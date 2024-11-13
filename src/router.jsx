@@ -116,7 +116,7 @@ const router = createBrowserRouter([
           {
             path: "notifications",
             lazy: async () => ({
-              Component: (await import("./pages/settings/notifications"))
+              Component: (await import("./pages/settings/notifications/index.jsx"))
                 .default
             })
           },
