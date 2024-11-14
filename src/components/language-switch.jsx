@@ -17,43 +17,22 @@ export default function LanguageSwitch() {
     ['zh', '简体中文'],
   ]);
 
-  const renderDropdownItem = () => {
-    return Array.from(languageText).map(([key, value]) => {
-      return DropdownMenuItem({
-        key: key,
-        onClick: () => setLanguage(key),
-        children: [
-          value,
-          IconCheck({
-            size: 14,
-            className: cn('ml-auto', language !== key && 'hidden'),
-          }),
-        ],
-      });
-    });
-  };
-
-  return DropdownMenu({
-    children: [
-      DropdownMenuTrigger({
-        asChild: true,
-        children: [
-          Button({
-            variant: 'outline',
-            size: 'default',
-            className: 'scale-95 rounded-full',
-            children: [
-              languageText.get(language),
-              { className: 'sr-only', children: 'Toggle language' },
-            ],
-          }),
-        ],
-      }),
-      DropdownMenuContent({
-        align: 'end',
-        children: renderDropdownItem(),
-      }),
-    ],
-  });
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" size="default" className="scale-95 rounded-full">
+          {languageText.get(language)}
+          <span className="sr-only">Toggle language</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        {Array.from(languageText).map(([key, value]) => (
+          <DropdownMenuItem key={key} onClick={() => setLanguage(key)}>
+            {value}
+            <IconCheck size={14} className={cn('ml-auto', language !== key && 'hidden')} />
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
 }
-
