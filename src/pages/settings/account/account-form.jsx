@@ -28,7 +28,7 @@ import {
   PopoverContent,
   PopoverTrigger
 } from "@/components/ui/popover"
-import { toast } from "@/components/ui/use-toast"
+import { toast } from "@/hooks/use-toast"
 
 const languages = [
   { label: "English", value: "en" },
@@ -39,7 +39,7 @@ const languages = [
   { label: "Russian", value: "ru" },
   { label: "Japanese", value: "ja" },
   { label: "Korean", value: "ko" },
-  { label: "Chinese", value: "zh" }
+  { label: "O'zbekcha", value: "uz" }
 ]
 
 const accountFormSchema = z.object({

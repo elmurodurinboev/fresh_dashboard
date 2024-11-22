@@ -1,4 +1,4 @@
 import * as en from './en.json'
-import * as zh from './zh.json'
+import * as uz from './uz.json'
 
-export default { en, zh }
+export default { en, uz }
