@@ -1,7 +1,24 @@
 import { Card } from "@/components/ui/card"
 import { UserAuthForm } from "./components/user-auth-form"
+import {useAuth} from "@/hooks/utils/useAuth.js";
+import {useEffect} from "react";
+import {useNavigate, useSearchParams} from "react-router-dom";
 
 export default function Login() {
+  const [searchParams] = useSearchParams()
+
+  const navigate = useNavigate()
+
+  const session = useAuth()
+  useEffect(() => {
+    if (session && Object.keys(session).length !== 0 && session.user_id) {
+      if (searchParams.has(`callbackUrl`)){
+        navigate(searchParams.get(`callbackUrl`))
+        return
+      }
+      navigate("/")
+    }
+  }, [navigate, session])
   return (
     <>
       <div className="container grid h-svh flex-col items-center justify-center bg-primary-foreground lg:max-w-none lg:px-0">

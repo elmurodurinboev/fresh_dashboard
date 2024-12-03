@@ -5,7 +5,9 @@ import { Button } from "./custom/button"
 import Nav from "./nav"
 import { cn } from "@/lib/utils"
 import { sidelinks } from "@/data/sidelinks"
+import MainLogo from "@/components/custom/main-logo.jsx";
 
+// eslint-disable-next-line react/prop-types
 export default function Sidebar({ className, isCollapsed, setIsCollapsed }) {
   const [navOpened, setNavOpened] = useState(false)
 
@@ -42,45 +44,16 @@ export default function Sidebar({ className, isCollapsed, setIsCollapsed }) {
           className="z-50 flex justify-between px-4 py-3 shadow-sm md:px-4"
         >
           <div className={`flex items-center ${!isCollapsed ? "gap-2" : ""}`}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 256 256"
-              className={`transition-all ${
-                isCollapsed ? "h-6 w-6" : "h-8 w-8"
-              }`}
-            >
-              <rect width="256" height="256" fill="none"></rect>
-              <line
-                x1="208"
-                y1="128"
-                x2="128"
-                y2="208"
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="16"
-              ></line>
-              <line
-                x1="192"
-                y1="40"
-                x2="40"
-                y2="192"
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="16"
-              ></line>
-              <span className="sr-only">Website Name</span>
-            </svg>
+            <MainLogo className={`transition-all ${
+              isCollapsed ? "h-6 w-6" : "h-8 w-8"
+            }`} />
             <div
               className={`flex flex-col justify-end truncate ${
                 isCollapsed ? "invisible w-0" : "visible w-auto"
               }`}
             >
-              <span className="font-medium">Shadcn Admin</span>
-              <span className="text-xs">Vite + ShadcnUI</span>
+              <span className="font-medium">We Fresh Drive</span>
+              <span className="text-xs">1229</span>
             </div>
           </div>
 

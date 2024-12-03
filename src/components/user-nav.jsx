@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/custom/button"
 import {
   DropdownMenu,
@@ -7,29 +7,47 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu"
 import { useTranslations } from "use-intl"
+import {useAuth} from "@/hooks/utils/useAuth.js";
+import {useMutation} from "@tanstack/react-query";
+import {AuthService} from "@/services/AuthService.js";
+import {useNavigate} from "react-router-dom";
+import {toast} from "@/hooks/use-toast.js";
 
 export function UserNav() {
   const t = useTranslations("userNav")
+  const {session} = useAuth()
+
+  const navigate = useNavigate()
+  const mutation = useMutation({
+    mutationKey: ["logout"],
+    mutationFn: AuthService.logoutAuth,
+    onSuccess: () => {
+      navigate("/auth/login")
+      toast({
+        description: "Logged Out"
+      })
+    }
+  })
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-8 w-8">
-            <AvatarImage src="/avatars/01.png" alt="@shadcn" />
-            <AvatarFallback>SN</AvatarFallback>
+            <AvatarFallback className={"uppercase"}>{session && session.firstname ? session.firstname[0] : 'U'}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">satnaing</p>
+            <p className="text-sm font-medium leading-none">{session && session.firstname ? session.firstname[0] : 'Unknown'}</p>
             <p className="text-xs leading-none text-muted-foreground">
-              satnaingdev@gmail.com
+              {
+                session && session.phone_number && session.phone_number
+              }
             </p>
           </div>
         </DropdownMenuLabel>
@@ -37,22 +55,17 @@ export function UserNav() {
         <DropdownMenuGroup>
           <DropdownMenuItem>
             {t("profile")}
-            <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            {t("billing")}
-            <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-          </DropdownMenuItem>
+
           <DropdownMenuItem>
             {t("settings")}
-            <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
           </DropdownMenuItem>
-          <DropdownMenuItem>{t("new_team")}</DropdownMenuItem>
+          {/*<DropdownMenuItem>{t("new_team")}</DropdownMenuItem>*/}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={() => mutation.mutate()}>
           {t("log_out")}
-          <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+          {/*<DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>*/}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

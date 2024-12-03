@@ -1,7 +1,7 @@
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { zodResolver } from "@hookform/resolvers/zod"
+import {useState} from "react"
+import {useForm} from "react-hook-form"
+import {z} from "zod"
+import {zodResolver} from "@hookform/resolvers/zod"
 import {
   Form,
   FormControl,
@@ -10,16 +10,20 @@ import {
   FormLabel,
   FormMessage
 } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/custom/button"
-import { PasswordInput } from "@/components/custom/password-input"
-import { cn } from "@/lib/utils"
+import {Input} from "@/components/ui/input"
+import {Button} from "@/components/custom/button"
+import {PasswordInput} from "@/components/custom/password-input"
+import {cn} from "@/lib/utils"
+import {useNavigate, useSearchParams} from "react-router-dom";
+import {useMutation} from "@tanstack/react-query";
+import {AuthService} from "@/services/AuthService.js";
+import {toast} from "@/hooks/use-toast.js";
 
 const formSchema = z.object({
-  login: z
+  phone_number: z
     .string()
-    .min(12, { message: "Please enter your number" })
-    .max(12, {message: "Please enter the real number"}),
+    .min(13, {message: "Please enter your number"})
+    .max(13, {message: "Please enter the real number"}),
   password: z
     .string()
     .min(1, {
@@ -30,7 +34,8 @@ const formSchema = z.object({
     })
 })
 
-export function UserAuthForm({ className, ...props }) {
+// eslint-disable-next-line react/prop-types
+export function UserAuthForm({className, ...props}) {
   const [isLoading, setIsLoading] = useState(false)
 
   const form = useForm({
@@ -41,13 +46,45 @@ export function UserAuthForm({ className, ...props }) {
     }
   })
 
-  function onSubmit(data) {
-    setIsLoading(true)
-    console.log(data)
+  const [searchParams] = useSearchParams()
+  const [globalError, setGlobalError] = useState()
+  const navigate = useNavigate()
 
-    setTimeout(() => {
+
+  const mutation = useMutation({
+    mutationFn: AuthService.login,
+    onSuccess: (data) => {
+      console.log(data)
+
       setIsLoading(false)
-    }, 3000)
+      setGlobalError()
+
+      AuthService.setAuthSession(data)
+
+      if (searchParams.has(`callbackUrl`)) {
+        navigate(searchParams.get(`callbackUrl`))
+        return
+      }
+      navigate("/")
+    },
+    onError: error => {
+      setIsLoading(false)
+
+      console.log(error)
+      toast(({
+        variant: 'destructive',
+        title: "Error",
+        description: error && error.message ? error.message : "Something went wrong"
+      }))
+    }
+  })
+
+
+  function onSubmit(data) {
+    console.log("data===", data)
+    setIsLoading(true)
+
+    mutation.mutate(data)
   }
 
   return (
@@ -57,31 +94,34 @@ export function UserAuthForm({ className, ...props }) {
           <div className="grid gap-2">
             <FormField
               control={form.control}
-              name="login"
-              render={({ field }) => (
+              name="phone_number"
+              render={({field}) => (
                 <FormItem className="space-y-1">
-                  <FormLabel>Login</FormLabel>
+                  <FormLabel>Phone number</FormLabel>
                   <FormControl>
                     <Input placeholder="998900000000" {...field} />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage/>
                 </FormItem>
               )}
             />
             <FormField
               control={form.control}
               name="password"
-              render={({ field }) => (
+              render={({field}) => (
                 <FormItem className="space-y-1">
                   <FormLabel>Password</FormLabel>
                   <FormControl>
                     <PasswordInput placeholder="********" {...field} />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage/>
                 </FormItem>
               )}
             />
-            <Button className="mt-2" loading={isLoading}>
+            {/*{globalError && (*/}
+            {/*  <p>{globalError}</p>*/}
+            {/*)}*/}
+            <Button className="mt-2" loading={isLoading} disabled={mutation.isPending}>
               Login
             </Button>
           </div>

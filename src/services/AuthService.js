@@ -2,14 +2,13 @@ import Api from "@/utils/api.js";
 
 export const AuthService = {
   async login(payload) {
-    const {data: {data}} = await Api.post('/login', payload)
+    const {data: {data}} = await Api.post('/auth/login/', payload)
     return data
   },
 
   getAuthSession() {
     try {
-      const data = JSON.parse(localStorage.getItem("auth-session"))
-      return data
+      return  JSON.parse(localStorage.getItem("auth-session"))
     } catch (e) {
       console.log(e)
     }
