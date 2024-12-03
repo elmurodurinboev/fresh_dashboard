@@ -24,7 +24,6 @@ export default [
       'react-refresh': reactRefresh,
     },
     rules: {
-      "react/prop-types": 0,
       "react/jsx-uses-vars": "error",
       "react/jsx-uses-react": "error",
       "react/no-unescaped-entities": "off",
@@ -35,6 +34,7 @@ export default [
       ...react.configs['jsx-runtime'].rules,
       ...reactHooks.configs.recommended.rules,
       'react/jsx-no-target-blank': 'off',
+      "react/prop-types": 0,
       'react-refresh/only-export-components': [
         'warn',
         { allowConstantExport: true },
