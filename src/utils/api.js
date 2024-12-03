@@ -11,10 +11,10 @@ const refreshToken = async () => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const {session, setSession} = useAuth()
 
-  const response = await fetch(`${import.meta.env.VITE_API_URL}/refresh`, {
+  const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/refresh/`, {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${session.refresh_token}`,
+      'Authorization': `Bearer ${session.refresh}`,
       'Content-Type': 'application/json'
     }
   });
@@ -56,7 +56,7 @@ instance.interceptors.request.use(
       //     language = 'uz_Latn'; // Fallback
       // }
 
-      config.headers.Authorization = `Bearer ${session?.token}`;
+      config.headers.Authorization = `Bearer ${session?.access}`;
       // config.headers['Accept-Language'] = language;
     }
 
@@ -81,7 +81,8 @@ instance.interceptors.response.use(
 
         try {
           const data = refreshToken()
-          originalRequest.headers.Authorization = `Bearer ${data.token}`;
+          console.log("refresh token req:", data)
+          originalRequest.headers.Authorization = `Bearer ${data.access}`;
 
           refreshAndRetryQueue.forEach(({ config, resolve, reject }) => {
             instance.request(config)

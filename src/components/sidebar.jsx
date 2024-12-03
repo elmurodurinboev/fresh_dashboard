@@ -7,7 +7,6 @@ import { cn } from "@/lib/utils"
 import { sidelinks } from "@/data/sidelinks"
 import MainLogo from "@/components/custom/main-logo.jsx";
 
-// eslint-disable-next-line react/prop-types
 export default function Sidebar({ className, isCollapsed, setIsCollapsed }) {
   const [navOpened, setNavOpened] = useState(false)
 

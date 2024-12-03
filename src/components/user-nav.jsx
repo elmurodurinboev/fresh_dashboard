@@ -12,7 +12,7 @@ import {
 import { useTranslations } from "use-intl"
 import {useAuth} from "@/hooks/utils/useAuth.js";
 import {useMutation} from "@tanstack/react-query";
-import {AuthService} from "@/services/AuthService.js";
+import {AuthService} from "@/services/auth.service.js";
 import {useNavigate} from "react-router-dom";
 import {toast} from "@/hooks/use-toast.js";
 
