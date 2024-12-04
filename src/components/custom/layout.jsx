@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils';
+import TopLoader from "@/components/custom/top-loader.jsx";
 
 const LayoutContext = React.createContext(null);
 
@@ -30,6 +31,7 @@ const Layout = ({ className, fixed = false, ...props }) => {
         )}
         {...props}
       />
+      <TopLoader />
     </LayoutContext.Provider>
   );
 };

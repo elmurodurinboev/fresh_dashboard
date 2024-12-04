@@ -16,7 +16,7 @@ import {PasswordInput} from "@/components/custom/password-input"
 import {cn} from "@/lib/utils"
 import {useNavigate, useSearchParams} from "react-router-dom";
 import {useMutation} from "@tanstack/react-query";
-import {AuthService} from "@/services/AuthService.js";
+import {AuthService} from "@/services/auth.service.js";
 import {toast} from "@/hooks/use-toast.js";
 
 const formSchema = z.object({

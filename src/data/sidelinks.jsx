@@ -20,7 +20,7 @@ import {
   IconTruck,
   IconUserShield,
   IconUsers,
-  IconLock
+  IconLock, IconCube
 } from "@tabler/icons-react"
 
 export const sidelinks = [
@@ -86,12 +86,12 @@ export const sidelinks = [
   //     }
   //   ]
   // },
-  // {
-  //   title: "sidebar.users",
-  //   label: "",
-  //   href: "/users",
-  //   icon: <IconUsers size={18} />
-  // },
+  {
+    title: "sidebar.products",
+    label: "",
+    href: "/products",
+    icon: <IconCube size={18}/>
+  },
   // {
   //   title: "sidebar.requests",
   //   label: "10",
