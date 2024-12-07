@@ -34,7 +34,6 @@ const formSchema = z.object({
     })
 })
 
-// eslint-disable-next-line react/prop-types
 export function UserAuthForm({className, ...props}) {
   const [isLoading, setIsLoading] = useState(false)
 

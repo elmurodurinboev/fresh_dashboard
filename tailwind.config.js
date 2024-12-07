@@ -9,6 +9,9 @@ module.exports = {
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
   		},
+			shadow: {
+				tb: "0 4px 30px 0 rgba(26, 28, 33, 0.05)",
+			},
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',

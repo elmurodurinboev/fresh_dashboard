@@ -14,9 +14,11 @@ const refreshToken = async () => {
   const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/refresh/`, {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${session.refresh}`,
       'Content-Type': 'application/json'
-    }
+    },
+    body: JSON.stringify({
+      "refresh": session.refresh
+    })
   });
 
   const res = await response.json();
@@ -27,9 +29,9 @@ const refreshToken = async () => {
     return
   }
 
-  setSession(res.data)
+  setSession({...session.user ,...res})
 
-  return res.data
+  return res.result
 }
 
 let isRefreshing = false;

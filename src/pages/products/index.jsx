@@ -16,6 +16,7 @@ import {
 import {Button} from "@/components/custom/button.jsx";
 import {DotsHorizontalIcon} from "@radix-ui/react-icons";
 import {Formatter} from "@/utils/formatter.js";
+import {useNavigate} from "react-router-dom";
 
 const Index = () => {
 
@@ -23,6 +24,8 @@ const Index = () => {
     queryKey: ['getAllProducts'],
     queryFn: ProductService.getProducts
   })
+
+  const navigate = useNavigate()
 
   return (
     <Layout>
@@ -38,6 +41,13 @@ const Index = () => {
         <div className="mb-2 flex items-center justify-between space-y-2">
           <div>
             <h2 className="text-2xl font-bold tracking-tight">Products</h2>
+          </div>
+          <div>
+            <Button
+              onClick={() => navigate("create")}
+            >
+              Add product
+            </Button>
           </div>
         </div>
         <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0">
@@ -69,9 +79,9 @@ const Index = () => {
                     </TableHeader>
                     <TableBody>
                       {
-                        productsData.data.data.length > 0 ? (
-                          productsData.data.data.map((product, index) => (
-                            <TableRow key={index} className={"bg-secondary border border-foreground"}>
+                        productsData.data.result.length > 0 ? (
+                          productsData.data.result.map((product, index) => (
+                            <TableRow key={index} className={"bg-secondary"}>
                               <TableCell className={"flex gap-2 items-center overflow-hidden"}>
                                 {product.image ? (
                                   <img
@@ -138,7 +148,8 @@ const Index = () => {
                         ) : (
                           <TableRow>
                             <TableCell
-                              className="h-24 text-center"
+                              colSpan={6}
+                              className="h-24 text-center text-rose-500 font-medium"
                             >
                               No results.
                             </TableCell>

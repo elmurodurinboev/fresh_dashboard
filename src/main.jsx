@@ -7,6 +7,7 @@ import "@/index.css"
 import router from "./router.jsx";
 import {LanguageProvider} from "./components/language-provider.jsx";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
+import {ReactQueryDevtools} from "@tanstack/react-query-devtools";
 
 const queryClient = new QueryClient();
 ReactDOM.createRoot(document.getElementById("root")).render(
@@ -18,6 +19,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           <Toaster/>
         </LanguageProvider>
       </ThemeProvider>
+      <ReactQueryDevtools initialIsOpen={false}/>
     </QueryClientProvider>
   </React.StrictMode>
 )

@@ -2,8 +2,8 @@ import Api from "@/utils/api.js";
 
 export const AuthService = {
   async login(payload) {
-    const {data: {data}} = await Api.post('/auth/login/', payload)
-    return data
+    const {data: {result}} = await Api.post('/auth/login/', payload)
+    return result
   },
 
   getAuthSession() {

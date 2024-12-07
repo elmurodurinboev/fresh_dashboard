@@ -19,7 +19,7 @@ const Protected = () => {
     };
   }, []);
 
-  return session?.user_id ? <Outlet /> : <Navigate to={"/auth/login"} />;
+  return session?.user ? <Outlet /> : <Navigate to={"/auth/login"} />;
 };
 
 export default Protected;
