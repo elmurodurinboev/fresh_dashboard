@@ -9,9 +9,10 @@ export default function Login() {
 
   const navigate = useNavigate()
 
-  const session = useAuth()
+  const {session} = useAuth()
+
   useEffect(() => {
-    if (session && Object.keys(session).length !== 0 && session.user_id) {
+    if (session && Object.keys(session).length !== 0 && session.user) {
       if (searchParams.has(`callbackUrl`)){
         navigate(searchParams.get(`callbackUrl`))
         return

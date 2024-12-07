@@ -22,7 +22,7 @@ export default function Sidebar({ className, isCollapsed, setIsCollapsed }) {
   return (
     <aside
       className={cn(
-        `fixed left-0 right-0 top-0 z-50 w-full border-r-2 border-r-muted transition-[width] md:bottom-0 md:right-auto md:h-svh ${
+        `fixed left-0 right-0 top-0 z-50 w-full transition-[width] md:bottom-0 shadow-xl drop-shadow md:right-auto md:h-svh ${
           isCollapsed ? "md:w-14" : "md:w-64"
         }`,
         className
@@ -47,12 +47,12 @@ export default function Sidebar({ className, isCollapsed, setIsCollapsed }) {
               isCollapsed ? "h-6 w-6" : "h-8 w-8"
             }`} />
             <div
-              className={`flex flex-col justify-end truncate ${
+              className={`flex flex-col justify-center truncate ${
                 isCollapsed ? "invisible w-0" : "visible w-auto"
               }`}
             >
-              <span className="font-medium">We Fresh Drive</span>
-              <span className="text-xs">1229</span>
+              <span className="font-medium leading-0">We Drive Fresh</span>
+              <span className="text-xs leading-0">1229</span>
             </div>
           </div>
 
