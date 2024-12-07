@@ -65,6 +65,12 @@ const router = createBrowserRouter([
             })
           },
           {
+            path: "shops/update/:id",
+            lazy: async () => ({
+              Component: (await import("@/pages/update-shop")).default
+            })
+          },
+          {
             path: "extra-components",
             lazy: async () => ({
               Component: (await import("@/pages/extra-components")).default
