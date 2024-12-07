@@ -2,7 +2,7 @@ import {Layout} from "@/components/custom/layout.jsx";
 import ThemeSwitch from "@/components/theme-switch.jsx";
 import {UserNav} from "@/components/user-nav.jsx";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.jsx";
-import {useQuery} from "@tanstack/react-query";
+import {useMutation, useQuery} from "@tanstack/react-query";
 import ProductService from "@/services/product.service.js";
 import {Skeleton} from "@/components/ui/skeleton.jsx";
 import DefaultImage from "@/components/custom/default-image.jsx";
@@ -17,15 +17,40 @@ import {Button} from "@/components/custom/button.jsx";
 import {DotsHorizontalIcon} from "@radix-ui/react-icons";
 import {Formatter} from "@/utils/formatter.js";
 import {useNavigate} from "react-router-dom";
+import {toast} from "@/hooks/use-toast.js";
+import DeleteConfirmationModal from "@/components/custom/delete-confirmation-modal.jsx";
+import {useState} from "react";
 
 const Index = () => {
-
+  const [deleteModal, setDeleteModal] = useState(false)
+  const [selectedProduct, setSelectedProduct] = useState({})
   const productsData = useQuery({
     queryKey: ['getAllProducts'],
     queryFn: ProductService.getProducts
   })
 
   const navigate = useNavigate()
+
+  const deleteMutation = useMutation({
+    mutationFn: ProductService.delete,
+    onSuccess: () => {
+      toast({
+        title: 'OK',
+        description: "Successfully added"
+      })
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message || "Messages.error_occurred"
+      })
+    },
+  })
+
+  const handleDelete = (product) => {
+    console.log(product)
+    setSelectedProduct(product)
+  }
 
   return (
     <Layout>
@@ -127,15 +152,17 @@ const Index = () => {
                                         variant="ghost"
                                         className="flex h-8 w-8 p-0 data-[state=open]:bg-muted"
                                       >
-                                        <DotsHorizontalIcon className="h-4 w-4" />
+                                        <DotsHorizontalIcon className="h-4 w-4"/>
                                         <span className="sr-only">Open menu</span>
                                       </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end" className="w-[160px]">
                                       <DropdownMenuItem>Edit</DropdownMenuItem>
                                       <DropdownMenuItem>Favorite</DropdownMenuItem>
-                                      <DropdownMenuSeparator />
-                                      <DropdownMenuItem>
+                                      <DropdownMenuSeparator/>
+                                      <DropdownMenuItem
+                                        onClick={() => handleDelete(product)}
+                                      >
                                         Delete
                                       </DropdownMenuItem>
                                     </DropdownMenuContent>
@@ -165,8 +192,16 @@ const Index = () => {
               <Skeleton className={"rounded-md border h-[500px]"}/>
             )
           }
-
         </div>
+        <DeleteConfirmationModal
+          open={deleteModal}
+          setOpen={setDeleteModal}
+          handleDelete={() => deleteMutation.mutate(selectedProduct.id)}
+          handleClose={() => {
+            setDeleteModal(false)
+            setSelectedProduct({})
+          }}
+        />
       </Layout.Body>
     </Layout>
   )
