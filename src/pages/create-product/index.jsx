@@ -14,6 +14,7 @@ import {Input} from "@/components/ui/input.jsx";
 import {zodResolver} from "@hookform/resolvers/zod";
 import ProductService from "@/services/product.service.js";
 import {toast} from "@/hooks/use-toast.js";
+import {Textarea} from "@/components/ui/textarea.jsx";
 
 
 const formSchema = z.object({
@@ -51,7 +52,7 @@ const Index = () => {
       count: '',
       price: '',
       discount_price: '',
-      subcategory: null
+      subcategory: ''
     }
   })
 
@@ -106,7 +107,6 @@ const Index = () => {
             <form onSubmit={form.handleSubmit(onSubmit)} className={"flex gap-4"}>
               <div className={"w-2/3 flex flex-col gap-4"}>
                 <div className={"w-full p-6 bg-white rounded-2xl shadow flex flex-col gap-4"}>
-                  <h2 className={"text-primary-text text-base font-semibold"}>Kategoriya</h2>
                   {
                     !subCategoryData.isLoading ? (
                       !subCategoryData.isError && subCategoryData.data && subCategoryData.isSuccess && subCategoryData.data.result ? (
@@ -142,10 +142,7 @@ const Index = () => {
                       <Skeleton className={"w-full h-9 rounded-md"}/>
                     )
                   }
-                </div>
 
-                <div className={"w-full p-6 bg-white rounded-2xl shadow flex flex-col gap-4"}>
-                  <h2 className={"text-primary-text text-base font-semibold"}>Mahsulot nomi</h2>
                   <FormField
                     control={form.control}
                     name="name"
@@ -159,27 +156,7 @@ const Index = () => {
                       </FormItem>
                     )}
                   />
-                </div>
 
-                <div className={"w-full p-6 bg-white rounded-2xl shadow flex flex-col gap-4"}>
-                  <h2 className={"text-primary-text text-base font-semibold"}>Mahsulot tavsifi</h2>
-                  <FormField
-                    control={form.control}
-                    name="descriptions"
-                    render={({field}) => (
-                      <FormItem className="space-y-1">
-                        <FormLabel className={"text-[#667085]"}>Mahsulot tavsifi</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Go'sh, hamir" {...field} />
-                        </FormControl>
-                        <FormMessage/>
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                <div className={"w-full p-6 bg-white rounded-2xl shadow flex flex-col gap-4"}>
-                  <h2 className={"text-primary-text text-base font-semibold"}>Mahsulot soni</h2>
                   <FormField
                     control={form.control}
                     name="count"
@@ -193,10 +170,7 @@ const Index = () => {
                       </FormItem>
                     )}
                   />
-                </div>
 
-                <div className={"w-full p-6 bg-white rounded-2xl shadow flex flex-col gap-4"}>
-                  <h2 className={"text-primary-text text-base font-semibold"}>Mahsulot narhi</h2>
                   <FormField
                     control={form.control}
                     name="price"
@@ -210,10 +184,7 @@ const Index = () => {
                       </FormItem>
                     )}
                   />
-                </div>
 
-                <div className={"w-full p-6 bg-white rounded-2xl shadow flex flex-col gap-4"}>
-                  <h2 className={"text-primary-text text-base font-semibold"}>Mahsulot chegirmasi</h2>
                   <FormField
                     control={form.control}
                     name="discount_price"
@@ -227,20 +198,33 @@ const Index = () => {
                       </FormItem>
                     )}
                   />
-                </div>
 
+                  <FormField
+                    control={form.control}
+                    name="descriptions"
+                    render={({field}) => (
+                      <FormItem className="space-y-1">
+                        <FormLabel className={"text-[#667085]"}>Mahsulot tavsifi</FormLabel>
+                        <FormControl>
+                          <Textarea placeholder="Go'sh, hamir" className={"resize-none"} {...field} rows={5} />
+                        </FormControl>
+                        <FormMessage/>
+                      </FormItem>
+                    )}
+                  />
+                </div>
               </div>
-              {/*TOTAL*/}
+
+              {/*Product Image*/}
               <div className={"w-1/3 flex flex-col gap-3"}>
-                <div className={"flex flex-col rounded-md p-4 shadow-xl"}>
-                  <h3 className={"text-primary-text text-base font-semibold mb-4"}>add_product_img</h3>
-                  <span className={"text-gray-400 text-sm font-normal mb-1"}>picture</span>
+                <div className={"flex flex-col bg-white rounded-2xl shadow p-6"}>
                   <FormField
                     name="image"
                     control={form.control}
                     render={
                       ({field: {onChange, value, ...field}}) => (
                         <FormItem>
+                          <FormLabel className={"text-[#667085]"}>Mahsulot rasmi</FormLabel>
                           <FormControl>
                             <div
                               className={`w-full border-2 border-dashed flex p-4 flex-col items-center justify-center rounded-md cursor-pointer gap-4 ${isDragged ? 'border-primary' : ''}`}
@@ -269,11 +253,11 @@ const Index = () => {
                       </span>) : (
                                   <div className={"w-full flex flex-col justify-center items-center gap-4"}>
                       <span
-                        className={"flex items-center justify-center rounded-full w-9 h-9 bg-brandbg text-brand p-2"}>
+                        className={"flex items-center justify-center rounded-full w-9 h-9 bg-green-100 text-green-600 p-2"}>
                         <IconPhoto className={"icon"}/>
                       </span>
                                     <p className={"text-center text-gray-400 text-sm font-normal"}>
-                                      drag_img
+                                      Rasmni bu yerga sudrab tashlang yoki rasm qo`shish tugmasini bosing
                                     </p>
                                   </div>
                                 )}
@@ -295,22 +279,22 @@ const Index = () => {
                                         className={"w-1/2"}
                                         onClick={() => onChange(null)} // This line clears the selected image
                                       >
-                                        delete
+                                        O`chirish
                                       </Button>
                                       <label
                                         htmlFor={"imageField"}
                                         className={"w-1/2 h-10 py-[10px] px-3 font-medium text-brand bg-secondary border-none flex items-center transition-all justify-center gap-2 rounded-md cursor-pointer"}
                                       >
-                                        replacement
+                                        Almashtirish
                                       </label>
                                     </div>) :
                                   (
                                     <label
                                       htmlFor={"imageField"}
-                                      className={"h-10 py-[10px] px-3 font-medium text-brand bg-brandbg border-none flex items-center hover:bg-brand hover:text-white transition-all justify-center gap-2 rounded-md cursor-pointer"}
+                                      className={"h-10 py-[10px] px-3 font-medium text-green-600 bg-green-50 border-none flex items-center hover:bg-green-500 hover:text-white transition-all justify-center gap-2 rounded-md cursor-pointer"}
                                     >
-                                      <IconPlus className={"icon-sm"}/>
-                                      add_img
+                                      <IconPlus className={"w-5 h-5"}/>
+                                      Rasm qo‘shish
                                     </label>)}
                             </div>
                           </FormControl>
@@ -331,10 +315,11 @@ const Index = () => {
                 <Button
                   size={"xl"}
                   type={"reset"}
+                  variant={"outline"}
                   onClick={() => navigate("/products")}
-                  className={"w-full gap-2 bg-neutral-50 text-gray-600"}
+                  className={"w-full gap-2 items-center"}
                 >
-                  <IconX className={"icon-sm"}/>
+                  <IconX className={"w-5 h-5"}/>
                   cancel
                 </Button>
               </div>
