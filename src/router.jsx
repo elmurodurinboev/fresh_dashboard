@@ -53,21 +53,39 @@ const router = createBrowserRouter([
             })
           },
           {
+            path: "category",
+            lazy: async () => ({
+              Component: (await import("@/pages/category")).default
+            })
+          },
+          {
+            path: "category/create",
+            lazy: async () => ({
+              Component: (await import("@/pages/category/create-category")).default
+            })
+          },
+          {
+            path: "category/update/:id",
+            lazy: async () => ({
+              Component: (await import("@/pages/category/update-category")).default
+            })
+          },
+          {
             path: "products/create",
             lazy: async () => ({
-              Component: (await import("@/pages/create-product")).default
+              Component: (await import("@/pages/products/create-product")).default
             })
           },
           {
             path: "shops/create",
             lazy: async () => ({
-              Component: (await import("@/pages/create-shop")).default
+              Component: (await import("@/pages/shops/create-shop")).default
             })
           },
           {
             path: "shops/update/:id",
             lazy: async () => ({
-              Component: (await import("@/pages/update-shop")).default
+              Component: (await import("@/pages/shops/update-shop")).default
             })
           },
           {

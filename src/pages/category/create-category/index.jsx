@@ -6,15 +6,11 @@ import {useForm} from "react-hook-form";
 import {z} from "zod";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.jsx";
 import {useNavigate} from "react-router-dom";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.jsx";
-import {useMutation, useQuery} from "@tanstack/react-query";
-import CategoryService from "@/services/category.service.js";
-import {Skeleton} from "@/components/ui/skeleton.jsx";
+import {useMutation} from "@tanstack/react-query";
 import {Input} from "@/components/ui/input.jsx";
 import {zodResolver} from "@hookform/resolvers/zod";
-import ProductService from "@/services/product.service.js";
 import {toast} from "@/hooks/use-toast.js";
-import {Textarea} from "@/components/ui/textarea.jsx";
+import CategoryService from "@/services/category.service.js";
 
 
 const formSchema = z.object({
@@ -24,20 +20,6 @@ const formSchema = z.object({
   image: z
     .any()
     .optional(),
-  descriptions: z
-    .string()
-    .optional(),
-  count: z
-    .string()
-    .min(1, {message: 'Min value is 1'}),
-  price: z
-    .string()
-    .min(3, {message: 'Min value is 3'}),
-  discount_price: z
-    .string()
-    .min(3, {message: 'Min value is 3'}),
-  subcategory: z
-    .string()
 })
 
 const Index = () => {
@@ -48,16 +30,11 @@ const Index = () => {
     defaultValues: {
       name: '',
       image: '',
-      descriptions: '',
-      count: '',
-      price: '',
-      discount_price: '',
-      subcategory: ''
     }
   })
 
   const mutation = useMutation({
-    mutationFn: ProductService.create,
+    mutationFn: CategoryService.create,
     onError: (error) => {
       const {result: {errors: serverErrors}, status} = error.response;
       if (status === 422) {
@@ -69,6 +46,7 @@ const Index = () => {
         return;
       }
       toast({
+        variant: 'destructive',
         title: "Error",
         description: error.message || "Messages.error_occurred"
       })
@@ -84,17 +62,11 @@ const Index = () => {
 
   const onSubmit = (data) => {
     const formData = new FormData()
-    Object.keys(data).forEach(item => formData.append(item, data[item]))
+    Object.keys(data).forEach(item => item !== 'image' && formData.append(item, data[item]))
 
-    formData.append("image", data.image ? data.image[0] : "")
+    data.image && formData.append("image", data.image)
     mutation.mutate(formData)
   }
-
-  const subCategoryData = useQuery({
-    queryKey: ["getAllCategory"],
-    queryFn: CategoryService.getAllSub
-  })
-
 
   return (
     <Layout>
@@ -107,42 +79,6 @@ const Index = () => {
             <form onSubmit={form.handleSubmit(onSubmit)} className={"flex gap-4"}>
               <div className={"w-2/3 flex flex-col gap-4"}>
                 <div className={"w-full p-6 bg-white rounded-2xl shadow flex flex-col gap-4"}>
-                  {
-                    !subCategoryData.isLoading ? (
-                      !subCategoryData.isError && subCategoryData.data && subCategoryData.isSuccess && subCategoryData.data.result ? (
-                        <FormField
-                          control={form.control}
-                          name="subcategory"
-                          render={({field}) => (
-                            <FormItem className="space-y-1">
-                              <FormLabel className={"text-[#667085]"}>Kategoriya nomi</FormLabel>
-                              <FormControl>
-                                <Select value={+field.value} onValueChange={(val) => field.onChange(val)}>
-                                  <SelectTrigger className="w-full text-black">
-                                    <SelectValue placeholder="Select subcategory"/>
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    {
-                                      subCategoryData.data.result.map((item, index) => (
-                                        <SelectItem value={item.id} key={index}>{item.name}</SelectItem>
-                                      ))
-                                    }
-                                  </SelectContent>
-                                </Select>
-                              </FormControl>
-                              <FormMessage/>
-                            </FormItem>
-                          )
-                          }
-                        />
-                      ) : (
-                        <span className={"text-rose-500"}>Nimadir xato ketdi!</span>
-                      )
-                    ) : (
-                      <Skeleton className={"w-full h-9 rounded-md"}/>
-                    )
-                  }
-
                   <FormField
                     control={form.control}
                     name="name"
@@ -151,62 +87,6 @@ const Index = () => {
                         <FormLabel className={"text-[#667085]"}>Mahsulot nomi</FormLabel>
                         <FormControl>
                           <Input placeholder="Lavash" {...field} />
-                        </FormControl>
-                        <FormMessage/>
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="count"
-                    render={({field}) => (
-                      <FormItem className="space-y-1">
-                        <FormLabel className={"text-[#667085]"}>Mahsulot soni</FormLabel>
-                        <FormControl>
-                          <Input placeholder="10" {...field} />
-                        </FormControl>
-                        <FormMessage/>
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="price"
-                    render={({field}) => (
-                      <FormItem className="space-y-1">
-                        <FormLabel className={"text-[#667085]"}>Mahsulot narhi</FormLabel>
-                        <FormControl>
-                          <Input placeholder="10" {...field} />
-                        </FormControl>
-                        <FormMessage/>
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="discount_price"
-                    render={({field}) => (
-                      <FormItem className="space-y-1">
-                        <FormLabel className={"text-[#667085]"}>Mahsulot chegirmasi</FormLabel>
-                        <FormControl>
-                          <Input placeholder="10" {...field} />
-                        </FormControl>
-                        <FormMessage/>
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="descriptions"
-                    render={({field}) => (
-                      <FormItem className="space-y-1">
-                        <FormLabel className={"text-[#667085]"}>Mahsulot tavsifi</FormLabel>
-                        <FormControl>
-                          <Textarea placeholder="Go'sh, hamir" className={"resize-none"} {...field} rows={5} />
                         </FormControl>
                         <FormMessage/>
                       </FormItem>
@@ -309,7 +189,7 @@ const Index = () => {
                   type={"submit"}
                   className={"w-full"}
                 >
-                  save
+                  Saqlash
                 </Button>
 
                 <Button
@@ -320,7 +200,7 @@ const Index = () => {
                   className={"w-full gap-2 items-center"}
                 >
                   <IconX className={"w-5 h-5"}/>
-                  cancel
+                  Bekor qilish
                 </Button>
               </div>
             </form>
