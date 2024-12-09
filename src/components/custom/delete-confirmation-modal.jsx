@@ -1,7 +1,21 @@
 import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog.jsx";
-import {Button} from "@/components/ui/button.jsx";
+import {Button} from "@/components/custom/button.jsx";
 
-const DeleteConfirmationModal = ({open, setOpen, handleClose, handleDelete, dialogTitle, dialogParagraph, showCancel = true, confirmText, cancelText, dialogContentProps}) => {
+const DeleteConfirmationModal = (
+  {
+    open,
+    setOpen,
+    handleClose,
+    handleDelete,
+    dialogTitle,
+    dialogParagraph,
+    showCancel = true,
+    confirmText,
+    cancelText,
+    dialogContentProps,
+    loading = false
+  }
+) => {
 
   let dialog_title = dialogTitle || "O'chirish"
   let dialog_paragraph = dialogParagraph || "Ishonchingiz komilmi?"
@@ -21,12 +35,12 @@ const DeleteConfirmationModal = ({open, setOpen, handleClose, handleDelete, dial
         </DialogHeader>
         <p>{dialog_paragraph}</p>
         <div className="flex justify-end gap-2 mt-3">
-          {!!showCancel  && (
+          {!!showCancel && (
             <Button variant={"secondary"} onClick={handleClose}>
               {cancel_text}
             </Button>
           )}
-          <Button variant={"destructive"} onClick={handleDelete}>{confirm_text}</Button>
+          <Button variant={"destructive"} loading={loading} onClick={handleDelete}>{confirm_text}</Button>
         </div>
       </DialogContent>
     </Dialog>

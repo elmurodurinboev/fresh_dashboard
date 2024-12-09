@@ -31,25 +31,33 @@ const Index = () => {
 
   const navigate = useNavigate()
 
+  const reset = () => {
+    setDeleteModal(false)
+    setSelectedProduct({})
+  }
+
   const deleteMutation = useMutation({
     mutationFn: ProductService.delete,
-    onSuccess: () => {
+    onSuccess: async () => {
       toast({
         title: 'OK',
-        description: "Successfully added"
+        description: "Successfully delted"
       })
+      await productsData.refetch()
+      reset()
     },
     onError: (error) => {
       toast({
         title: "Error",
         description: error.message || "Messages.error_occurred"
       })
+      reset()
     },
   })
 
   const handleDelete = (product) => {
-    console.log(product)
     setSelectedProduct(product)
+    setDeleteModal(true)
   }
 
   return (
@@ -112,7 +120,7 @@ const Index = () => {
                                   <img
                                     src={product.image}
                                     alt={"product_image"}
-                                    className={"max-w-[48px] max-h-[48px] rounded-md"}
+                                    className={"w-[48px] h-[48px] rounded-md object-cover"}
                                   />
                                 ) : (
                                   <DefaultImage/>
@@ -157,8 +165,7 @@ const Index = () => {
                                       </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end" className="w-[160px]">
-                                      <DropdownMenuItem>Edit</DropdownMenuItem>
-                                      <DropdownMenuItem>Favorite</DropdownMenuItem>
+                                      <DropdownMenuItem onClick={() => navigate(`update/${product.id}`)}>Edit</DropdownMenuItem>
                                       <DropdownMenuSeparator/>
                                       <DropdownMenuItem
                                         onClick={() => handleDelete(product)}
