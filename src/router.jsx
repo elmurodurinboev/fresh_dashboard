@@ -47,6 +47,12 @@ const router = createBrowserRouter([
             })
           },
           {
+            path: "products/update/:id",
+            lazy: async () => ({
+              Component: (await import("@/pages/products/update-product")).default
+            })
+          },
+          {
             path: "shops",
             lazy: async () => ({
               Component: (await import("@/pages/shops")).default
@@ -68,6 +74,25 @@ const router = createBrowserRouter([
             path: "category/update/:id",
             lazy: async () => ({
               Component: (await import("@/pages/category/update-category")).default
+            })
+          },
+
+          {
+            path: "subcategory",
+            lazy: async () => ({
+              Component: (await import("@/pages/subcategory")).default
+            })
+          },
+          {
+            path: "subcategory/create",
+            lazy: async () => ({
+              Component: (await import("@/pages/subcategory/create-subcategory")).default
+            })
+          },
+          {
+            path: "subcategory/update/:id",
+            lazy: async () => ({
+              Component: (await import("@/pages/subcategory/update-subcategory")).default
             })
           },
           {
