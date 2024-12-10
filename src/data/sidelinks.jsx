@@ -2,7 +2,9 @@ import {
   IconLayoutDashboard,
   IconSettings,
   IconCube,
-  IconBuildingStore, IconCategory
+  IconBuildingStore,
+  IconCategory,
+  IconCategory2
 } from "@tabler/icons-react"
 
 export const sidelinks = [
@@ -25,6 +27,13 @@ export const sidelinks = [
     label: "",
     href: "/category",
     icon: <IconCategory size={18}/>
+  },
+
+  {
+    title: "sidebar.subcategory",
+    label: "",
+    href: "/subcategory",
+    icon: <IconCategory2 size={18}/>
   },
 
   {
