@@ -42,6 +42,14 @@ export const sidelinks = [
     href: "/shops",
     icon: <IconBuildingStore size={18}/>
   },
+
+  {
+    title: "sidebar.restaurants",
+    label: "",
+    href: "/restaurants",
+    icon: <IconBuildingStore size={18}/>
+  },
+
   {
     title: "sidebar.settings",
     label: "",

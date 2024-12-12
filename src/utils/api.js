@@ -29,7 +29,7 @@ const refreshToken = async () => {
     return
   }
 
-  setSession({...session.user ,...res})
+  setSession(res.result)
 
   return res.result
 }
