@@ -81,7 +81,7 @@ const Index = () => {
   const mutation = useMutation({
     mutationFn: ProductService.updatePatch,
     onError: (error) => {
-      const {result: {errors: serverErrors}, status} = error.response;
+      const {data: {errors: serverErrors}, status} = error.response;
       if (status === 422) {
         Object.entries(serverErrors).forEach(([key, value]) => {
           form.setError(key, {
@@ -128,8 +128,8 @@ const Index = () => {
             <h2 className="text-2xl font-bold tracking-tight">Create Products</h2>
           </div>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className={"flex gap-4"}>
-              <div className={"w-2/3 flex flex-col gap-4"}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className={"grid grid-cols-12 gap-4"}>
+              <div className={"col-span-12 lg:col-span-8 flex flex-col gap-4"}>
                 <div className={"w-full p-6 bg-white rounded-2xl shadow flex flex-col gap-4"}>
                   {
                     !subCategoryData.isLoading ? (
@@ -240,7 +240,7 @@ const Index = () => {
               </div>
 
               {/*Product Image*/}
-              <div className={"w-1/3 flex flex-col gap-3"}>
+              <div className={"col-span-12 lg:col-span-4 flex flex-col gap-3"}>
                 <div className={"flex flex-col bg-white rounded-2xl shadow p-6"}>
                   <FormField
                     name="image"
