@@ -21,23 +21,25 @@ const formSchema = z.object({
   name: z
     .string()
     .min(3, {message: 'Name must be at least 3'}),
-  image: z
-    .any()
-    .optional(),
+  image: z.preprocess(
+    (val) => (val instanceof File ? val : undefined), // Ensure the value is a File or undefined
+    z.instanceof(File, { message: "Image is required and must be a file" }) // Validate as File
+  ),
   descriptions: z
     .string()
-    .optional(),
+    .min(5, {message: "This field is required and its length must be greater or equal 5"}),
   count: z
-    .string()
-    .min(1, {message: 'Min value is 1'}),
+    .number()
+    .min(1),
   price: z
-    .string()
-    .min(3, {message: 'Min value is 3'}),
+    .number()
+    .min(3),
   discount_price: z
-    .string()
-    .min(3, {message: 'Min value is 3'}),
+    .number()
+    .min(3),
   subcategory: z
-    .string()
+    .number()
+    .min(3)
 })
 
 const Index = () => {
@@ -49,17 +51,18 @@ const Index = () => {
       name: '',
       image: '',
       descriptions: '',
-      count: '',
-      price: '',
-      discount_price: '',
-      subcategory: ''
+      count: 0,
+      price: 0,
+      discount_price: 0,
+      subcategory: null
     }
   })
 
   const mutation = useMutation({
     mutationFn: ProductService.create,
     onError: (error) => {
-      const {result: {errors: serverErrors}, status} = error.response;
+      console.log(error)
+      const {data: {errors: serverErrors}, status} = error.response;
       if (status === 422) {
         Object.entries(serverErrors).forEach(([key, value]) => {
           form.setError(key, {
@@ -69,6 +72,7 @@ const Index = () => {
         return;
       }
       toast({
+        variant: "destructive",
         title: "Error",
         description: error.message || "Messages.error_occurred"
       })
@@ -104,8 +108,8 @@ const Index = () => {
             <h2 className="text-2xl font-bold tracking-tight">Create Products</h2>
           </div>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className={"flex gap-4"}>
-              <div className={"w-2/3 flex flex-col gap-4"}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className={"grid grid-cols-12 gap-4"}>
+              <div className={"col-span-12 lg:col-span-8 flex flex-col gap-4"}>
                 <div className={"w-full p-6 bg-white rounded-2xl shadow flex flex-col gap-4"}>
                   {
                     !subCategoryData.isLoading ? (
@@ -117,7 +121,7 @@ const Index = () => {
                             <FormItem className="space-y-1">
                               <FormLabel className={"text-[#667085]"}>Kategoriya nomi</FormLabel>
                               <FormControl>
-                                <Select value={+field.value} onValueChange={(val) => field.onChange(val)}>
+                                <Select value={+field.value} onValueChange={(val) => field.onChange(+val)}>
                                   <SelectTrigger className="w-full text-black">
                                     <SelectValue placeholder="Select subcategory"/>
                                   </SelectTrigger>
@@ -164,7 +168,7 @@ const Index = () => {
                       <FormItem className="space-y-1">
                         <FormLabel className={"text-[#667085]"}>Mahsulot soni</FormLabel>
                         <FormControl>
-                          <Input placeholder="10" {...field} />
+                          <Input placeholder="10" {...field} onChange={e => field.onChange(+e.target.value)}  />
                         </FormControl>
                         <FormMessage/>
                       </FormItem>
@@ -178,7 +182,7 @@ const Index = () => {
                       <FormItem className="space-y-1">
                         <FormLabel className={"text-[#667085]"}>Mahsulot narhi</FormLabel>
                         <FormControl>
-                          <Input placeholder="10" {...field} />
+                          <Input placeholder="10" {...field} onChange={e => field.onChange(+e.target.value)}  />
                         </FormControl>
                         <FormMessage/>
                       </FormItem>
@@ -190,9 +194,9 @@ const Index = () => {
                     name="discount_price"
                     render={({field}) => (
                       <FormItem className="space-y-1">
-                        <FormLabel className={"text-[#667085]"}>Mahsulot chegirmasi</FormLabel>
+                        <FormLabel className={"text-[#667085]"}>Mahsulotdan beriladigan ulush</FormLabel>
                         <FormControl>
-                          <Input placeholder="10" {...field} />
+                          <Input placeholder="1000" {...field} onChange={e => field.onChange(+e.target.value)}  />
                         </FormControl>
                         <FormMessage/>
                       </FormItem>
@@ -216,7 +220,7 @@ const Index = () => {
               </div>
 
               {/*Product Image*/}
-              <div className={"w-1/3 flex flex-col gap-3"}>
+              <div className={"col-span-12 lg:col-span-4 flex flex-col gap-3"}>
                 <div className={"flex flex-col bg-white rounded-2xl shadow p-6"}>
                   <FormField
                     name="image"
