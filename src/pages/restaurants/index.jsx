@@ -17,7 +17,6 @@ import {useNavigate} from "react-router-dom";
 import {toast} from "@/hooks/use-toast.js";
 import DeleteConfirmationModal from "@/components/custom/delete-confirmation-modal.jsx";
 import {useState} from "react";
-import ShopService from "@/services/restaurant.service.js";
 import RestaurantService from "@/services/restaurant.service.js";
 import DefaultImage from "@/components/custom/default-image.jsx";
 
@@ -33,9 +32,10 @@ const Index = () => {
   const navigate = useNavigate()
 
   const deleteMutation = useMutation({
-    mutationFn: ShopService.delete,
+    mutationFn: RestaurantService.delete,
     onSuccess: async () => {
       toast({
+        variant: 'success',
         title: 'OK',
         description: "Successfully Deleted"
       })
@@ -71,13 +71,13 @@ const Index = () => {
       <Layout.Body>
         <div className="mb-2 flex items-center justify-between space-y-2">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight">Do`konlar</h2>
+            <h2 className="text-2xl font-bold tracking-tight">Restoranlar</h2>
           </div>
           <div>
             <Button
               onClick={() => navigate("create")}
             >
-              Do`kon qo`shish
+              Restoran qo`shish
             </Button>
           </div>
         </div>
@@ -101,13 +101,13 @@ const Index = () => {
                     </TableHeader>
                     <TableBody>
                       {
-                        restaurantsData.data.result.length > 0 ? (
-                          restaurantsData.data.result.map((restaurant, index) => (
+                        restaurantsData.data.results.length > 0 ? (
+                          restaurantsData.data.results.map((restaurant, index) => (
                             <TableRow key={index} className={"bg-secondary"}>
                               <TableCell className={"flex gap-2 items-center overflow-hidden"}>
-                                {restaurant.image ? (
+                                {restaurant.picture ? (
                                   <img
-                                    src={restaurant.image}
+                                    src={restaurant.picture}
                                     alt={"product_image"}
                                     className={"w-[48px] h-[48px] rounded-md object-cover"}
                                   />
@@ -119,7 +119,7 @@ const Index = () => {
 
                               <TableCell>
                                 {
-                                  restaurant.is_active
+                                  restaurant.is_active ? 'Aktiv' : "Aktiv emas"
                                 }
                               </TableCell>
                               <TableCell className={"text-end"}>
@@ -135,7 +135,7 @@ const Index = () => {
                                       </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end" className="w-[160px]">
-                                      <DropdownMenuItem onClick={() => navigate(`/shops/update/${restaurant.id}`)}>Edit</DropdownMenuItem>
+                                      <DropdownMenuItem onClick={() => navigate(`update/${restaurant.id}`)}>Edit</DropdownMenuItem>
                                       <DropdownMenuSeparator/>
                                       <DropdownMenuItem
                                         onClick={() => handleDelete(restaurant)}
