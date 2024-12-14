@@ -3,7 +3,7 @@ import api from "@/utils/api.js";
 const RestaurantService = {
   async getAll() {
     const {data} = await api.get("/restaurant/")
-    return data
+    return data.result
   },
 
   async delete(id) {
@@ -24,8 +24,13 @@ const RestaurantService = {
   },
 
   async update(payload) {
-    const {data} = await api.put(`/restaurant/${payload.id}/`, payload)
+    const {data} = await api.put(`/restaurant/${payload.id}/`, payload.formData)
     return data
   },
+
+  async getOwners() {
+    const {data} = await  api.get("/restaurant_owners/")
+    return data
+  }
 }
 export default RestaurantService
