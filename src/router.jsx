@@ -65,7 +65,7 @@ const router = createBrowserRouter([
             })
           },
           {
-            path: "restaurants/create",
+            path: "restaurants/create-category",
             lazy: async () => ({
               Component: (await import("@/pages/restaurants/create-restaurants")).default
             })
@@ -83,13 +83,19 @@ const router = createBrowserRouter([
             })
           },
           {
+            path: "restaurant-products/create-category",
+            lazy: async () => ({
+              Component: (await import("@/pages/restaurants/products/create-product")).default
+            })
+          },
+          {
             path: "category",
             lazy: async () => ({
               Component: (await import("@/pages/shops/category")).default
             })
           },
           {
-            path: "category/create",
+            path: "category/create-category",
             lazy: async () => ({
               Component: (await import("@/pages/shops/category/create-category")).default
             })
@@ -108,7 +114,7 @@ const router = createBrowserRouter([
             })
           },
           {
-            path: "subcategory/create",
+            path: "subcategory/create-category",
             lazy: async () => ({
               Component: (await import("@/pages/shops/subcategory/create-subcategory")).default
             })
@@ -120,13 +126,13 @@ const router = createBrowserRouter([
             })
           },
           {
-            path: "shop-products/create",
+            path: "shop-products/create-category",
             lazy: async () => ({
               Component: (await import("@/pages/shops/products/create-product")).default
             })
           },
           {
-            path: "shops/create",
+            path: "shops/create-category",
             lazy: async () => ({
               Component: (await import("@/pages/shops/create-shop")).default
             })

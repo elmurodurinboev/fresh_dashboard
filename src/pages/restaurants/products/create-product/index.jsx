@@ -21,14 +21,14 @@ const formSchema = z.object({
   name: z
     .string()
     .min(3, {message: 'Name must be at least 3'}),
-  image: z.preprocess(
+  picture: z.preprocess(
     (val) => (val instanceof File ? val : undefined), // Ensure the value is a File or undefined
     z.instanceof(File, { message: "Image is required and must be a file" }) // Validate as File
   ),
   descriptions: z
     .string()
     .min(5, {message: "This field is required and its length must be greater or equal 5"}),
-  count: z
+  stock_level: z
     .number()
     .min(1),
   price: z
@@ -37,6 +37,8 @@ const formSchema = z.object({
   discount_price: z
     .number()
     .min(3),
+  is_active: z
+    .boolean(),
   subcategory: z
     .number()
     .min(3)

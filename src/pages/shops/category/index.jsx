@@ -18,7 +18,7 @@ import {toast} from "@/hooks/use-toast.js";
 import DeleteConfirmationModal from "@/components/custom/delete-confirmation-modal.jsx";
 import {useState} from "react";
 import {format} from "date-fns";
-import CategoryService from "@/services/category.service.js";
+import ShopCategoryService from "@/services/shop-category.service.js";
 import DefaultImage from "@/components/custom/default-image.jsx";
 
 const Index = () => {
@@ -26,14 +26,14 @@ const Index = () => {
   const [selectedCategory, setSelectedCategory] = useState({})
   const categoryData = useQuery({
     queryKey: ['getAllCategories'],
-    queryFn: CategoryService.getAllSub
+    queryFn: ShopCategoryService.getAllSub
   })
 
 
   const navigate = useNavigate()
 
   const deleteMutation = useMutation({
-    mutationFn: CategoryService.delete,
+    mutationFn: ShopCategoryService.delete,
     onSuccess: async () => {
       toast({
         title: 'OK',

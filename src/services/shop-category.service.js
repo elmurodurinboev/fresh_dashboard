@@ -1,7 +1,7 @@
 import Api from "@/utils/api.js";
 import api from "@/utils/api.js";
 
-const CategoryService = {
+const ShopCategoryService = {
   async getAllSub() {
     const {data} = await Api.get("/shop_category/")
     return data
@@ -31,4 +31,4 @@ const CategoryService = {
 
 }
 
-export default CategoryService
+export default ShopCategoryService
