@@ -3,7 +3,7 @@ import ThemeSwitch from "@/components/theme-switch.jsx";
 import {UserNav} from "@/components/user-nav.jsx";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.jsx";
 import {useMutation, useQuery} from "@tanstack/react-query";
-import ProductService from "@/services/product.service.js";
+import ShopProductService from "@/services/shop-product.service.js";
 import {Skeleton} from "@/components/ui/skeleton.jsx";
 import DefaultImage from "@/components/custom/default-image.jsx";
 import {
@@ -26,7 +26,7 @@ const Index = () => {
   const [selectedProduct, setSelectedProduct] = useState({})
   const productsData = useQuery({
     queryKey: ['getAllProducts'],
-    queryFn: ProductService.getProducts
+    queryFn: ShopProductService.getProducts
   })
 
   const navigate = useNavigate()
@@ -37,7 +37,7 @@ const Index = () => {
   }
 
   const deleteMutation = useMutation({
-    mutationFn: ProductService.delete,
+    mutationFn: ShopProductService.delete,
     onSuccess: async () => {
       toast({
         title: 'OK',

@@ -16,9 +16,9 @@ export const sidelinks = [
   },
 
   {
-    title: "sidebar.products",
+    title: "sidebar.shop-products",
     label: "",
-    href: "/products",
+    href: "/shop-products",
     icon: <IconCube size={18}/>
   },
 
@@ -48,6 +48,13 @@ export const sidelinks = [
     label: "",
     href: "/restaurants",
     icon: <IconBuildingStore size={18}/>
+  },
+
+  {
+    title: "sidebar.restaurant-products",
+    label: "",
+    href: "/restaurant-products",
+    icon: <IconCube size={18}/>
   },
 
   {
