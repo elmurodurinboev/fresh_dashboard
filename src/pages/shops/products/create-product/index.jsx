@@ -1,85 +1,67 @@
-import {useNavigate, useParams} from "react-router-dom";
-import {useEffect, useState} from "react";
-import {useForm} from "react-hook-form";
-import {zodResolver} from "@hookform/resolvers/zod";
-import {useMutation, useQuery} from "@tanstack/react-query";
-import {toast} from "@/hooks/use-toast.js";
-import {z} from "zod";
 import {Layout} from "@/components/custom/layout.jsx";
+import {Button} from "@/components/custom/button.jsx";
+import {IconPhoto, IconPlus, IconX} from "@tabler/icons-react";
+import {useState} from "react";
+import {useForm} from "react-hook-form";
+import {z} from "zod";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.jsx";
+import {useNavigate} from "react-router-dom";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.jsx";
+import {useMutation, useQuery} from "@tanstack/react-query";
+import SubcategoryService from "@/services/subcategory.service.js";
 import {Skeleton} from "@/components/ui/skeleton.jsx";
 import {Input} from "@/components/ui/input.jsx";
-import {Switch} from "@/components/ui/switch.jsx";
+import {zodResolver} from "@hookform/resolvers/zod";
+import ShopProductService from "@/services/shop-product.service.js";
+import {toast} from "@/hooks/use-toast.js";
 import {Textarea} from "@/components/ui/textarea.jsx";
-import {IconPhoto, IconPlus, IconX} from "@tabler/icons-react";
-import {Button} from "@/components/custom/button.jsx";
-import RestaurantService from "@/services/restaurant.service.js";
-import CountryService from "@/services/country.service.js";
+
+
 const formSchema = z.object({
   name: z
     .string()
     .min(3, {message: 'Name must be at least 3'}),
-  delivery_time: z
+  image: z.preprocess(
+    (val) => (val instanceof File ? val : undefined), // Ensure the value is a File or undefined
+    z.instanceof(File, { message: "Image is required and must be a file" }) // Validate as File
+  ),
+  descriptions: z
     .string()
-    .min(2, {message: "Bu maydon bo'sh bo'lmasligi kerak"}),
-  country: z
-    .number(),
-  owner: z
-    .number(),
-  picture: z
-    .any(),
-  description: z
-    .string(),
-  rating: z
-    .number(),
-  is_active: z
-    .boolean()
+    .min(5, {message: "This field is required and its length must be greater or equal 5"}),
+  count: z
+    .number()
+    .min(1),
+  price: z
+    .number()
+    .min(3),
+  discount_price: z
+    .number()
+    .min(3),
+  subcategory: z
+    .number()
+    .min(3)
 })
+
 const Index = () => {
-  const params = useParams()
   const navigate = useNavigate()
   const [isDragged, setIsDragged] = useState(false)
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
-      delivery_time: '',
-      country: null,
-      owner: null,
-      picture: null,
-      description: '',
-      rating: "",
-      is_active: false
+      image: '',
+      descriptions: '',
+      count: 0,
+      price: 0,
+      discount_price: 0,
+      subcategory: null
     }
   })
-
-  const restaurantData = useQuery({
-    queryKey: ['getProduct', params.id],
-    queryFn: RestaurantService.getOne,
-    enabled: !!params && !!params.id
-  })
-
-  useEffect(() => {
-    const {isSuccess, data} = restaurantData;
-
-    if (isSuccess && data?.result !== 0) {
-      form.reset({
-        name: data.result.name && data.result.name,
-        delivery_time: data.result.delivery_time && data.result.delivery_time,
-        country: data.result.country && data.result.country,
-        owner: data.result.owner && data.result.owner,
-        picture: data.result.picture && data.result.picture,
-        description: data.result.description && data.result.description,
-        rating: data.result.rating && data.result.rating,
-        is_active: data.result.is_active && data.result.is_active
-      });
-    }
-  }, [restaurantData.isSuccess, restaurantData.data?.result]);
 
   const mutation = useMutation({
-    mutationFn: RestaurantService.update,
+    mutationFn: ShopProductService.create,
     onError: (error) => {
+      console.log(error)
       const {data: {errors: serverErrors}, status} = error.response;
       if (status === 422) {
         Object.entries(serverErrors).forEach(([key, value]) => {
@@ -90,6 +72,7 @@ const Index = () => {
         return;
       }
       toast({
+        variant: "destructive",
         title: "Error",
         description: error.message || "Messages.error_occurred"
       })
@@ -100,90 +83,51 @@ const Index = () => {
         description: "Successfully added"
       })
       form.reset()
-      navigate("/restaurants")
     }
   })
 
-  const country = useQuery({
-    queryKey: ['GetCountry'],
-    queryFn: CountryService.getAll
-  })
-
-  const owners = useQuery({
-    queryKey: ['GetOwners'],
-    queryFn: RestaurantService.getOwners
-  })
-
   const onSubmit = (data) => {
-    console.log(data)
     const formData = new FormData()
-    Object.keys(data).forEach(item =>  formData.append(item, data[item]))
-    mutation.mutate({formData, id: params.id})
+    Object.keys(data).forEach(item => formData.append(item, data[item]))
+
+    formData.append("image", data.image ? data.image[0] : "")
+    mutation.mutate(formData)
   }
+
+  const subCategoryData = useQuery({
+    queryKey: ["getAllCategory"],
+    queryFn: SubcategoryService.getAllSub
+  })
+
+
   return (
     <Layout>
       <Layout.Body>
         <div className="mb-2 flex flex-col gap-4">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight">Restaranni o`zgartirish</h2>
+            <h2 className="text-2xl font-bold tracking-tight">Create Products</h2>
           </div>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className={"grid grid-cols-12 gap-4"}>
               <div className={"col-span-12 lg:col-span-8 flex flex-col gap-4"}>
                 <div className={"w-full p-6 bg-white rounded-2xl shadow flex flex-col gap-4"}>
                   {
-                    !owners.isLoading ? (
-                      !owners.isError && owners.data && owners.isSuccess && owners.data.result ? (
+                    !subCategoryData.isLoading ? (
+                      !subCategoryData.isError && subCategoryData.data && subCategoryData.isSuccess && subCategoryData.data.result ? (
                         <FormField
                           control={form.control}
-                          name="owner"
+                          name="subcategory"
                           render={({field}) => (
                             <FormItem className="space-y-1">
-                              <FormLabel className={"text-[#667085]"}>Restaran egasi</FormLabel>
+                              <FormLabel className={"text-[#667085]"}>Kategoriya nomi</FormLabel>
                               <FormControl>
                                 <Select value={+field.value} onValueChange={(val) => field.onChange(+val)}>
                                   <SelectTrigger className="w-full text-black">
-                                    <SelectValue placeholder="Select Owner"/>
+                                    <SelectValue placeholder="Select subcategory"/>
                                   </SelectTrigger>
                                   <SelectContent>
                                     {
-                                      owners.data.result.results.map((item, index) => (
-                                        <SelectItem value={item.id}
-                                                    key={index}>{item.first_name} {item.last_name}</SelectItem>
-                                      ))
-                                    }
-                                  </SelectContent>
-                                </Select>
-                              </FormControl>
-                              <FormMessage/>
-                            </FormItem>
-                          )
-                          }
-                        />
-                      ) : (
-                        <span className={"text-rose-500"}>Nimadir xato ketdi!</span>
-                      )
-                    ) : (
-                      <Skeleton className={"w-full h-9 rounded-md"}/>
-                    )
-                  }
-                  {
-                    !country.isLoading ? (
-                      !country.isError && country.data && country.isSuccess && country.data.result ? (
-                        <FormField
-                          control={form.control}
-                          name="country"
-                          render={({field}) => (
-                            <FormItem className="space-y-1">
-                              <FormLabel className={"text-[#667085]"}>Hudud</FormLabel>
-                              <FormControl>
-                                <Select value={+field.value} onValueChange={(val) => field.onChange(+val)}>
-                                  <SelectTrigger className="w-full text-black">
-                                    <SelectValue placeholder="Select country"/>
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    {
-                                      country.data.result.map((item, index) => (
+                                      subCategoryData.data.result.map((item, index) => (
                                         <SelectItem value={item.id} key={index}>{item.name}</SelectItem>
                                       ))
                                     }
@@ -208,9 +152,9 @@ const Index = () => {
                     name="name"
                     render={({field}) => (
                       <FormItem className="space-y-1">
-                        <FormLabel className={"text-[#667085]"}>Restaran nomi</FormLabel>
+                        <FormLabel className={"text-[#667085]"}>Mahsulot nomi</FormLabel>
                         <FormControl>
-                          <Input placeholder="Evos" {...field} />
+                          <Input placeholder="Lavash" {...field} />
                         </FormControl>
                         <FormMessage/>
                       </FormItem>
@@ -219,56 +163,54 @@ const Index = () => {
 
                   <FormField
                     control={form.control}
-                    name="delivery_time"
+                    name="count"
                     render={({field}) => (
                       <FormItem className="space-y-1">
-                        <FormLabel className={"text-[#667085]"}>Yetkazib berish vaqti</FormLabel>
+                        <FormLabel className={"text-[#667085]"}>Mahsulot soni</FormLabel>
                         <FormControl>
-                          <Input placeholder="10" {...field} />
+                          <Input placeholder="10" {...field} onChange={e => field.onChange(+e.target.value)}  />
                         </FormControl>
                         <FormMessage/>
                       </FormItem>
                     )}
                   />
 
-                  <div className={"flex items-center justify-between gap-4"}>
-                    <FormField
-                      control={form.control}
-                      name="rating"
-                      render={({field}) => (
-                        <FormItem className="space-y-1 flex-1">
-                          <FormLabel className={"text-[#667085]"}>Restor reytinggi</FormLabel>
-                          <FormControl>
-                            <Input placeholder="10" {...field} onChange={e => field.onChange(+e.target.value)}/>
-                          </FormControl>
-                          <FormMessage/>
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="is_active"
-                      render={({field}) => (
-                        <FormItem className="flex  gap-2">
-                          <FormLabel className={"text-[#667085] flex items-center"}>Aktivligi</FormLabel>
-                          <FormControl>
-                            <Switch {...field} onCheckedChange={val => field.onChange(val)} />
-                          </FormControl>
-                          <FormMessage/>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+                  <FormField
+                    control={form.control}
+                    name="price"
+                    render={({field}) => (
+                      <FormItem className="space-y-1">
+                        <FormLabel className={"text-[#667085]"}>Mahsulot narhi</FormLabel>
+                        <FormControl>
+                          <Input placeholder="10" {...field} onChange={e => field.onChange(+e.target.value)}  />
+                        </FormControl>
+                        <FormMessage/>
+                      </FormItem>
+                    )}
+                  />
 
                   <FormField
                     control={form.control}
-                    name="description"
+                    name="discount_price"
                     render={({field}) => (
                       <FormItem className="space-y-1">
-                        <FormLabel className={"text-[#667085]"}>Restoran tavsifi</FormLabel>
+                        <FormLabel className={"text-[#667085]"}>Mahsulotdan beriladigan ulush</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="Go'sh, hamir" className={"resize-none"} {...field} rows={5}/>
+                          <Input placeholder="1000" {...field} onChange={e => field.onChange(+e.target.value)}  />
+                        </FormControl>
+                        <FormMessage/>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="descriptions"
+                    render={({field}) => (
+                      <FormItem className="space-y-1">
+                        <FormLabel className={"text-[#667085]"}>Mahsulot tavsifi</FormLabel>
+                        <FormControl>
+                          <Textarea placeholder="Go'sh, hamir" className={"resize-none"} {...field} rows={5} />
                         </FormControl>
                         <FormMessage/>
                       </FormItem>
@@ -281,12 +223,12 @@ const Index = () => {
               <div className={"col-span-12 lg:col-span-4 flex flex-col gap-3"}>
                 <div className={"flex flex-col bg-white rounded-2xl shadow p-6"}>
                   <FormField
-                    name="picture"
+                    name="image"
                     control={form.control}
                     render={
                       ({field: {onChange, value, ...field}}) => (
                         <FormItem>
-                          <FormLabel className={"text-[#667085]"}>Restoran rasmi</FormLabel>
+                          <FormLabel className={"text-[#667085]"}>Mahsulot rasmi</FormLabel>
                           <FormControl>
                             <div
                               className={`w-full border-2 border-dashed flex p-4 flex-col items-center justify-center rounded-md cursor-pointer gap-4 ${isDragged ? 'border-primary' : ''}`}
@@ -310,20 +252,14 @@ const Index = () => {
                               {
                                 value ? (
                                   <span className={"w-full min-h-max rounded-md overflow-hidden"}>
-                                    <img
-                                      src={typeof value === "string" ? value : URL.createObjectURL(value)}
-                                      alt="Selected Image"
-                                      width={"100"}
-                                      height={"100"}
-                                      className="w-full object-center object-contain"
-                                    />
-                                  </span>
-                                ) : (
+                        <img src={URL.createObjectURL(value)} alt="Selected Image" width={"100"} height={"100"}
+                             className="w-full object-center object-contain"/>
+                      </span>) : (
                                   <div className={"w-full flex flex-col justify-center items-center gap-4"}>
-                                    <span
-                                      className={"flex items-center justify-center rounded-full w-9 h-9 bg-green-100 text-green-600 p-2"}>
-                                      <IconPhoto className={"icon"}/>
-                                    </span>
+                      <span
+                        className={"flex items-center justify-center rounded-full w-9 h-9 bg-green-100 text-green-600 p-2"}>
+                        <IconPhoto className={"icon"}/>
+                      </span>
                                     <p className={"text-center text-gray-400 text-sm font-normal"}>
                                       Rasmni bu yerga sudrab tashlang yoki rasm qo`shish tugmasini bosing
                                     </p>
@@ -377,18 +313,18 @@ const Index = () => {
                   type={"submit"}
                   className={"w-full"}
                 >
-                  Saqlash
+                  save
                 </Button>
 
                 <Button
                   size={"xl"}
                   type={"reset"}
                   variant={"outline"}
-                  onClick={() => navigate("/restaurants")}
+                  onClick={() => navigate("/shop-products")}
                   className={"w-full gap-2 items-center"}
                 >
                   <IconX className={"w-5 h-5"}/>
-                  Bekor qilish
+                  cancel
                 </Button>
               </div>
             </form>

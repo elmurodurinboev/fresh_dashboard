@@ -1,18 +1,18 @@
 import {Layout} from "@/components/custom/layout.jsx";
 import {Button} from "@/components/custom/button.jsx";
 import {IconPhoto, IconPlus, IconX} from "@tabler/icons-react";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.jsx";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.jsx";
 import {useMutation, useQuery} from "@tanstack/react-query";
 import SubcategoryService from "@/services/subcategory.service.js";
 import {Skeleton} from "@/components/ui/skeleton.jsx";
 import {Input} from "@/components/ui/input.jsx";
 import {zodResolver} from "@hookform/resolvers/zod";
-import ProductService from "@/services/product.service.js";
+import ShopProductService from "@/services/shop-product.service.js";
 import {toast} from "@/hooks/use-toast.js";
 import {Textarea} from "@/components/ui/textarea.jsx";
 
@@ -21,28 +21,26 @@ const formSchema = z.object({
   name: z
     .string()
     .min(3, {message: 'Name must be at least 3'}),
-  image: z.preprocess(
-    (val) => (val instanceof File ? val : undefined), // Ensure the value is a File or undefined
-    z.instanceof(File, { message: "Image is required and must be a file" }) // Validate as File
-  ),
+  image: z
+    .any(),
   descriptions: z
     .string()
-    .min(5, {message: "This field is required and its length must be greater or equal 5"}),
+    .optional(),
   count: z
     .number()
-    .min(1),
+    .min(1, {message: 'Min value is 1'}),
   price: z
     .number()
-    .min(3),
+    .min(3, {message: 'Min value is 3'}),
   discount_price: z
     .number()
-    .min(3),
+    .min(3, {message: 'Min value is 3'}),
   subcategory: z
     .number()
-    .min(3)
 })
 
 const Index = () => {
+  const params = useParams()
   const navigate = useNavigate()
   const [isDragged, setIsDragged] = useState(false)
   const form = useForm({
@@ -51,17 +49,38 @@ const Index = () => {
       name: '',
       image: '',
       descriptions: '',
-      count: 0,
-      price: 0,
-      discount_price: 0,
-      subcategory: null
+      count: '',
+      price: '',
+      discount_price: '',
+      subcategory: ''
     }
   })
 
+  const productData = useQuery({
+    queryKey: ['getProduct', params.id],
+    queryFn: ShopProductService.getOne,
+    enabled: !!params && !!params.id
+  })
+
+  useEffect(() => {
+    const {isSuccess, data} = productData;
+
+    if (isSuccess && data?.result !== 0) {
+      form.reset({
+        name: data.result.name && data.result.name,
+        image: data.result.image && data.result.image,
+        descriptions: data.result.descriptions && data.result.descriptions,
+        count: data.result.count && data.result.count,
+        price: data.result.price && data.result.price,
+        discount_price: data.result.discount_price && data.result.discount_price,
+        subcategory: data.result.subcategory.id && data.result.subcategory.id
+      });
+    }
+  }, [productData.isSuccess, productData.data?.result]);
+
   const mutation = useMutation({
-    mutationFn: ProductService.create,
+    mutationFn: ShopProductService.updatePatch,
     onError: (error) => {
-      console.log(error)
       const {data: {errors: serverErrors}, status} = error.response;
       if (status === 422) {
         Object.entries(serverErrors).forEach(([key, value]) => {
@@ -72,7 +91,6 @@ const Index = () => {
         return;
       }
       toast({
-        variant: "destructive",
         title: "Error",
         description: error.message || "Messages.error_occurred"
       })
@@ -83,15 +101,17 @@ const Index = () => {
         description: "Successfully added"
       })
       form.reset()
+      navigate("/shop-products")
     }
   })
 
   const onSubmit = (data) => {
+    console.log(data)
     const formData = new FormData()
-    Object.keys(data).forEach(item => formData.append(item, data[item]))
-
-    formData.append("image", data.image ? data.image[0] : "")
-    mutation.mutate(formData)
+    Object.keys(data).forEach(item => item !== 'image' && formData.append(item, data[item]))
+    const imgType = typeof data?.image
+    data.image && imgType === 'object' && formData.append("image", data.image ? data.image[0] : productData?.image)
+    mutation.mutate({formData, id: params.id})
   }
 
   const subCategoryData = useQuery({
@@ -168,7 +188,7 @@ const Index = () => {
                       <FormItem className="space-y-1">
                         <FormLabel className={"text-[#667085]"}>Mahsulot soni</FormLabel>
                         <FormControl>
-                          <Input placeholder="10" {...field} onChange={e => field.onChange(+e.target.value)}  />
+                          <Input placeholder="10" {...field} />
                         </FormControl>
                         <FormMessage/>
                       </FormItem>
@@ -182,7 +202,7 @@ const Index = () => {
                       <FormItem className="space-y-1">
                         <FormLabel className={"text-[#667085]"}>Mahsulot narhi</FormLabel>
                         <FormControl>
-                          <Input placeholder="10" {...field} onChange={e => field.onChange(+e.target.value)}  />
+                          <Input placeholder="10" {...field} />
                         </FormControl>
                         <FormMessage/>
                       </FormItem>
@@ -194,9 +214,9 @@ const Index = () => {
                     name="discount_price"
                     render={({field}) => (
                       <FormItem className="space-y-1">
-                        <FormLabel className={"text-[#667085]"}>Mahsulotdan beriladigan ulush</FormLabel>
+                        <FormLabel className={"text-[#667085]"}>Mahsulot chegirmasi</FormLabel>
                         <FormControl>
-                          <Input placeholder="1000" {...field} onChange={e => field.onChange(+e.target.value)}  />
+                          <Input placeholder="10" {...field} />
                         </FormControl>
                         <FormMessage/>
                       </FormItem>
@@ -210,7 +230,7 @@ const Index = () => {
                       <FormItem className="space-y-1">
                         <FormLabel className={"text-[#667085]"}>Mahsulot tavsifi</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="Go'sh, hamir" className={"resize-none"} {...field} rows={5} />
+                          <Textarea placeholder="Go'sh, hamir" className={"resize-none"} value={field.value} {...field} rows={5}/>
                         </FormControl>
                         <FormMessage/>
                       </FormItem>
@@ -252,14 +272,20 @@ const Index = () => {
                               {
                                 value ? (
                                   <span className={"w-full min-h-max rounded-md overflow-hidden"}>
-                        <img src={URL.createObjectURL(value)} alt="Selected Image" width={"100"} height={"100"}
-                             className="w-full object-center object-contain"/>
-                      </span>) : (
+                                    <img
+                                      src={typeof value === "string" ? value : URL.createObjectURL(value)}
+                                      alt="Selected Image"
+                                      width={"100"}
+                                      height={"100"}
+                                      className="w-full object-center object-contain"
+                                    />
+                                  </span>
+                                ) : (
                                   <div className={"w-full flex flex-col justify-center items-center gap-4"}>
-                      <span
-                        className={"flex items-center justify-center rounded-full w-9 h-9 bg-green-100 text-green-600 p-2"}>
-                        <IconPhoto className={"icon"}/>
-                      </span>
+                                    <span
+                                      className={"flex items-center justify-center rounded-full w-9 h-9 bg-green-100 text-green-600 p-2"}>
+                                      <IconPhoto className={"icon"}/>
+                                    </span>
                                     <p className={"text-center text-gray-400 text-sm font-normal"}>
                                       Rasmni bu yerga sudrab tashlang yoki rasm qo`shish tugmasini bosing
                                     </p>
@@ -320,7 +346,7 @@ const Index = () => {
                   size={"xl"}
                   type={"reset"}
                   variant={"outline"}
-                  onClick={() => navigate("/products")}
+                  onClick={() => navigate("/shop-products")}
                   className={"w-full gap-2 items-center"}
                 >
                   <IconX className={"w-5 h-5"}/>

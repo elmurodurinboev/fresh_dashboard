@@ -1,6 +1,6 @@
 import api from "@/utils/api.js";
 
-const ProductService = {
+const ShopProductService = {
   async getProducts() {
     const {data} = await api.get("/shop_product/")
     return data
@@ -31,4 +31,4 @@ const ProductService = {
 
 }
 
-export default ProductService
+export default ShopProductService

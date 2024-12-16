@@ -3,9 +3,7 @@ import ThemeSwitch from "@/components/theme-switch.jsx";
 import {UserNav} from "@/components/user-nav.jsx";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.jsx";
 import {useMutation, useQuery} from "@tanstack/react-query";
-import ProductService from "@/services/product.service.js";
 import {Skeleton} from "@/components/ui/skeleton.jsx";
-import DefaultImage from "@/components/custom/default-image.jsx";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,48 +13,47 @@ import {
 } from "@/components/ui/dropdown-menu.jsx";
 import {Button} from "@/components/custom/button.jsx";
 import {DotsHorizontalIcon} from "@radix-ui/react-icons";
-import {Formatter} from "@/utils/formatter.js";
 import {useNavigate} from "react-router-dom";
 import {toast} from "@/hooks/use-toast.js";
 import DeleteConfirmationModal from "@/components/custom/delete-confirmation-modal.jsx";
 import {useState} from "react";
+import {format} from "date-fns";
+import ShopCategoryService from "@/services/shop-category.service.js";
+import DefaultImage from "@/components/custom/default-image.jsx";
 
 const Index = () => {
   const [deleteModal, setDeleteModal] = useState(false)
-  const [selectedProduct, setSelectedProduct] = useState({})
-  const productsData = useQuery({
-    queryKey: ['getAllProducts'],
-    queryFn: ProductService.getProducts
+  const [selectedCategory, setSelectedCategory] = useState({})
+  const categoryData = useQuery({
+    queryKey: ['getAllCategories'],
+    queryFn: ShopCategoryService.getAllSub
   })
+
 
   const navigate = useNavigate()
 
-  const reset = () => {
-    setDeleteModal(false)
-    setSelectedProduct({})
-  }
-
   const deleteMutation = useMutation({
-    mutationFn: ProductService.delete,
+    mutationFn: ShopCategoryService.delete,
     onSuccess: async () => {
       toast({
         title: 'OK',
-        description: "Successfully delted"
+        description: "Successfully Deleted"
       })
-      await productsData.refetch()
-      reset()
+      setDeleteModal(false)
+      setSelectedCategory({})
+      await categoryData.refetch()
     },
     onError: (error) => {
       toast({
         title: "Error",
         description: error.message || "Messages.error_occurred"
       })
-      reset()
+      setDeleteModal(false)
     },
   })
 
   const handleDelete = (product) => {
-    setSelectedProduct(product)
+    setSelectedCategory(product)
     setDeleteModal(true)
   }
 
@@ -73,38 +70,29 @@ const Index = () => {
       <Layout.Body>
         <div className="mb-2 flex items-center justify-between space-y-2">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight">Products</h2>
+            <h2 className="text-2xl font-bold tracking-tight">Kategoriyalar</h2>
           </div>
           <div>
             <Button
               onClick={() => navigate("create")}
             >
-              Add product
+              Kategoriya qo`shish
             </Button>
           </div>
         </div>
         <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0">
           {
-            !productsData.isLoading ? (
-              productsData && productsData.data && productsData.isSuccess && !productsData.isError && (
+            !categoryData.isLoading ? (
+              categoryData && categoryData.data && categoryData.isSuccess && !categoryData.isError && (
                 <div className="rounded-md border min-h-[500px]">
                   <Table>
                     <TableHeader>
                       <TableRow>
                         <TableHead>
-                          Image and name
+                          Nomi
                         </TableHead>
                         <TableHead>
-                          Category
-                        </TableHead>
-                        <TableHead>
-                          Count
-                        </TableHead>
-                        <TableHead>
-                          Price
-                        </TableHead>
-                        <TableHead>
-                          Discount price
+                          Yaratilgan sana
                         </TableHead>
                         <TableHead className={"text-end"}>
                         </TableHead>
@@ -112,46 +100,27 @@ const Index = () => {
                     </TableHeader>
                     <TableBody>
                       {
-                        productsData.data.result.length > 0 ? (
-                          productsData.data.result.map((product, index) => (
+                        categoryData.data.result.length > 0 ? (
+                          categoryData.data.result.map((category, index) => (
                             <TableRow key={index} className={"bg-secondary"}>
                               <TableCell className={"flex gap-2 items-center overflow-hidden"}>
-                                {product.image ? (
+                                {category.image ? (
                                   <img
-                                    src={product.image}
+                                    src={category.image}
                                     alt={"product_image"}
                                     className={"w-[48px] h-[48px] rounded-md object-cover"}
                                   />
                                 ) : (
                                   <DefaultImage/>
                                 )}
-                                <span>{product.name}</span>
+                                <span>{category.name}</span>
                               </TableCell>
 
                               <TableCell>
                                 {
-                                  product?.subcategory.name
+                                  format(category?.created_at, 'yyyy-MM-dd')
                                 }
                               </TableCell>
-
-                              <TableCell>
-                                {
-                                  product?.count
-                                }
-                              </TableCell>
-
-                              <TableCell>
-                                {
-                                  Formatter.currency(product?.price)
-                                }
-                              </TableCell>
-
-                              <TableCell>
-                                {
-                                  Formatter.currency(product?.discount_price)
-                                }
-                              </TableCell>
-
                               <TableCell className={"text-end"}>
                                 <div className={"w-auto flex justify-end items-center"}>
                                   <DropdownMenu>
@@ -165,10 +134,10 @@ const Index = () => {
                                       </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end" className="w-[160px]">
-                                      <DropdownMenuItem onClick={() => navigate(`update/${product.id}`)}>Edit</DropdownMenuItem>
+                                      <DropdownMenuItem onClick={() => navigate(`/category/update/${category.id}`)}>Edit</DropdownMenuItem>
                                       <DropdownMenuSeparator/>
                                       <DropdownMenuItem
-                                        onClick={() => handleDelete(product)}
+                                        onClick={() => handleDelete(category)}
                                       >
                                         Delete
                                       </DropdownMenuItem>
@@ -203,10 +172,10 @@ const Index = () => {
         <DeleteConfirmationModal
           open={deleteModal}
           setOpen={setDeleteModal}
-          handleDelete={() => deleteMutation.mutate(selectedProduct.id)}
+          handleDelete={() => deleteMutation.mutate(selectedCategory.id)}
           handleClose={() => {
             setDeleteModal(false)
-            setSelectedProduct({})
+            setSelectedCategory({})
           }}
         />
       </Layout.Body>

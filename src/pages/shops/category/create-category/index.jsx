@@ -10,7 +10,7 @@ import {useMutation} from "@tanstack/react-query";
 import {Input} from "@/components/ui/input.jsx";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {toast} from "@/hooks/use-toast.js";
-import CategoryService from "@/services/category.service.js";
+import ShopCategoryService from "@/services/shop-category.service.js";
 
 
 const formSchema = z.object({
@@ -34,7 +34,7 @@ const Index = () => {
   })
 
   const mutation = useMutation({
-    mutationFn: CategoryService.create,
+    mutationFn: ShopCategoryService.create,
     onError: (error) => {
       const {result: {errors: serverErrors}, status} = error.response;
       if (status === 422) {

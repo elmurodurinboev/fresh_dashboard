@@ -6,11 +6,15 @@ import {useForm} from "react-hook-form";
 import {z} from "zod";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.jsx";
 import {useNavigate, useParams} from "react-router-dom";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.jsx";
 import {useMutation, useQuery} from "@tanstack/react-query";
+import SubcategoryService from "@/services/subcategory.service.js";
+import {Skeleton} from "@/components/ui/skeleton.jsx";
 import {Input} from "@/components/ui/input.jsx";
 import {zodResolver} from "@hookform/resolvers/zod";
+import ShopProductService from "@/services/shop-product.service.js";
 import {toast} from "@/hooks/use-toast.js";
-import CategoryService from "@/services/category.service.js";
+import {Textarea} from "@/components/ui/textarea.jsx";
 
 
 const formSchema = z.object({
@@ -18,8 +22,21 @@ const formSchema = z.object({
     .string()
     .min(3, {message: 'Name must be at least 3'}),
   image: z
-    .any()
+    .any(),
+  descriptions: z
+    .string()
     .optional(),
+  count: z
+    .number()
+    .min(1, {message: 'Min value is 1'}),
+  price: z
+    .number()
+    .min(3, {message: 'Min value is 3'}),
+  discount_price: z
+    .number()
+    .min(3, {message: 'Min value is 3'}),
+  subcategory: z
+    .number()
 })
 
 const Index = () => {
@@ -31,29 +48,40 @@ const Index = () => {
     defaultValues: {
       name: '',
       image: '',
+      descriptions: '',
+      count: '',
+      price: '',
+      discount_price: '',
+      subcategory: ''
     }
   })
 
-  const categoryData = useQuery({
-    queryKey: ['getOneCategory', params.id],
-    queryFn: CategoryService.getOne,
+  const productData = useQuery({
+    queryKey: ['getProduct', params.id],
+    queryFn: ShopProductService.getOne,
     enabled: !!params && !!params.id
   })
 
   useEffect(() => {
-    if (categoryData && categoryData.data && categoryData.isSuccess && categoryData.data.result && !categoryData.isError) {
-      form.reset({
-        name: categoryData.data.result.name,
-        image: categoryData.data.result.image,
-      })
-    }
-  }, [categoryData.isSuccess, categoryData.data?.result]);
+    const {isSuccess, data} = productData;
 
+    if (isSuccess && data?.result !== 0) {
+      form.reset({
+        name: data.result.name && data.result.name,
+        image: data.result.image && data.result.image,
+        descriptions: data.result.descriptions && data.result.descriptions,
+        count: data.result.count && data.result.count,
+        price: data.result.price && data.result.price,
+        discount_price: data.result.discount_price && data.result.discount_price,
+        subcategory: data.result.subcategory.id && data.result.subcategory.id
+      });
+    }
+  }, [productData.isSuccess, productData.data?.result]);
 
   const mutation = useMutation({
-    mutationFn: CategoryService.update,
+    mutationFn: ShopProductService.updatePatch,
     onError: (error) => {
-      const {result: {errors: serverErrors}, status} = error.response;
+      const {data: {errors: serverErrors}, status} = error.response;
       if (status === 422) {
         Object.entries(serverErrors).forEach(([key, value]) => {
           form.setError(key, {
@@ -63,7 +91,6 @@ const Index = () => {
         return;
       }
       toast({
-        variant: 'destructive',
         title: "Error",
         description: error.message || "Messages.error_occurred"
       })
@@ -74,16 +101,24 @@ const Index = () => {
         description: "Successfully added"
       })
       form.reset()
+      navigate("/shop-products")
     }
   })
 
   const onSubmit = (data) => {
+    console.log(data)
     const formData = new FormData()
     Object.keys(data).forEach(item => item !== 'image' && formData.append(item, data[item]))
-
-    data.image && formData.append("image", data.image)
-    mutation.mutate(formData)
+    const imgType = typeof data?.image
+    data.image && imgType === 'object' && formData.append("image", data.image ? data.image[0] : productData?.image)
+    mutation.mutate({formData, id: params.id})
   }
+
+  const subCategoryData = useQuery({
+    queryKey: ["getAllCategory"],
+    queryFn: SubcategoryService.getAllSub
+  })
+
 
   return (
     <Layout>
@@ -96,6 +131,42 @@ const Index = () => {
             <form onSubmit={form.handleSubmit(onSubmit)} className={"grid grid-cols-12 gap-4"}>
               <div className={"col-span-12 lg:col-span-8 flex flex-col gap-4"}>
                 <div className={"w-full p-6 bg-white rounded-2xl shadow flex flex-col gap-4"}>
+                  {
+                    !subCategoryData.isLoading ? (
+                      !subCategoryData.isError && subCategoryData.data && subCategoryData.isSuccess && subCategoryData.data.result ? (
+                        <FormField
+                          control={form.control}
+                          name="subcategory"
+                          render={({field}) => (
+                            <FormItem className="space-y-1">
+                              <FormLabel className={"text-[#667085]"}>Kategoriya nomi</FormLabel>
+                              <FormControl>
+                                <Select value={+field.value} onValueChange={(val) => field.onChange(+val)}>
+                                  <SelectTrigger className="w-full text-black">
+                                    <SelectValue placeholder="Select subcategory"/>
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {
+                                      subCategoryData.data.result.map((item, index) => (
+                                        <SelectItem value={item.id} key={index}>{item.name}</SelectItem>
+                                      ))
+                                    }
+                                  </SelectContent>
+                                </Select>
+                              </FormControl>
+                              <FormMessage/>
+                            </FormItem>
+                          )
+                          }
+                        />
+                      ) : (
+                        <span className={"text-rose-500"}>Nimadir xato ketdi!</span>
+                      )
+                    ) : (
+                      <Skeleton className={"w-full h-9 rounded-md"}/>
+                    )
+                  }
+
                   <FormField
                     control={form.control}
                     name="name"
@@ -104,6 +175,62 @@ const Index = () => {
                         <FormLabel className={"text-[#667085]"}>Mahsulot nomi</FormLabel>
                         <FormControl>
                           <Input placeholder="Lavash" {...field} />
+                        </FormControl>
+                        <FormMessage/>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="count"
+                    render={({field}) => (
+                      <FormItem className="space-y-1">
+                        <FormLabel className={"text-[#667085]"}>Mahsulot soni</FormLabel>
+                        <FormControl>
+                          <Input placeholder="10" {...field} />
+                        </FormControl>
+                        <FormMessage/>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="price"
+                    render={({field}) => (
+                      <FormItem className="space-y-1">
+                        <FormLabel className={"text-[#667085]"}>Mahsulot narhi</FormLabel>
+                        <FormControl>
+                          <Input placeholder="10" {...field} />
+                        </FormControl>
+                        <FormMessage/>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="discount_price"
+                    render={({field}) => (
+                      <FormItem className="space-y-1">
+                        <FormLabel className={"text-[#667085]"}>Mahsulot chegirmasi</FormLabel>
+                        <FormControl>
+                          <Input placeholder="10" {...field} />
+                        </FormControl>
+                        <FormMessage/>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="descriptions"
+                    render={({field}) => (
+                      <FormItem className="space-y-1">
+                        <FormLabel className={"text-[#667085]"}>Mahsulot tavsifi</FormLabel>
+                        <FormControl>
+                          <Textarea placeholder="Go'sh, hamir" className={"resize-none"} value={field.value} {...field} rows={5}/>
                         </FormControl>
                         <FormMessage/>
                       </FormItem>
@@ -174,9 +301,7 @@ const Index = () => {
                                 onChange={(e) => onChange(e.target.files[0])}
                               />
                               {
-                                value
-                                  ?
-                                  (
+                                value ? (
                                     <div className={"w-full flex gap-4 items-center"}>
                                       <Button
                                         type={"button"}
@@ -192,8 +317,7 @@ const Index = () => {
                                       >
                                         Almashtirish
                                       </label>
-                                    </div>
-                                  ) :
+                                    </div>) :
                                   (
                                     <label
                                       htmlFor={"imageField"}
@@ -201,9 +325,7 @@ const Index = () => {
                                     >
                                       <IconPlus className={"w-5 h-5"}/>
                                       Rasm qo‘shish
-                                    </label>
-                                  )
-                              }
+                                    </label>)}
                             </div>
                           </FormControl>
                           <FormMessage/>
@@ -217,18 +339,18 @@ const Index = () => {
                   type={"submit"}
                   className={"w-full"}
                 >
-                  Saqlash
+                  save
                 </Button>
 
                 <Button
                   size={"xl"}
                   type={"reset"}
                   variant={"outline"}
-                  onClick={() => navigate("/category")}
+                  onClick={() => navigate("/shop-products")}
                   className={"w-full gap-2 items-center"}
                 >
                   <IconX className={"w-5 h-5"}/>
-                  Bekor qilish
+                  cancel
                 </Button>
               </div>
             </form>
