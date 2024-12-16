@@ -90,7 +90,7 @@ const Index = () => {
       <Layout.Body>
         <div className="mb-2 flex flex-col gap-4">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight">Create Products</h2>
+            <h2 className="text-2xl font-bold tracking-tight">Update Caetegory</h2>
           </div>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className={"grid grid-cols-12 gap-4"}>
@@ -101,7 +101,7 @@ const Index = () => {
                     name="name"
                     render={({field}) => (
                       <FormItem className="space-y-1">
-                        <FormLabel className={"text-[#667085]"}>Mahsulot nomi</FormLabel>
+                        <FormLabel className={"text-[#667085]"}>Kategoriya nomi</FormLabel>
                         <FormControl>
                           <Input placeholder="Lavash" {...field} />
                         </FormControl>

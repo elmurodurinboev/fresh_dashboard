@@ -1,8 +1,8 @@
 import Api from "@/utils/api.js";
 import api from "@/utils/api.js";
 
-const ShopCategoryService = {
-  async getAllSub() {
+const RestaurantCategoryService = {
+  async getAll() {
     const {data} = await Api.get("/restaurant-category/")
     return data
   },
@@ -13,6 +13,11 @@ const ShopCategoryService = {
   },
 
   async update(payload) {
+    const {data} = await  Api.put(`/restaurant-category/${payload.id}/`, {payload})
+    return data
+  },
+
+  async updatePatch(payload) {
     const {data} = await  Api.put(`/restaurant-category/${payload.id}/`, {payload})
     return data
   },
@@ -31,4 +36,4 @@ const ShopCategoryService = {
 
 }
 
-export default ShopCategoryService
+export default RestaurantCategoryService

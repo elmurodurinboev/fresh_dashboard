@@ -1,16 +1,19 @@
 import {Layout} from "@/components/custom/layout.jsx";
 import {Button} from "@/components/custom/button.jsx";
 import {IconPhoto, IconPlus, IconX} from "@tabler/icons-react";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.jsx";
-import {useNavigate} from "react-router-dom";
-import {useMutation} from "@tanstack/react-query";
+import {useNavigate, useParams} from "react-router-dom";
+import {useMutation, useQuery} from "@tanstack/react-query";
 import {Input} from "@/components/ui/input.jsx";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {toast} from "@/hooks/use-toast.js";
-import ShopCategoryService from "@/services/shop-category.service.js";
+import RestaurantCategoryService from "@/services/restaurant-category.service.js";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.jsx";
+import {Skeleton} from "@/components/ui/skeleton.jsx";
+import RestaurantService from "@/services/restaurant.service.js";
 
 
 const formSchema = z.object({
@@ -20,9 +23,12 @@ const formSchema = z.object({
   image: z
     .any()
     .optional(),
+  restaurant: z
+    .number()
 })
 
 const Index = () => {
+  const params = useParams()
   const navigate = useNavigate()
   const [isDragged, setIsDragged] = useState(false)
   const form = useForm({
@@ -30,11 +36,28 @@ const Index = () => {
     defaultValues: {
       name: '',
       image: '',
+      restaurant: null,
     }
   })
 
+  const categoryData = useQuery({
+    queryKey: ['getOneCategory', params.id],
+    queryFn: RestaurantCategoryService.getOne,
+    enabled: !!params && !!params.id
+  })
+
+  useEffect(() => {
+    if (categoryData && categoryData.data && categoryData.isSuccess && categoryData.data.result && !categoryData.isError) {
+      form.reset({
+        name: categoryData.data.result.name,
+        image: categoryData.data.result.image,
+      })
+    }
+  }, [categoryData.isSuccess, categoryData.data?.result]);
+
+
   const mutation = useMutation({
-    mutationFn: ShopCategoryService.create,
+    mutationFn: RestaurantCategoryService.updatePatch,
     onError: (error) => {
       const {result: {errors: serverErrors}, status} = error.response;
       if (status === 422) {
@@ -68,23 +91,66 @@ const Index = () => {
     mutation.mutate(formData)
   }
 
+
+  const restaurantsData = useQuery({
+    queryKey: ['getRestaurants'],
+    queryFn: RestaurantService.getAll
+  })
+
   return (
     <Layout>
       <Layout.Body>
         <div className="mb-2 flex flex-col gap-4">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight">Create Category</h2>
+            <h2 className="text-2xl font-bold tracking-tight">update category</h2>
           </div>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className={"grid grid-cols-12 gap-4"}>
               <div className={"col-span-12 lg:col-span-8 flex flex-col gap-4"}>
                 <div className={"w-full p-6 bg-white rounded-2xl shadow flex flex-col gap-4"}>
+
+                  {
+                    !restaurantsData.isLoading ? (
+                      !restaurantsData.isError && restaurantsData.data && restaurantsData.isSuccess && restaurantsData.data.results ? (
+                        <FormField
+                          control={form.control}
+                          name="restaurant"
+                          render={({field}) => (
+                            <FormItem className="space-y-1">
+                              <FormLabel className={"text-[#667085]"}>Restoran</FormLabel>
+                              <FormControl>
+                                <Select value={+field.value} onValueChange={(val) => field.onChange(+val)}>
+                                  <SelectTrigger className="w-full text-black">
+                                    <SelectValue placeholder="Select subcategory"/>
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {
+                                      restaurantsData.data.results.map((item, index) => (
+                                        <SelectItem value={item.id} key={index}>{item.name}</SelectItem>
+                                      ))
+                                    }
+                                  </SelectContent>
+                                </Select>
+                              </FormControl>
+                              <FormMessage/>
+                            </FormItem>
+                          )
+                          }
+                        />
+                      ) : (
+                        <span className={"text-rose-500"}>Nimadir xato ketdi!</span>
+                      )
+                    ) : (
+                      <Skeleton className={"w-full h-9 rounded-md"}/>
+                    )
+                  }
+
                   <FormField
                     control={form.control}
                     name="name"
                     render={({field}) => (
                       <FormItem className="space-y-1">
-                        <FormLabel className={"text-[#667085]"}>Kategoriya nomi</FormLabel>
+                        <FormLabel className={"text-[#667085]"}>Mahsulot nomi</FormLabel>
                         <FormControl>
                           <Input placeholder="Lavash" {...field} />
                         </FormControl>
@@ -104,7 +170,7 @@ const Index = () => {
                     render={
                       ({field: {onChange, value, ...field}}) => (
                         <FormItem>
-                          <FormLabel className={"text-[#667085]"}>Kategoriya rasmi</FormLabel>
+                          <FormLabel className={"text-[#667085]"}>Mahsulot rasmi</FormLabel>
                           <FormControl>
                             <div
                               className={`w-full border-2 border-dashed flex p-4 flex-col items-center justify-center rounded-md cursor-pointer gap-4 ${isDragged ? 'border-primary' : ''}`}
@@ -128,14 +194,20 @@ const Index = () => {
                               {
                                 value ? (
                                   <span className={"w-full min-h-max rounded-md overflow-hidden"}>
-                        <img src={URL.createObjectURL(value)} alt="Selected Image" width={"100"} height={"100"}
-                             className="w-full object-center object-contain"/>
-                      </span>) : (
+                                    <img
+                                      src={typeof value === "string" ? value : URL.createObjectURL(value)}
+                                      alt="Selected Image"
+                                      width={"100"}
+                                      height={"100"}
+                                      className="w-full object-center object-contain"
+                                    />
+                                  </span>
+                                ) : (
                                   <div className={"w-full flex flex-col justify-center items-center gap-4"}>
-                      <span
-                        className={"flex items-center justify-center rounded-full w-9 h-9 bg-green-100 text-green-600 p-2"}>
-                        <IconPhoto className={"icon"}/>
-                      </span>
+                                    <span
+                                      className={"flex items-center justify-center rounded-full w-9 h-9 bg-green-100 text-green-600 p-2"}>
+                                      <IconPhoto className={"icon"}/>
+                                    </span>
                                     <p className={"text-center text-gray-400 text-sm font-normal"}>
                                       Rasmni bu yerga sudrab tashlang yoki rasm qo`shish tugmasini bosing
                                     </p>
@@ -151,7 +223,9 @@ const Index = () => {
                                 onChange={(e) => onChange(e.target.files[0])}
                               />
                               {
-                                value ? (
+                                value
+                                  ?
+                                  (
                                     <div className={"w-full flex gap-4 items-center"}>
                                       <Button
                                         type={"button"}
@@ -167,7 +241,8 @@ const Index = () => {
                                       >
                                         Almashtirish
                                       </label>
-                                    </div>) :
+                                    </div>
+                                  ) :
                                   (
                                     <label
                                       htmlFor={"imageField"}
@@ -175,7 +250,9 @@ const Index = () => {
                                     >
                                       <IconPlus className={"w-5 h-5"}/>
                                       Rasm qo‘shish
-                                    </label>)}
+                                    </label>
+                                  )
+                              }
                             </div>
                           </FormControl>
                           <FormMessage/>
@@ -196,7 +273,7 @@ const Index = () => {
                   size={"xl"}
                   type={"reset"}
                   variant={"outline"}
-                  onClick={() => navigate("/products")}
+                  onClick={() => navigate("/category")}
                   className={"w-full gap-2 items-center"}
                 >
                   <IconX className={"w-5 h-5"}/>
