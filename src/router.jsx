@@ -77,6 +77,12 @@ const router = createBrowserRouter([
             })
           },
           {
+            path: "restaurants/create",
+            lazy: async () => ({
+              Component: (await import("@/pages/restaurants/create-restaurants")).default
+            })
+          },
+          {
             path: "restaurant-products",
             lazy: async () => ({
               Component: (await import("@/pages/restaurants/products")).default

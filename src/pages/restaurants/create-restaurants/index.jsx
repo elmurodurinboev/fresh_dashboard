@@ -129,7 +129,7 @@ const Index = () => {
                                   </SelectTrigger>
                                   <SelectContent>
                                     {
-                                      owners.data.result.map((item, index) => (
+                                      owners.data.result.results.map((item, index) => (
                                         <SelectItem value={item.id}
                                                     key={index}>{item.first_name} {item.last_name}</SelectItem>
                                       ))
