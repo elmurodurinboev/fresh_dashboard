@@ -40,6 +40,28 @@ const router = createBrowserRouter([
               Component: (await import("@/pages/tasks")).default
             })
           },
+          // ===========================================
+          // Shop routes
+          {
+            path: "shops",
+            lazy: async () => ({
+              Component: (await import("@/pages/shops")).default
+            })
+          },
+          {
+            path: "shops/create",
+            lazy: async () => ({
+              Component: (await import("@/pages/shops/create-shop")).default
+            })
+          },
+          {
+            path: "shops/update/:id",
+            lazy: async () => ({
+              Component: (await import("@/pages/shops/update-shop")).default
+            })
+          },
+
+          // Shop product routes
           {
             path: "shop-products",
             lazy: async () => ({
@@ -52,22 +74,60 @@ const router = createBrowserRouter([
               Component: (await import("@/pages/shops/products/update-product")).default
             })
           },
+
           {
-            path: "shops",
+            path: "shop-products/create",
             lazy: async () => ({
-              Component: (await import("@/pages/shops")).default
+              Component: (await import("@/pages/shops/products/create-product")).default
             })
           },
+
+          // ShopCategory
+          {
+            path: "shop-category",
+            lazy: async () => ({
+              Component: (await import("@/pages/shops/category")).default
+            })
+          },
+          {
+            path: "shop-category/create",
+            lazy: async () => ({
+              Component: (await import("@/pages/shops/category/create-category")).default
+            })
+          },
+          {
+            path: "shop-category/update/:id",
+            lazy: async () => ({
+              Component: (await import("@/pages/shops/category/update-category")).default
+            })
+          },
+
+          // SubCategory
+          {
+            path: "subcategory",
+            lazy: async () => ({
+              Component: (await import("@/pages/shops/subcategory")).default
+            })
+          },
+          {
+            path: "subcategory/create",
+            lazy: async () => ({
+              Component: (await import("@/pages/shops/subcategory/create-subcategory")).default
+            })
+          },
+          {
+            path: "subcategory/update/:id",
+            lazy: async () => ({
+              Component: (await import("@/pages/shops/subcategory/update-subcategory")).default
+            })
+          },
+
+          // ======================================================================
+          // Restaurant routes
           {
             path: "restaurants",
             lazy: async () => ({
               Component: (await import("@/pages/restaurants")).default
-            })
-          },
-          {
-            path: "restaurants/create-category",
-            lazy: async () => ({
-              Component: (await import("@/pages/restaurants/create-restaurants")).default
             })
           },
           {
@@ -82,6 +142,8 @@ const router = createBrowserRouter([
               Component: (await import("@/pages/restaurants/create-restaurants")).default
             })
           },
+
+          // RestaurantProducts routes
           {
             path: "restaurant-products",
             lazy: async () => ({
@@ -89,66 +151,40 @@ const router = createBrowserRouter([
             })
           },
           {
-            path: "restaurant-products/create-category",
+            path: "restaurant-products/create",
             lazy: async () => ({
               Component: (await import("@/pages/restaurants/products/create-product")).default
             })
           },
           {
-            path: "category",
+            path: "restaurant-products/update/:id",
             lazy: async () => ({
-              Component: (await import("@/pages/shops/category")).default
-            })
-          },
-          {
-            path: "category/create-category",
-            lazy: async () => ({
-              Component: (await import("@/pages/shops/category/create-category")).default
-            })
-          },
-          {
-            path: "category/update/:id",
-            lazy: async () => ({
-              Component: (await import("@/pages/shops/category/update-category")).default
+              Component: (await import("@/pages/restaurants/products/update-product")).default
             })
           },
 
+          // RestaurantCategory
           {
-            path: "subcategory",
+            path: "restaurant-category",
             lazy: async () => ({
-              Component: (await import("@/pages/shops/subcategory")).default
+              Component: (await import("@/pages/restaurants/category")).default
             })
           },
           {
-            path: "subcategory/create-category",
+            path: "restaurant-category/create",
             lazy: async () => ({
-              Component: (await import("@/pages/shops/subcategory/create-subcategory")).default
+              Component: (await import("@/pages/restaurants/category/create-category")).default
             })
           },
           {
-            path: "subcategory/update/:id",
+            path: "restaurant-category/update/:id",
             lazy: async () => ({
-              Component: (await import("@/pages/shops/subcategory/update-subcategory")).default
+              Component: (await import("@/pages/restaurants/category/update-category")).default
             })
           },
-          {
-            path: "shop-products/create-category",
-            lazy: async () => ({
-              Component: (await import("@/pages/shops/products/create-product")).default
-            })
-          },
-          {
-            path: "shops/create-category",
-            lazy: async () => ({
-              Component: (await import("@/pages/shops/create-shop")).default
-            })
-          },
-          {
-            path: "shops/update/:id",
-            lazy: async () => ({
-              Component: (await import("@/pages/shops/update-shop")).default
-            })
-          },
+
+
+
           {
             path: "extra-components",
             lazy: async () => ({

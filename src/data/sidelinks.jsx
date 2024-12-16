@@ -21,9 +21,8 @@ export const sidelinks = [
     href: "/shop-products",
     icon: <IconCube size={18}/>
   },
-
   {
-    title: "sidebar.category",
+    title: "sidebar.shop-category",
     label: "",
     href: "/category",
     icon: <IconCategory size={18}/>
@@ -56,7 +55,12 @@ export const sidelinks = [
     href: "/restaurant-products",
     icon: <IconCube size={18}/>
   },
-
+  {
+    title: "sidebar.restaurant-category",
+    label: "",
+    href: "/restaurant-category",
+    icon: <IconCategory size={18}/>
+  },
   {
     title: "sidebar.settings",
     label: "",
