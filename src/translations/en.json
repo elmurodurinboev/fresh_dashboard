@@ -2,8 +2,6 @@
   "sidebar": {
     "dashboard": "Dashboard",
     "tasks": "Tasks",
-    "chats": "Chats",
-    "apps": "Apps",
     "authentication": "Authentication",
     "auth_sign_in_email_password": "Sign In (email + password)",
     "auth_sign_in_box": "Sign In (box)",
@@ -21,7 +19,12 @@
     "error_internal_server": "Internal Server Error",
     "error_maintenance": "Maintenance Error",
     "error_unauthorised": "Unauthorised Error",
-    "settings": "Settings"
+    "settings": "Settings",
+    "subcategory": "Subcategory",
+    "shops": "",
+    "restaurants": "",
+    "restaurant-products": "",
+    "restaurant-category": ""
   },
   "dashboard": {
     "overview": "Overview",

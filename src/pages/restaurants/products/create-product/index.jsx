@@ -8,24 +8,26 @@ import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/
 import {useNavigate} from "react-router-dom";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.jsx";
 import {useMutation, useQuery} from "@tanstack/react-query";
-import SubcategoryService from "@/services/subcategory.service.js";
 import {Skeleton} from "@/components/ui/skeleton.jsx";
 import {Input} from "@/components/ui/input.jsx";
 import {zodResolver} from "@hookform/resolvers/zod";
-import ShopProductService from "@/services/shop-product.service.js";
+import RestaurantProductService from "@/services/restaurant-product.service.js";
 import {toast} from "@/hooks/use-toast.js";
 import {Textarea} from "@/components/ui/textarea.jsx";
+import RestaurantCategoryService from "@/services/restaurant-category.service.js";
+import {Switch} from "@/components/ui/switch.jsx";
 
 
 const formSchema = z.object({
   name: z
     .string()
     .min(3, {message: 'Name must be at least 3'}),
-  picture: z.preprocess(
+  picture:
+    z.preprocess(
     (val) => (val instanceof File ? val : undefined), // Ensure the value is a File or undefined
     z.instanceof(File, { message: "Image is required and must be a file" }) // Validate as File
   ),
-  descriptions: z
+  description: z
     .string()
     .min(5, {message: "This field is required and its length must be greater or equal 5"}),
   stock_level: z
@@ -39,9 +41,10 @@ const formSchema = z.object({
     .min(3),
   is_active: z
     .boolean(),
-  subcategory: z
+  category: z
+    .number(),
+  volume: z
     .number()
-    .min(3)
 })
 
 const Index = () => {
@@ -51,17 +54,19 @@ const Index = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
-      image: '',
-      descriptions: '',
-      count: 0,
+      picture: '',
+      description: '',
       price: 0,
       discount_price: 0,
-      subcategory: null
+      category: null,
+      volume: 0,
+      is_active: false,
+      stock_level: 0
     }
   })
 
   const mutation = useMutation({
-    mutationFn: ShopProductService.create,
+    mutationFn: RestaurantProductService.create,
     onError: (error) => {
       console.log(error)
       const {data: {errors: serverErrors}, status} = error.response;
@@ -96,9 +101,9 @@ const Index = () => {
     mutation.mutate(formData)
   }
 
-  const subCategoryData = useQuery({
+  const categoryData = useQuery({
     queryKey: ["getAllCategory"],
-    queryFn: SubcategoryService.getAllSub
+    queryFn: RestaurantCategoryService.getAll
   })
 
 
@@ -113,41 +118,57 @@ const Index = () => {
             <form onSubmit={form.handleSubmit(onSubmit)} className={"grid grid-cols-12 gap-4"}>
               <div className={"col-span-12 lg:col-span-8 flex flex-col gap-4"}>
                 <div className={"w-full p-6 bg-white rounded-2xl shadow flex flex-col gap-4"}>
-                  {
-                    !subCategoryData.isLoading ? (
-                      !subCategoryData.isError && subCategoryData.data && subCategoryData.isSuccess && subCategoryData.data.result ? (
-                        <FormField
-                          control={form.control}
-                          name="subcategory"
-                          render={({field}) => (
-                            <FormItem className="space-y-1">
-                              <FormLabel className={"text-[#667085]"}>Kategoriya nomi</FormLabel>
-                              <FormControl>
-                                <Select value={+field.value} onValueChange={(val) => field.onChange(+val)}>
-                                  <SelectTrigger className="w-full text-black">
-                                    <SelectValue placeholder="Select subcategory"/>
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    {
-                                      subCategoryData.data.result.map((item, index) => (
-                                        <SelectItem value={item.id} key={index}>{item.name}</SelectItem>
-                                      ))
-                                    }
-                                  </SelectContent>
-                                </Select>
-                              </FormControl>
-                              <FormMessage/>
-                            </FormItem>
-                          )
-                          }
-                        />
-                      ) : (
-                        <span className={"text-rose-500"}>Nimadir xato ketdi!</span>
-                      )
-                    ) : (
-                      <Skeleton className={"w-full h-9 rounded-md"}/>
-                    )
-                  }
+                 <div className={"w-full grid grid-cols-12 gap-4 items-center"}>
+                   {
+                     !categoryData.isLoading ? (
+                       !categoryData.isError && categoryData.data && categoryData.isSuccess && categoryData.data.result && categoryData.data.result.results ? (
+                         <FormField
+                           control={form.control}
+                           name="category"
+                           render={({field}) => (
+                             <FormItem className="col-span-9 space-y-1">
+                               <FormLabel className={"text-[#667085]"}>Kategoriya nomi</FormLabel>
+                               <FormControl>
+                                 <Select value={+field.value} onValueChange={(val) => field.onChange(+val)}>
+                                   <SelectTrigger className="w-full text-black">
+                                     <SelectValue placeholder="Select subcategory"/>
+                                   </SelectTrigger>
+                                   <SelectContent>
+                                     {
+                                       categoryData.data.result.results.map((item, index) => (
+                                         <SelectItem value={item.id} key={index}>{item.name}</SelectItem>
+                                       ))
+                                     }
+                                   </SelectContent>
+                                 </Select>
+                               </FormControl>
+                               <FormMessage/>
+                             </FormItem>
+                           )
+                           }
+                         />
+                       ) : (
+                         <span className={"text-rose-500"}>Nimadir xato ketdi!</span>
+                       )
+                     ) : (
+                       <Skeleton className={"col-span-9 h-9 rounded-md"}/>
+                     )
+                   }
+
+                   <FormField
+                     control={form.control}
+                     name="is_active"
+                     render={({field}) => (
+                       <FormItem className="flex flex-col gap-1 col-span-3 pt-3 items-end">
+                         <FormLabel className={"text-[#667085] flex items-center"}>Aktivligi</FormLabel>
+                         <FormControl>
+                           <Switch {...field} />
+                         </FormControl>
+                         <FormMessage/>
+                       </FormItem>
+                     )}
+                   />
+                 </div>
 
                   <FormField
                     control={form.control}
@@ -165,10 +186,10 @@ const Index = () => {
 
                   <FormField
                     control={form.control}
-                    name="count"
+                    name="volume"
                     render={({field}) => (
                       <FormItem className="space-y-1">
-                        <FormLabel className={"text-[#667085]"}>Mahsulot soni</FormLabel>
+                        <FormLabel className={"text-[#667085]"}>Volume</FormLabel>
                         <FormControl>
                           <Input placeholder="10" {...field} onChange={e => field.onChange(+e.target.value)}  />
                         </FormControl>
@@ -176,6 +197,7 @@ const Index = () => {
                       </FormItem>
                     )}
                   />
+
 
                   <FormField
                     control={form.control}
@@ -207,7 +229,21 @@ const Index = () => {
 
                   <FormField
                     control={form.control}
-                    name="descriptions"
+                    name="stock_level"
+                    render={({field}) => (
+                      <FormItem className="space-y-1">
+                        <FormLabel className={"text-[#667085]"}>Stock level</FormLabel>
+                        <FormControl>
+                          <Input placeholder="1000" {...field} onChange={e => field.onChange(+e.target.value)}  />
+                        </FormControl>
+                        <FormMessage/>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="description"
                     render={({field}) => (
                       <FormItem className="space-y-1">
                         <FormLabel className={"text-[#667085]"}>Mahsulot tavsifi</FormLabel>
@@ -225,7 +261,7 @@ const Index = () => {
               <div className={"col-span-12 lg:col-span-4 flex flex-col gap-3"}>
                 <div className={"flex flex-col bg-white rounded-2xl shadow p-6"}>
                   <FormField
-                    name="image"
+                    name="picture"
                     control={form.control}
                     render={
                       ({field: {onChange, value, ...field}}) => (
@@ -314,6 +350,7 @@ const Index = () => {
                   size={"xl"}
                   type={"submit"}
                   className={"w-full"}
+                  loading={mutation.isPending}
                 >
                   save
                 </Button>
@@ -322,7 +359,7 @@ const Index = () => {
                   size={"xl"}
                   type={"reset"}
                   variant={"outline"}
-                  onClick={() => navigate("/shop-products")}
+                  onClick={() => navigate("/restaurant-products")}
                   className={"w-full gap-2 items-center"}
                 >
                   <IconX className={"w-5 h-5"}/>

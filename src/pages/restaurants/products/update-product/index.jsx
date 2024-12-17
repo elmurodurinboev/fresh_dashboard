@@ -8,34 +8,39 @@ import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/
 import {useNavigate, useParams} from "react-router-dom";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.jsx";
 import {useMutation, useQuery} from "@tanstack/react-query";
-import SubcategoryService from "@/services/subcategory.service.js";
 import {Skeleton} from "@/components/ui/skeleton.jsx";
 import {Input} from "@/components/ui/input.jsx";
 import {zodResolver} from "@hookform/resolvers/zod";
-import ShopProductService from "@/services/shop-product.service.js";
+import RestaurantProductService from "@/services/restaurant-product.service.js";
 import {toast} from "@/hooks/use-toast.js";
 import {Textarea} from "@/components/ui/textarea.jsx";
+import RestaurantCategoryService from "@/services/restaurant-category.service.js";
+import {Switch} from "@/components/ui/switch.jsx";
 
 
 const formSchema = z.object({
   name: z
     .string()
     .min(3, {message: 'Name must be at least 3'}),
-  image: z
-    .any(),
-  descriptions: z
+  picture:
+    z.any(),
+  description: z
     .string()
-    .optional(),
-  count: z
+    .min(5, {message: "This field is required and its length must be greater or equal 5"}),
+  stock_level: z
     .number()
-    .min(1, {message: 'Min value is 1'}),
+    .min(1),
   price: z
     .number()
-    .min(3, {message: 'Min value is 3'}),
+    .min(3),
   discount_price: z
     .number()
-    .min(3, {message: 'Min value is 3'}),
-  subcategory: z
+    .min(3),
+  is_active: z
+    .boolean(),
+  category: z
+    .number(),
+  volume: z
     .number()
 })
 
@@ -47,18 +52,20 @@ const Index = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
-      image: '',
-      descriptions: '',
-      count: '',
-      price: '',
-      discount_price: '',
-      subcategory: ''
+      picture: '',
+      description: '',
+      price: 0,
+      discount_price: 0,
+      category: null,
+      volume: 0,
+      is_active: false,
+      stock_level: 0
     }
   })
 
   const productData = useQuery({
     queryKey: ['getProduct', params.id],
-    queryFn: ShopProductService.getOne,
+    queryFn: RestaurantProductService.getOne,
     enabled: !!params && !!params.id
   })
 
@@ -68,18 +75,20 @@ const Index = () => {
     if (isSuccess && data?.result !== 0) {
       form.reset({
         name: data.result.name && data.result.name,
-        image: data.result.image && data.result.image,
-        descriptions: data.result.descriptions && data.result.descriptions,
-        count: data.result.count && data.result.count,
+        picture: data.result.picture && data.result.picture,
+        description: data.result.description && data.result.description,
+        volume: data.result.volume && +data.result.volume,
         price: data.result.price && data.result.price,
         discount_price: data.result.discount_price && data.result.discount_price,
-        subcategory: data.result.subcategory.id && data.result.subcategory.id
+        category: data.result.category && data.result.category,
+        is_active: data.result.is_active && data.result.is_active,
+        stock_level: data.result.stock_level && data.result.stock_level,
       });
     }
   }, [productData.isSuccess, productData.data?.result]);
 
   const mutation = useMutation({
-    mutationFn: ShopProductService.updatePatch,
+    mutationFn: RestaurantProductService.updatePatch,
     onError: (error) => {
       const {data: {errors: serverErrors}, status} = error.response;
       if (status === 422) {
@@ -101,22 +110,22 @@ const Index = () => {
         description: "Successfully added"
       })
       form.reset()
-      navigate("/shop-products")
+      navigate("/restaurant-products")
     }
   })
 
   const onSubmit = (data) => {
     console.log(data)
     const formData = new FormData()
-    Object.keys(data).forEach(item => item !== 'image' && formData.append(item, data[item]))
-    const imgType = typeof data?.image
-    data.image && imgType === 'object' && formData.append("image", data.image ? data.image[0] : productData?.image)
+    Object.keys(data).forEach(item => item !== 'picture' && formData.append(item, data[item]))
+    const imgType = typeof data?.picture
+    data.picture && imgType === 'object' && formData.append("picture", data.picture ? data.picture[0] : productData?.picture)
     mutation.mutate({formData, id: params.id})
   }
 
-  const subCategoryData = useQuery({
+  const categoryData = useQuery({
     queryKey: ["getAllCategory"],
-    queryFn: SubcategoryService.getAllSub
+    queryFn: RestaurantCategoryService.getAll
   })
 
 
@@ -125,47 +134,63 @@ const Index = () => {
       <Layout.Body>
         <div className="mb-2 flex flex-col gap-4">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight">Create Products</h2>
+            <h2 className="text-2xl font-bold tracking-tight">Update Products</h2>
           </div>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className={"grid grid-cols-12 gap-4"}>
               <div className={"col-span-12 lg:col-span-8 flex flex-col gap-4"}>
                 <div className={"w-full p-6 bg-white rounded-2xl shadow flex flex-col gap-4"}>
-                  {
-                    !subCategoryData.isLoading ? (
-                      !subCategoryData.isError && subCategoryData.data && subCategoryData.isSuccess && subCategoryData.data.result ? (
-                        <FormField
-                          control={form.control}
-                          name="subcategory"
-                          render={({field}) => (
-                            <FormItem className="space-y-1">
-                              <FormLabel className={"text-[#667085]"}>Kategoriya nomi</FormLabel>
-                              <FormControl>
-                                <Select value={+field.value} onValueChange={(val) => field.onChange(+val)}>
-                                  <SelectTrigger className="w-full text-black">
-                                    <SelectValue placeholder="Select subcategory"/>
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    {
-                                      subCategoryData.data.result.map((item, index) => (
-                                        <SelectItem value={item.id} key={index}>{item.name}</SelectItem>
-                                      ))
-                                    }
-                                  </SelectContent>
-                                </Select>
-                              </FormControl>
-                              <FormMessage/>
-                            </FormItem>
-                          )
-                          }
-                        />
+                  <div className={"w-full grid grid-cols-12 gap-4 items-center"}>
+                    {
+                      !categoryData.isLoading ? (
+                        !categoryData.isError && categoryData.data && categoryData.isSuccess && categoryData.data.result && categoryData.data.result.results ? (
+                          <FormField
+                            control={form.control}
+                            name="category"
+                            render={({field}) => (
+                              <FormItem className="col-span-9 space-y-1">
+                                <FormLabel className={"text-[#667085]"}>Kategoriya nomi</FormLabel>
+                                <FormControl>
+                                  <Select value={+field.value} onValueChange={(val) => field.onChange(+val)}>
+                                    <SelectTrigger className="w-full text-black">
+                                      <SelectValue placeholder="Select subcategory"/>
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {
+                                        categoryData.data.result.results.map((item, index) => (
+                                          <SelectItem value={item.id} key={index}>{item.name}</SelectItem>
+                                        ))
+                                      }
+                                    </SelectContent>
+                                  </Select>
+                                </FormControl>
+                                <FormMessage/>
+                              </FormItem>
+                            )
+                            }
+                          />
+                        ) : (
+                          <span className={"text-rose-500"}>Nimadir xato ketdi!</span>
+                        )
                       ) : (
-                        <span className={"text-rose-500"}>Nimadir xato ketdi!</span>
+                        <Skeleton className={"col-span-9 h-9 rounded-md"}/>
                       )
-                    ) : (
-                      <Skeleton className={"w-full h-9 rounded-md"}/>
-                    )
-                  }
+                    }
+
+                    <FormField
+                      control={form.control}
+                      name="is_active"
+                      render={({field}) => (
+                        <FormItem className="flex flex-col gap-1 col-span-3 pt-3 items-end">
+                          <FormLabel className={"text-[#667085] flex items-center"}>Aktivligi</FormLabel>
+                          <FormControl>
+                            <Switch {...field} onCheckedChange={val => field.onChange(val)} />
+                          </FormControl>
+                          <FormMessage/>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
 
                   <FormField
                     control={form.control}
@@ -183,17 +208,18 @@ const Index = () => {
 
                   <FormField
                     control={form.control}
-                    name="count"
+                    name="volume"
                     render={({field}) => (
                       <FormItem className="space-y-1">
-                        <FormLabel className={"text-[#667085]"}>Mahsulot soni</FormLabel>
+                        <FormLabel className={"text-[#667085]"}>Volume</FormLabel>
                         <FormControl>
-                          <Input placeholder="10" {...field} />
+                          <Input placeholder="10" {...field} onChange={e => field.onChange(+e.target.value)}  />
                         </FormControl>
                         <FormMessage/>
                       </FormItem>
                     )}
                   />
+
 
                   <FormField
                     control={form.control}
@@ -202,7 +228,7 @@ const Index = () => {
                       <FormItem className="space-y-1">
                         <FormLabel className={"text-[#667085]"}>Mahsulot narhi</FormLabel>
                         <FormControl>
-                          <Input placeholder="10" {...field} />
+                          <Input placeholder="10" {...field} onChange={e => field.onChange(+e.target.value)}  />
                         </FormControl>
                         <FormMessage/>
                       </FormItem>
@@ -214,9 +240,9 @@ const Index = () => {
                     name="discount_price"
                     render={({field}) => (
                       <FormItem className="space-y-1">
-                        <FormLabel className={"text-[#667085]"}>Mahsulot chegirmasi</FormLabel>
+                        <FormLabel className={"text-[#667085]"}>Mahsulotdan beriladigan ulush</FormLabel>
                         <FormControl>
-                          <Input placeholder="10" {...field} />
+                          <Input placeholder="1000" {...field} onChange={e => field.onChange(+e.target.value)}  />
                         </FormControl>
                         <FormMessage/>
                       </FormItem>
@@ -225,12 +251,26 @@ const Index = () => {
 
                   <FormField
                     control={form.control}
-                    name="descriptions"
+                    name="stock_level"
+                    render={({field}) => (
+                      <FormItem className="space-y-1">
+                        <FormLabel className={"text-[#667085]"}>Stock level</FormLabel>
+                        <FormControl>
+                          <Input placeholder="1000" {...field} onChange={e => field.onChange(+e.target.value)}  />
+                        </FormControl>
+                        <FormMessage/>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="description"
                     render={({field}) => (
                       <FormItem className="space-y-1">
                         <FormLabel className={"text-[#667085]"}>Mahsulot tavsifi</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="Go'sh, hamir" className={"resize-none"} value={field.value} {...field} rows={5}/>
+                          <Textarea placeholder="Go'sh, hamir" className={"resize-none"} {...field} rows={5} />
                         </FormControl>
                         <FormMessage/>
                       </FormItem>
@@ -243,7 +283,7 @@ const Index = () => {
               <div className={"col-span-12 lg:col-span-4 flex flex-col gap-3"}>
                 <div className={"flex flex-col bg-white rounded-2xl shadow p-6"}>
                   <FormField
-                    name="image"
+                    name="picture"
                     control={form.control}
                     render={
                       ({field: {onChange, value, ...field}}) => (
@@ -290,7 +330,8 @@ const Index = () => {
                                       Rasmni bu yerga sudrab tashlang yoki rasm qo`shish tugmasini bosing
                                     </p>
                                   </div>
-                                )}
+                                )
+                              }
                               <input
                                 {...field}
                                 type="file"
@@ -338,6 +379,7 @@ const Index = () => {
                   size={"xl"}
                   type={"submit"}
                   className={"w-full"}
+                  loading={mutation.isPending}
                 >
                   save
                 </Button>
@@ -346,7 +388,7 @@ const Index = () => {
                   size={"xl"}
                   type={"reset"}
                   variant={"outline"}
-                  onClick={() => navigate("/shop-products")}
+                  onClick={() => navigate("/restaurant-products")}
                   className={"w-full gap-2 items-center"}
                 >
                   <IconX className={"w-5 h-5"}/>
