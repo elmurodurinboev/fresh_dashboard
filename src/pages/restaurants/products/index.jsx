@@ -86,7 +86,7 @@ const Index = () => {
         <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0">
           {
             !productsData.isLoading ? (
-              productsData && productsData.data && productsData.isSuccess && !productsData.isError && (
+              productsData && productsData.data && productsData.isSuccess && !productsData.isError && productsData.data.result &&  (
                 <div className="rounded-md border min-h-[500px]">
                   <Table>
                     <TableHeader>
@@ -115,7 +115,7 @@ const Index = () => {
                     </TableHeader>
                     <TableBody>
                       {
-                        productsData.data.result.results.length > 0 ? (
+                        productsData.data.result.results && productsData.data.result.results.length > 0 ? (
                           productsData.data.result.results.map((product, index) => (
                             <TableRow key={index} className={"bg-secondary"}>
                               <TableCell className={"flex gap-2 items-center overflow-hidden"}>

@@ -244,7 +244,7 @@ const Index = () => {
                   size={"xl"}
                   type={"reset"}
                   variant={"outline"}
-                  onClick={() => navigate("/products")}
+                  onClick={() => navigate("/restaurant-category")}
                   className={"w-full gap-2 items-center"}
                 >
                   <IconX className={"w-5 h-5"}/>
