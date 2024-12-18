@@ -8,6 +8,7 @@ import {Input} from "@/components/ui/input.jsx";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {toast} from "@/hooks/use-toast.js";
 import ShopService from "@/services/shop.service.js";
+import {useNavigate} from "react-router-dom";
 
 
 const formSchema = z.object({
@@ -17,6 +18,7 @@ const formSchema = z.object({
 })
 
 const Index = () => {
+  const navigate= useNavigate()
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -88,7 +90,8 @@ const Index = () => {
                   <Button
                     variant={'outline'}
                     size={"lg"}
-
+                    type={"button"}
+                    onClick={() => navigate("/shops")}
                   >
                     Bekor qilish
                   </Button>

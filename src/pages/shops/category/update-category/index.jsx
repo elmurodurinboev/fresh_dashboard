@@ -71,9 +71,10 @@ const Index = () => {
     onSuccess: () => {
       toast({
         title: 'OK',
-        description: "Successfully added"
+        description: "Successfully updated"
       })
       form.reset()
+      navigate('/shop-category')
     }
   })
 
@@ -82,7 +83,7 @@ const Index = () => {
     Object.keys(data).forEach(item => item !== 'image' && formData.append(item, data[item]))
 
     data.image && formData.append("image", data.image)
-    mutation.mutate(formData)
+    mutation.mutate({formData, id: params.id})
   }
 
   return (
@@ -224,7 +225,7 @@ const Index = () => {
                   size={"xl"}
                   type={"reset"}
                   variant={"outline"}
-                  onClick={() => navigate("/category")}
+                  onClick={() => navigate("/shop-category")}
                   className={"w-full gap-2 items-center"}
                 >
                   <IconX className={"w-5 h-5"}/>

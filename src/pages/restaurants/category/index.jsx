@@ -82,7 +82,7 @@ const Index = () => {
         <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0">
           {
             !categoryData.isLoading ? (
-              categoryData && categoryData.data && categoryData.isSuccess && !categoryData.isError && (
+              categoryData && categoryData.data && categoryData.isSuccess && !categoryData.isError && categoryData.data.result && (
                 <div className="rounded-md border min-h-[500px]">
                   <Table>
                     <TableHeader>
@@ -99,7 +99,7 @@ const Index = () => {
                     </TableHeader>
                     <TableBody>
                       {
-                        categoryData.data.result.results.length > 0 ? (
+                        categoryData.data.result.results && categoryData.data.result.results.length > 0 ? (
                           categoryData.data.result.results.map((category, index) => (
                             <TableRow key={index} className={"bg-secondary"}>
                               <TableCell className={"flex gap-2 items-center overflow-hidden"}>
