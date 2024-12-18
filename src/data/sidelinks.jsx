@@ -24,7 +24,7 @@ export const sidelinks = [
   {
     title: "sidebar.shop-category",
     label: "",
-    href: "/category",
+    href: "/shop-category",
     icon: <IconCategory size={18}/>
   },
 

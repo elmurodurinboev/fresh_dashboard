@@ -134,7 +134,7 @@ const Index = () => {
                                       </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end" className="w-[160px]">
-                                      <DropdownMenuItem onClick={() => navigate(`/category/update/${category.id}`)}>Edit</DropdownMenuItem>
+                                      <DropdownMenuItem onClick={() => navigate(`update/${category.id}`)}>Edit</DropdownMenuItem>
                                       <DropdownMenuSeparator/>
                                       <DropdownMenuItem
                                         onClick={() => handleDelete(category)}
