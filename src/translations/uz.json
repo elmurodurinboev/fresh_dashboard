@@ -1,6 +1,6 @@
 {
   "sidebar": {
-    "dashboard": "Asboblar paneli",
+    "dashboard": "Dashboard",
     "tasks": "Amallar",
     "chats": "Suhbatlar",
     "apps": "Ilovalar",
@@ -21,7 +21,14 @@
     "error_internal_server": "Ichki Serverda Xatolik!",
     "error_maintenance": "Texnik xizmat ko'rsatishda Xatolik!",
     "error_unauthorised": "Akkaunt Ochilmagan",
-    "settings": "Sozlamalar "
+    "settings": "Sozlamalar",
+    "shop-products": "Do'kon mahsulotlari",
+    "shop-category": "Do'kon kategorialari",
+    "subcategory": "Do'kon subkategoriyalari",
+    "shops": "Do'konlar",
+    "restaurants": "Restoranlar",
+    "restaurant-products": "Restoran mahsulotlari",
+    "restaurant-category": "Restoran kategoriyalari"
   },
   "dashboard": {
     "overview": "Umumiy ko'rinish",
@@ -32,7 +39,7 @@
     "products": "Mahsulotlar",
     "settings": "Sozlamalar",
     "search": "Qidirmoq...",
-    "dashboard": "Asboblar paneli",
+    "dashboard": "Dashboard",
     "download": "Yuklab olish",
     "total_revenue": "Umumiy qiymat",
     "from_last_month": "Oldingi oydan {amount}",

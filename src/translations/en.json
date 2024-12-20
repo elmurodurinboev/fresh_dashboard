@@ -20,11 +20,13 @@
     "error_maintenance": "Maintenance Error",
     "error_unauthorised": "Unauthorised Error",
     "settings": "Settings",
-    "subcategory": "Subcategory",
-    "shops": "",
-    "restaurants": "",
-    "restaurant-products": "",
-    "restaurant-category": ""
+    "shop-products": "Shop products",
+    "shop-category": "shop category",
+    "subcategory": "Shop subcategory",
+    "shops": "Shops",
+    "restaurants": "Restaurants",
+    "restaurant-products": "Restaurant products",
+    "restaurant-category": "Restaurant category"
   },
   "dashboard": {
     "overview": "Overview",

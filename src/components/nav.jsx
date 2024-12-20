@@ -138,6 +138,7 @@ function NavLinkDropdown({ title, icon, label, sub, closeNav }) {
 
 function NavLinkIcon({ title, icon, label, href }) {
   const { checkActiveNav } = useCheckActiveNav()
+  const t = useTranslations()
   return (
     <Tooltip delayDuration={0}>
       <TooltipTrigger asChild>
@@ -156,7 +157,7 @@ function NavLinkIcon({ title, icon, label, href }) {
         </Link>
       </TooltipTrigger>
       <TooltipContent side="right" className="flex items-center gap-4">
-        {title}
+        {t(title)}
         {label && (
           <span className="ml-auto text-muted-foreground">{label}</span>
         )}

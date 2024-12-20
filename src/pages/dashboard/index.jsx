@@ -16,9 +16,13 @@ import { RecentSales } from "./components/recent-sales"
 import { Overview } from "./components/overview"
 import { useTranslations } from "use-intl"
 import LanguageSwitch from "@/components/language-switch"
+import ComingSoon from "@/components/coming-soon.jsx";
+import {useAuth} from "@/hooks/utils/useAuth.js";
 
 export default function Dashboard() {
   const t = useTranslations("dashboard")
+  const {session} = useAuth()
+  if (session) return <ComingSoon />
   return (
     <Layout>
       {/* ===== Top Heading ===== */}

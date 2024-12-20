@@ -51,7 +51,7 @@ export default function Sidebar({ className, isCollapsed, setIsCollapsed }) {
                 isCollapsed ? "invisible w-0" : "visible w-auto"
               }`}
             >
-              <span className="font-medium leading-0">We Drive Fresh</span>
+              <span className="font-medium leading-0">WeDrive Fresh</span>
               <span className="text-xs leading-0">1229</span>
             </div>
           </div>
