@@ -183,7 +183,26 @@ const router = createBrowserRouter([
             })
           },
 
+          // Courier router
 
+          {
+            path: "courier",
+            lazy: async () => ({
+              Component: (await import("@/pages/courier")).default
+            })
+          },
+          {
+            path: "courier/create",
+            lazy: async () => ({
+              Component: (await import("@/pages/courier/create-courier")).default
+            })
+          },
+          {
+            path: "courier/update/:id",
+            lazy: async () => ({
+              Component: (await import("@/pages/courier/update-courier")).default
+            })
+          },
 
           {
             path: "extra-components",
