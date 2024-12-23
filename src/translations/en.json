@@ -26,7 +26,8 @@
     "shops": "Shops",
     "restaurants": "Restaurants",
     "restaurant-products": "Restaurant products",
-    "restaurant-category": "Restaurant category"
+    "restaurant-category": "Restaurant category",
+    "courier": "Courier"
   },
   "dashboard": {
     "overview": "Overview",
