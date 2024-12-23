@@ -10,7 +10,6 @@ import {
   FormLabel,
   FormMessage
 } from "@/components/ui/form"
-import {Input} from "@/components/ui/input"
 import {Button} from "@/components/custom/button"
 import {PasswordInput} from "@/components/custom/password-input"
 import {cn} from "@/lib/utils"
@@ -18,12 +17,12 @@ import {useNavigate, useSearchParams} from "react-router-dom";
 import {useMutation} from "@tanstack/react-query";
 import {AuthService} from "@/services/auth.service.js";
 import {toast} from "@/hooks/use-toast.js";
+import PhoneInput from "@/components/custom/phone-input.jsx";
 
 const formSchema = z.object({
   phone_number: z
     .string()
-    .min(13, {message: "Please enter your number"})
-    .max(13, {message: "Please enter the real number"}),
+    .min(9, {message: "Yaroqli telefon raqam kiriting!"}),
   password: z
     .string()
     .min(1, {
@@ -40,13 +39,12 @@ export function UserAuthForm({className, ...props}) {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      login: "",
+      phone_number: "",
       password: ""
     }
   })
 
   const [searchParams] = useSearchParams()
-  const [globalError, setGlobalError] = useState()
   const navigate = useNavigate()
 
 
@@ -56,7 +54,6 @@ export function UserAuthForm({className, ...props}) {
       console.log(data)
 
       setIsLoading(false)
-      setGlobalError()
 
       AuthService.setAuthSession(data)
 
@@ -78,11 +75,10 @@ export function UserAuthForm({className, ...props}) {
     }
   })
 
-
   function onSubmit(data) {
     console.log("data===", data)
     setIsLoading(true)
-
+    data.phone_number = `+998${data.phone_number}`
     mutation.mutate(data)
   }
 
@@ -94,16 +90,44 @@ export function UserAuthForm({className, ...props}) {
             <FormField
               control={form.control}
               name="phone_number"
-              render={({field}) => (
+              render={({ field }) => (
                 <FormItem className="space-y-1">
                   <FormLabel>Phone number</FormLabel>
                   <FormControl>
-                    <Input placeholder="998900000000" {...field} />
+                    <div className="relative flex items-center">
+                      <span className="absolute left-2 text-sm">+99 8</span>
+                      <PhoneInput
+                        {...field}
+                        className="pl-12 flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                        mask="00 000 0000"
+                        placeholder="90 000 0000"
+                        onAccept={(val, mask) => {
+                          console.log(mask.unmaskedValue)
+                          console.log(mask.unmaskedValue.length)
+                          field.onChange(mask.unmaskedValue);
+                        }}
+                        autoComplete="off"
+                      />
+                    </div>
+                    {/*<Input*/}
+                    {/*  placeholder="99 890 000 00 00"*/}
+                    {/*  {...field}*/}
+                    {/*  ref={mask.ref} // Attach mask ref to manage input masking*/}
+                    {/*  value={mask.value} // Use the mask's value to ensure synchronization*/}
+                    {/*  onChange={() => {*/}
+                    {/*    console.log(mask.value); // Masked value*/}
+                    {/*    console.log(mask.unmaskedValue); // Unmasked (plain) value*/}
+                    {/*    console.log("field value=", field.value)*/}
+                    {/*    // Update React Hook Form with unmasked value*/}
+                    {/*    field.onChange(mask.unmaskedValue);*/}
+                    {/*  }}*/}
+                    {/*/>*/}
                   </FormControl>
                   <FormMessage/>
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="password"
