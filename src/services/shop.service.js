@@ -24,8 +24,13 @@ const ShopService = {
   },
 
   async update(payload) {
-    const {data} = await api.put(`/shop/${payload.id}/`, {name: payload.name})
+    const {data} = await api.put(`/shop/${payload.id}/`, payload)
     return data
   },
+
+  async getOwners() {
+    const {data} = await api.get(`/shop_owners/`,)
+    return data
+  }
 }
 export default ShopService
