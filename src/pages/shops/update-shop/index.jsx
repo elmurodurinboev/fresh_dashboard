@@ -11,14 +11,36 @@ import ShopService from "@/services/shop.service.js";
 import {useNavigate, useParams} from "react-router-dom";
 import {useEffect} from "react";
 import {Skeleton} from "@/components/ui/skeleton.jsx";
-
+import CountryService from "@/services/country.service.js";
+import {Switch} from "@/components/ui/switch.jsx";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.jsx";
+import {Textarea} from "@/components/ui/textarea.jsx";
 
 const formSchema = z.object({
   name: z
     .string()
     .min(3, {message: 'Name must be at least 3'}),
+  address: z
+    .string(),
+  delivery_time: z
+    .string(),
+  description: z
+    .string(),
+  opening_time: z
+    .string(),
+  closing_time: z
+    .string(),
+  latitude: z
+    .string(),
+  longitude: z
+    .string(),
+  is_active: z
+    .boolean(),
+  owner: z
+    .number(),
+  country: z
+    .number(),
 })
-
 const Index = () => {
   const navigate = useNavigate()
   const params = useParams()
@@ -26,9 +48,18 @@ const Index = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
+      address: '',
+      delivery_time: '',
+      description: '',
+      opening_time: '',
+      closing_time: '',
+      latitude: '',
+      longitude: '',
+      is_active: true,
+      owner: null,
+      country: null
     }
   })
-
   const shopData = useQuery({
     queryKey: ['getOne', params.id],
     queryFn: ShopService.getOne,
@@ -41,7 +72,17 @@ const Index = () => {
 
     if (isSuccess && data?.result !== 0) {
       form.reset({
-        name: data.result.name
+        name: data.result.name ? data.result.name : '',
+        address: data.result.address ? data.result.address : '',
+        delivery_time: data.result.delivery_time ? data.result.delivery_time.match(/\d+/)[0] : null,
+        description: data.result.description ? data.result.description : '',
+        opening_time: data.result.opening_time ? data.result.opening_time : '',
+        closing_time: data.result.closing_time ? data.result.closing_time : '',
+        latitude: data.result.latitude ? data.result.latitude : '',
+        longitude: data.result.longitude ? data.result.longitude : '',
+        is_active: data.result.is_active ? data.result.is_active : false,
+        owner: data.result.owner ? +data.result.owner : null,
+        country: data.result.country ? +data.result.country : null,
       });
     }
   }, [shopData.isSuccess, shopData.data?.result]);
@@ -49,7 +90,7 @@ const Index = () => {
   const mutation = useMutation({
     mutationFn: ShopService.update,
     onError: (error) => {
-      const {result: {errors: serverErrors}, status} = error.response;
+      const {data: {errors: serverErrors}, status} = error.response;
       if (status === 422) {
         Object.entries(serverErrors).forEach(([key, value]) => {
           form.setError(key, {
@@ -74,38 +115,246 @@ const Index = () => {
   })
 
   const onSubmit = (data) => {
-    mutation.mutate({...data, id: params.id})
+    data.id = params.id
+    mutation.mutate(data)
   }
+
+  const ownersData = useQuery({
+    queryKey: ["getOwners"],
+    queryFn: ShopService.getOwners
+  })
+
+  const countryData = useQuery({
+    queryKey: ["getCountries"],
+    queryFn: CountryService.getAll
+  })
 
   return (
     <Layout>
       <Layout.Body>
         <div className="mb-2 flex flex-col gap-4">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight">Do`konni o`zgartirish</h2>
+            <h2 className="text-2xl font-bold tracking-tight">Do`kon yaratish</h2>
           </div>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className={"flex gap-4"}>
               <div className={"w-full p-6 bg-white rounded-2xl shadow flex flex-col gap-4"}>
-                {
-                  !shopData.isLoading ? (
+                <div className={"flex justify-between gap-3"}>
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({field}) => (
+                      <FormItem className="space-y-1 flex-1">
+                        <FormLabel className={"text-[#667085]"}>Do`kon nomi</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Evos" {...field} />
+                        </FormControl>
+                        <FormMessage/>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="is_active"
+                    render={({field}) => (
+                      <FormItem className="flex flex-col gap-1 pt-3 items-end">
+                        <FormLabel className={"text-[#667085] flex items-center"}>Aktivligi</FormLabel>
+                        <FormControl>
+                          <Switch {...field} />
+                        </FormControl>
+                        <FormMessage/>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className={"grid grid-cols-12 gap-3"}>
+                  <div className={"col-span-6"}>
+                    {
+                      !countryData.isLoading ? (
+                        !countryData.isError && countryData.data && countryData.isSuccess && countryData.data.result ? (
+                          <FormField
+                            control={form.control}
+                            name="country"
+                            render={({field}) => (
+                              <FormItem className="space-y-1">
+                                <FormLabel className={"text-[#667085]"}>Hudud</FormLabel>
+                                <FormControl>
+                                  <Select value={+field.value} onValueChange={(val) => field.onChange(+val)}>
+                                    <SelectTrigger className="w-full text-black">
+                                      <SelectValue placeholder="Select country"/>
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {
+                                        countryData.data.result.map((item, index) => (
+                                          <SelectItem value={item.id} key={index}>{item.name}</SelectItem>
+                                        ))
+                                      }
+                                    </SelectContent>
+                                  </Select>
+                                </FormControl>
+                                <FormMessage/>
+                              </FormItem>
+                            )
+                            }
+                          />
+                        ) : (
+                          <span className={"text-rose-500"}>Nimadir xato ketdi!</span>
+                        )
+                      ) : (
+                        <Skeleton className={"w-full h-9 rounded-md"}/>
+                      )
+                    }
+                  </div>
+
+                  <div className={"col-span-6"}>
+                    {
+                      !ownersData.isLoading ? (
+                        !ownersData.isError && ownersData.data && ownersData.isSuccess && ownersData.data.result && ownersData.data.result.results ? (
+                          <FormField
+                            control={form.control}
+                            name="owner"
+                            render={({field}) => (
+                              <FormItem className="space-y-1">
+                                <FormLabel className={"text-[#667085]"}>Do`kon egasi</FormLabel>
+                                <FormControl>
+                                  <Select value={+field.value} onValueChange={(val) => field.onChange(+val)}>
+                                    <SelectTrigger className="w-full text-black">
+                                      <SelectValue placeholder="Select owner"/>
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {
+                                        ownersData.data.result.results && ownersData.data.result.results.map((item, index) => (
+                                          <SelectItem value={item.id} key={index}>{item.full_name}</SelectItem>
+                                        ))
+                                      }
+                                    </SelectContent>
+                                  </Select>
+                                </FormControl>
+                                <FormMessage/>
+                              </FormItem>
+                            )
+                            }
+                          />
+                        ) : (
+                          <span className={"text-rose-500"}>Nimadir xato ketdi!</span>
+                        )
+                      ) : (
+                        <Skeleton className={"w-full h-9 rounded-md"}/>
+                      )
+                    }
+                  </div>
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name="address"
+                  render={({field}) => (
+                    <FormItem className="space-y-1">
+                      <FormLabel className={"text-[#667085]"}>Manzil</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Hazorasp" {...field} type={"text"}/>
+                      </FormControl>
+                      <FormMessage/>
+                    </FormItem>
+                  )}
+                />
+
+                <div className={"grid grid-cols-12 items-center gap-3"}>
+                  <div className={"col-span-6 flex justify-between"}>
                     <FormField
                       control={form.control}
-                      name="name"
+                      name="opening_time"
                       render={({field}) => (
                         <FormItem className="space-y-1">
-                          <FormLabel className={"text-[#667085]"}>Do`kon nomi</FormLabel>
+                          <FormLabel className={"text-[#667085]"}>Ochilish vaqti</FormLabel>
                           <FormControl>
-                            <Input placeholder="Evos" {...field} />
+                            <Input placeholder="30" {...field} type={"time"} className={"w-auto"}/>
                           </FormControl>
                           <FormMessage/>
                         </FormItem>
                       )}
                     />
-                  ) : (
-                    <Skeleton className={"w-full h-9 rounded-md"} />
-                  )
-                }
+
+                    <FormField
+                      control={form.control}
+                      name="closing_time"
+                      render={({field}) => (
+                        <FormItem className="space-y-1">
+                          <FormLabel className={"text-[#667085]"}>Ochilish vaqti</FormLabel>
+                          <FormControl>
+                            <Input placeholder="30" {...field} type={"time"} className={"w-auto"}/>
+                          </FormControl>
+                          <FormMessage/>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div className={"col-span-6"}>
+                    <FormField
+                      control={form.control}
+                      name="delivery_time"
+                      render={({field}) => (
+                        <FormItem className="space-y-1 flex-1">
+                          <FormLabel className={"text-[#667085]"}>Yetkazib berish vaqti</FormLabel>
+                          <FormControl>
+                            <div className={"flex items-center gap-2"}>
+                              <Input placeholder="30" {...field} type={"number"}/>
+                              <span>daqiqa</span>
+                            </div>
+                          </FormControl>
+                          <FormMessage/>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({field}) => (
+                    <FormItem className="space-y-1">
+                      <FormLabel className={"text-[#667085]"}>Mahsulot tavsifi</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="Go'sh, hamir" className={"resize-none"} {...field} rows={5}/>
+                      </FormControl>
+                      <FormMessage/>
+                    </FormItem>
+                  )}
+                />
+
+                <div className={"grid grid-cols-12 gap-3"}>
+                  <FormField
+                    control={form.control}
+                    name="latitude"
+                    render={({field}) => (
+                      <FormItem className="space-y-1 col-span-6">
+                        <FormLabel className={"text-[#667085]"}>Latitude</FormLabel>
+                        <FormControl>
+                          <Input placeholder="41.1" {...field} type={"text"}/>
+                        </FormControl>
+                        <FormMessage/>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="longitude"
+                    render={({field}) => (
+                      <FormItem className="space-y-1 col-span-6">
+                        <FormLabel className={"text-[#667085]"}>Longitude</FormLabel>
+                        <FormControl>
+                          <Input placeholder="61.1" {...field} type={"text"}/>
+                        </FormControl>
+                        <FormMessage/>
+                      </FormItem>
+                    )}
+                  />
+
+                </div>
+
                 <div className={"space-x-4"}>
                   <Button
                     type={'submit'}
@@ -117,7 +366,8 @@ const Index = () => {
                   <Button
                     variant={'outline'}
                     size={"lg"}
-
+                    type={"button"}
+                    onClick={() => navigate("/shops")}
                   >
                     Bekor qilish
                   </Button>
