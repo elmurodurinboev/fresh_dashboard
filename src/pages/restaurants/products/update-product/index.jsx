@@ -240,7 +240,7 @@ const Index = () => {
                     name="discount_price"
                     render={({field}) => (
                       <FormItem className="space-y-1">
-                        <FormLabel className={"text-[#667085]"}>Mahsulotdan beriladigan ulush</FormLabel>
+                        <FormLabel className={"text-[#667085]"}>Mahsulotdan chegirmasi</FormLabel>
                         <FormControl>
                           <Input placeholder="1000" {...field} onChange={e => field.onChange(+e.target.value)}  />
                         </FormControl>

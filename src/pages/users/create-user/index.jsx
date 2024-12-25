@@ -92,6 +92,7 @@ const Index = () => {
   })
 
   const onSubmit = (data) => {
+    data.phone_number = `+998${data.phone_number}`
     const formData = new FormData()
     Object.keys(data).forEach(item => formData.append(item, data[item]))
     mutation.mutate(formData)
@@ -135,13 +136,12 @@ const Index = () => {
                             <span className="absolute left-2 text-sm">+99 8</span>
                             <PhoneInput
                               {...field}
-                              className="pl-12 flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                              className="pl-12 flex h-9"
                               mask="00 000 0000"
                               placeholder="90 000 0000"
                               onAccept={(val, mask) => {
-                                field.onChange(mask.unmaskedValue);
+                                field.onChange(mask._unmaskedValue);
                               }}
-                              autoComplete="off"
                             />
                           </div>
                         </FormControl>
@@ -364,6 +364,7 @@ const Index = () => {
                   size={"xl"}
                   type={"submit"}
                   className={"w-full"}
+                  loading={mutation.isPending}
                 >
                   save
                 </Button>

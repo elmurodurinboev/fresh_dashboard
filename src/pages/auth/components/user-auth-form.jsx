@@ -25,11 +25,8 @@ const formSchema = z.object({
     .min(9, {message: "Yaroqli telefon raqam kiriting!"}),
   password: z
     .string()
-    .min(1, {
-      message: "Please enter your password"
-    })
-    .min(7, {
-      message: "Password must be at least 7 characters long"
+    .min(8, {
+      message: "Yaroqli parol kiriting"
     })
 })
 
@@ -51,10 +48,7 @@ export function UserAuthForm({className, ...props}) {
   const mutation = useMutation({
     mutationFn: AuthService.login,
     onSuccess: (data) => {
-      console.log(data)
-
       setIsLoading(false)
-
       AuthService.setAuthSession(data)
 
       if (searchParams.has(`callbackUrl`)) {
@@ -65,18 +59,24 @@ export function UserAuthForm({className, ...props}) {
     },
     onError: error => {
       setIsLoading(false)
-
-      console.log(error)
-      toast(({
-        variant: 'destructive',
+      const {data: {errors: serverErrors}, status} = error.response;
+      if (status === 422) {
+        Object.entries(serverErrors).forEach(([key, value]) => {
+          form.setError(key, {
+            type: "server", message: value[0]
+          })
+        })
+        return;
+      }
+      toast({
+        variant: "destructive",
         title: "Error",
-        description: error && error.message ? error.message : "Something went wrong"
-      }))
+        description: error.message || "Xatolik yuz berdi!"
+      })
     }
   })
 
   function onSubmit(data) {
-    console.log("data===", data)
     setIsLoading(true)
     data.phone_number = `+998${data.phone_number}`
     mutation.mutate(data)
@@ -98,30 +98,16 @@ export function UserAuthForm({className, ...props}) {
                       <span className="absolute left-2 text-sm">+99 8</span>
                       <PhoneInput
                         {...field}
-                        className="pl-12 flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                        onChange={() => {}}
                         mask="00 000 0000"
+                        className={"pl-12 flex h-9"}
                         placeholder="90 000 0000"
                         onAccept={(val, mask) => {
-                          console.log(mask.unmaskedValue)
-                          console.log(mask.unmaskedValue.length)
-                          field.onChange(mask.unmaskedValue);
+                          field.onChange(mask._unmaskedValue);
                         }}
-                        autoComplete="off"
                       />
                     </div>
-                    {/*<Input*/}
-                    {/*  placeholder="99 890 000 00 00"*/}
-                    {/*  {...field}*/}
-                    {/*  ref={mask.ref} // Attach mask ref to manage input masking*/}
-                    {/*  value={mask.value} // Use the mask's value to ensure synchronization*/}
-                    {/*  onChange={() => {*/}
-                    {/*    console.log(mask.value); // Masked value*/}
-                    {/*    console.log(mask.unmaskedValue); // Unmasked (plain) value*/}
-                    {/*    console.log("field value=", field.value)*/}
-                    {/*    // Update React Hook Form with unmasked value*/}
-                    {/*    field.onChange(mask.unmaskedValue);*/}
-                    {/*  }}*/}
-                    {/*/>*/}
+                    
                   </FormControl>
                   <FormMessage/>
                 </FormItem>
@@ -141,9 +127,6 @@ export function UserAuthForm({className, ...props}) {
                 </FormItem>
               )}
             />
-            {/*{globalError && (*/}
-            {/*  <p>{globalError}</p>*/}
-            {/*)}*/}
             <Button className="mt-2" loading={isLoading} disabled={mutation.isPending}>
               Login
             </Button>

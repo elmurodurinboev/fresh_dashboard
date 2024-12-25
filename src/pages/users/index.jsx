@@ -15,8 +15,14 @@ import {DotsHorizontalIcon} from "@radix-ui/react-icons";
 import {useNavigate} from "react-router-dom";
 import DefaultImage from "@/components/custom/default-image.jsx";
 import CourierService from "@/services/user.service.js";
+import {toast} from "@/hooks/use-toast.js";
+import UserService from "@/services/user.service.js";
+import {useState} from "react";
+import DeleteConfirmationModal from "@/components/custom/delete-confirmation-modal.jsx";
 
 const Index = () => {
+  const [deleteModal, setDeleteModal] = useState(false)
+  const [selectedProduct, setSelectedProduct] = useState({})
   const usersData = useQuery({
     queryKey: ['getAllUsers'],
     queryFn: CourierService.getAll
@@ -25,8 +31,34 @@ const Index = () => {
 
   const navigate = useNavigate()
 
-  const handleDelete = () => {
 
+  const reset = () => {
+    setDeleteModal(false)
+    setSelectedProduct({})
+  }
+
+  const deleteMutation = useMutation({
+    mutationFn: UserService.delete,
+    onSuccess: async () => {
+      toast({
+        title: 'OK',
+        description: "Successfully deleted"
+      })
+      await usersData.refetch()
+      reset()
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message || "Messages.error_occurred"
+      })
+      reset()
+    },
+  })
+
+  const handleDelete = (user) => {
+    setSelectedProduct(user)
+    setDeleteModal(true)
   }
 
   return (
@@ -157,6 +189,16 @@ const Index = () => {
             )
           }
         </div>
+        <DeleteConfirmationModal
+          open={deleteModal}
+          setOpen={setDeleteModal}
+          loading={deleteMutation.isPending}
+          handleDelete={() => deleteMutation.mutate(selectedProduct.id)}
+          handleClose={() => {
+            setDeleteModal(false)
+            setSelectedProduct({})
+          }}
+        />
       </Layout.Body>
     </Layout>
   )
