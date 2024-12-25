@@ -204,6 +204,21 @@ const router = createBrowserRouter([
             })
           },
 
+          // Users Routes
+
+          {
+            path: "users",
+            lazy: async () => ({
+              Component: (await import("@/pages/users")).default
+            })
+          },
+          {
+            path: "users/create",
+            lazy: async () => ({
+              Component: (await import("@/pages/users/create-user")).default
+            })
+          },
+
           {
             path: "extra-components",
             lazy: async () => ({

@@ -1,95 +1,72 @@
 import {Layout} from "@/components/custom/layout.jsx";
 import {Button} from "@/components/custom/button.jsx";
 import {IconPhoto, IconPlus, IconX} from "@tabler/icons-react";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.jsx";
-import {useNavigate, useParams} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.jsx";
-import {useMutation, useQuery} from "@tanstack/react-query";
-import {Skeleton} from "@/components/ui/skeleton.jsx";
+import {useMutation} from "@tanstack/react-query";
 import {Input} from "@/components/ui/input.jsx";
 import {zodResolver} from "@hookform/resolvers/zod";
-import RestaurantProductService from "@/services/restaurant-product.service.js";
 import {toast} from "@/hooks/use-toast.js";
-import {Textarea} from "@/components/ui/textarea.jsx";
-import RestaurantCategoryService from "@/services/restaurant-category.service.js";
+import {UserTypes} from "@/data/user-types.jsx";
+import PhoneInput from "@/components/custom/phone-input.jsx";
+import {PasswordInput} from "@/components/custom/password-input.jsx";
 import {Switch} from "@/components/ui/switch.jsx";
+import UserService from "@/services/user.service.js";
 
 
 const formSchema = z.object({
-  name: z
+  full_name: z
     .string()
     .min(3, {message: 'Name must be at least 3'}),
-  picture:
-    z.any(),
-  description: z
+  image: z
+    .any(),
+  phone_number: z
     .string()
-    .min(5, {message: "This field is required and its length must be greater or equal 5"}),
-  stock_level: z
-    .number()
-    .min(1),
-  price: z
-    .number()
-    .min(3),
-  discount_price: z
-    .number()
+    .min(9, {message: "Telefon raqaminggizni to`liq kiriting"}),
+  birth_date: z
+    .string(),
+  gender: z
+    .string(),
+  user_role: z
+    .string()
     .min(3),
   is_active: z
-    .boolean(),
-  category: z
-    .number(),
-  volume: z
-    .number()
+    .boolean()
+    .default(false),
+  is_staff: z
+    .boolean()
+    .default(false),
+  password: z
+    .string()
+    .min(8, {message: "Parol kamida 8 ta belgidan iborat bo'lishi zarur"})
 })
 
 const Index = () => {
-  const params = useParams()
   const navigate = useNavigate()
   const [isDragged, setIsDragged] = useState(false)
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: '',
-      picture: '',
-      description: '',
-      price: 0,
-      discount_price: 0,
-      category: null,
-      volume: 0,
-      is_active: false,
-      stock_level: 0
+      full_name: '',
+      image: null,
+      phone_number: '',
+      birth_date: '',
+      gender: null,
+      user_role: null,
+      is_active: true,
+      is_staff: true,
+      password: '',
     }
   })
-
-  const productData = useQuery({
-    queryKey: ['getProduct', params.id],
-    queryFn: RestaurantProductService.getOne,
-    enabled: !!params && !!params.id
-  })
-
-  useEffect(() => {
-    const {isSuccess, data} = productData;
-
-    if (isSuccess && data?.result !== 0) {
-      form.reset({
-        name: data.result.name && data.result.name,
-        picture: data.result.picture && data.result.picture,
-        description: data.result.description && data.result.description,
-        volume: data.result.volume && +data.result.volume,
-        price: data.result.price && data.result.price,
-        discount_price: data.result.discount_price && data.result.discount_price,
-        category: data.result.category && data.result.category,
-        is_active: data.result.is_active && data.result.is_active,
-        stock_level: data.result.stock_level && data.result.stock_level,
-      });
-    }
-  }, [productData.isSuccess, productData.data?.result]);
 
   const mutation = useMutation({
-    mutationFn: RestaurantProductService.updatePatch,
+    mutationFn: UserService.create,
     onError: (error) => {
+      console.log(error)
       const {data: {errors: serverErrors}, status} = error.response;
       if (status === 422) {
         Object.entries(serverErrors).forEach(([key, value]) => {
@@ -100,6 +77,7 @@ const Index = () => {
         return;
       }
       toast({
+        variant: "destructive",
         title: "Error",
         description: error.message || "Messages.error_occurred"
       })
@@ -110,23 +88,15 @@ const Index = () => {
         description: "Successfully added"
       })
       form.reset()
-      navigate("/restaurant-products")
     }
   })
 
   const onSubmit = (data) => {
-    console.log(data)
+    data.phone_number = `+998${data.phone_number}`
     const formData = new FormData()
-    Object.keys(data).forEach(item => item !== 'picture' && formData.append(item, data[item]))
-    const imgType = typeof data?.picture
-    data.picture && imgType === 'object' && formData.append("picture", data.picture ? data.picture[0] : productData?.picture)
-    mutation.mutate({formData, id: params.id})
+    Object.keys(data).forEach(item => formData.append(item, data[item]))
+    mutation.mutate(formData)
   }
-
-  const categoryData = useQuery({
-    queryKey: ["getAllCategory"],
-    queryFn: RestaurantCategoryService.getAll
-  })
 
 
   return (
@@ -134,148 +104,170 @@ const Index = () => {
       <Layout.Body>
         <div className="mb-2 flex flex-col gap-4">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight">Update Products</h2>
+            <h2 className="text-2xl font-bold tracking-tight">Foydalanuvchi yaratish</h2>
           </div>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className={"grid grid-cols-12 gap-4"}>
               <div className={"col-span-12 lg:col-span-8 flex flex-col gap-4"}>
                 <div className={"w-full p-6 bg-white rounded-2xl shadow flex flex-col gap-4"}>
-                  <div className={"w-full grid grid-cols-12 gap-4 items-center"}>
-                    {
-                      !categoryData.isLoading ? (
-                        !categoryData.isError && categoryData.data && categoryData.isSuccess && categoryData.data.result && categoryData.data.result.results ? (
-                          <FormField
-                            control={form.control}
-                            name="category"
-                            render={({field}) => (
-                              <FormItem className="col-span-9 space-y-1">
-                                <FormLabel className={"text-[#667085]"}>Kategoriya nomi</FormLabel>
-                                <FormControl>
-                                  <Select value={+field.value} onValueChange={(val) => field.onChange(+val)}>
-                                    <SelectTrigger className="w-full text-black">
-                                      <SelectValue placeholder="Select subcategory"/>
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                      {
-                                        categoryData.data.result.results.map((item, index) => (
-                                          <SelectItem value={item.id} key={index}>{item.name}</SelectItem>
-                                        ))
-                                      }
-                                    </SelectContent>
-                                  </Select>
-                                </FormControl>
-                                <FormMessage/>
-                              </FormItem>
-                            )
-                            }
-                          />
-                        ) : (
-                          <span className={"text-rose-500"}>Nimadir xato ketdi!</span>
-                        )
-                      ) : (
-                        <Skeleton className={"col-span-9 h-9 rounded-md"}/>
-                      )
-                    }
 
-                    <FormField
-                      control={form.control}
-                      name="is_active"
-                      render={({field}) => (
-                        <FormItem className="flex flex-col gap-1 col-span-3 pt-3 items-end">
-                          <FormLabel className={"text-[#667085] flex items-center"}>Aktivligi</FormLabel>
-                          <FormControl>
-                            <Switch {...field} onCheckedChange={val => field.onChange(val)} />
-                          </FormControl>
-                          <FormMessage/>
-                        </FormItem>
-                      )}
-                    />
+                  <FormField
+                    control={form.control}
+                    name="full_name"
+                    render={({field}) => (
+                      <FormItem className="space-y-1">
+                        <FormLabel className={"text-[#667085]"}>Foydalanuvchi to`liq ismi</FormLabel>
+                        <FormControl>
+                          <Input placeholder="John doe" {...field} />
+                        </FormControl>
+                        <FormMessage/>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="phone_number"
+                    render={({field}) => (
+                      <FormItem className="space-y-1">
+                        <FormLabel>Telefon raqam</FormLabel>
+                        <FormControl>
+                          <div className="relative flex items-center">
+                            <span className="absolute left-2 text-sm">+99 8</span>
+                            <PhoneInput
+                              {...field}
+                              className="pl-12 flex h-9"
+                              mask="00 000 0000"
+                              placeholder="90 000 0000"
+                              onAccept={(val, mask) => {
+                                field.onChange(mask._unmaskedValue);
+                              }}
+                            />
+                          </div>
+                        </FormControl>
+                        <FormMessage/>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({field}) => (
+                      <FormItem className="space-y-1">
+                        <FormLabel>Parol</FormLabel>
+                        <FormControl>
+                          <PasswordInput placeholder="********" {...field} />
+                        </FormControl>
+                        <FormMessage/>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="user_role"
+                    render={({field}) => (
+                      <FormItem className="space-y-1">
+                        <FormLabel>User rol</FormLabel>
+                        <FormControl>
+                          <Select {...field} onValueChange={val => field.onChange(val)}>
+                            <SelectTrigger>
+                              <SelectValue placeholder={"Tanlang"}/>
+                            </SelectTrigger>
+                            <SelectContent>
+                              {
+                                UserTypes && UserTypes.length > 0 && (
+                                  UserTypes.map((item, index) => (
+                                    <SelectItem
+                                      key={index}
+                                      value={item.user_role}
+                                    >
+                                      {item.name}
+                                    </SelectItem>
+                                  ))
+                                )
+                              }
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage/>
+                      </FormItem>
+                    )}
+                  />
+                  <div className={"grid grid-cols-12 gap-3"}>
+                    <div className={"col-span-6"}>
+                      <FormField
+                        control={form.control}
+                        name="gender"
+                        render={({field}) => (
+                          <FormItem className="space-y-1">
+                            <FormLabel>Jins</FormLabel>
+                            <FormControl>
+                              <Select  value={field.value} onValueChange={val => field.onChange(val)} >
+                                <SelectTrigger>
+                                  <SelectValue placeholder={'Tanlang'}/>
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value={"male"}>Erkak</SelectItem>
+                                  <SelectItem value={"female"}>Ayol</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </FormControl>
+                            <FormMessage/>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className={"col-span-6"}>
+                      <FormField
+                        control={form.control}
+                        name="birth_date"
+                        render={({field}) => (
+                          <FormItem className="space-y-1">
+                            <FormLabel>Tug`ilgan sana</FormLabel>
+                            <FormControl>
+                              <Input placeholder="1999-22-12" type={'date'} {...field} className={"w-auto"}/>
+                            </FormControl>
+                            <FormMessage/>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
                   </div>
-
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({field}) => (
-                      <FormItem className="space-y-1">
-                        <FormLabel className={"text-[#667085]"}>Mahsulot nomi</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Lavash" {...field} />
-                        </FormControl>
-                        <FormMessage/>
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="volume"
-                    render={({field}) => (
-                      <FormItem className="space-y-1">
-                        <FormLabel className={"text-[#667085]"}>Volume</FormLabel>
-                        <FormControl>
-                          <Input placeholder="10" {...field} onChange={e => field.onChange(+e.target.value)}  />
-                        </FormControl>
-                        <FormMessage/>
-                      </FormItem>
-                    )}
-                  />
-
-
-                  <FormField
-                    control={form.control}
-                    name="price"
-                    render={({field}) => (
-                      <FormItem className="space-y-1">
-                        <FormLabel className={"text-[#667085]"}>Mahsulot narhi</FormLabel>
-                        <FormControl>
-                          <Input placeholder="10" {...field} onChange={e => field.onChange(+e.target.value)}  />
-                        </FormControl>
-                        <FormMessage/>
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="discount_price"
-                    render={({field}) => (
-                      <FormItem className="space-y-1">
-                        <FormLabel className={"text-[#667085]"}>Mahsulotdan chegirmasi</FormLabel>
-                        <FormControl>
-                          <Input placeholder="1000" {...field} onChange={e => field.onChange(+e.target.value)}  />
-                        </FormControl>
-                        <FormMessage/>
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="stock_level"
-                    render={({field}) => (
-                      <FormItem className="space-y-1">
-                        <FormLabel className={"text-[#667085]"}>Stock level</FormLabel>
-                        <FormControl>
-                          <Input placeholder="1000" {...field} onChange={e => field.onChange(+e.target.value)}  />
-                        </FormControl>
-                        <FormMessage/>
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="description"
-                    render={({field}) => (
-                      <FormItem className="space-y-1">
-                        <FormLabel className={"text-[#667085]"}>Mahsulot tavsifi</FormLabel>
-                        <FormControl>
-                          <Textarea placeholder="Go'sh, hamir" className={"resize-none"} {...field} rows={5} />
-                        </FormControl>
-                        <FormMessage/>
-                      </FormItem>
-                    )}
-                  />
+                  <div className={"grid grid-cols-12"}>
+                    <div className={"col-span-6"}>
+                      <FormField
+                        control={form.control}
+                        name="is_active"
+                        render={({field}) => (
+                          <FormItem className="flex flex-col gap-1">
+                            <FormLabel>Aktiv</FormLabel>
+                            <FormControl>
+                              <Switch {...field} onCheckedChange={val => field.onChange(val)} />
+                            </FormControl>
+                            <FormMessage/>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className={"col-span-6"}>
+                      <FormField
+                        control={form.control}
+                        name="is_stuff"
+                        render={({field}) => (
+                          <FormItem className="flex flex-col gap-1">
+                            <FormLabel>Admin paneldan foydalanish</FormLabel>
+                            <FormControl>
+                              <Switch {...field} onCheckedChange={val => field.onChange(val)} />
+                            </FormControl>
+                            <FormMessage/>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -283,12 +275,12 @@ const Index = () => {
               <div className={"col-span-12 lg:col-span-4 flex flex-col gap-3"}>
                 <div className={"flex flex-col bg-white rounded-2xl shadow p-6"}>
                   <FormField
-                    name="picture"
+                    name="image"
                     control={form.control}
                     render={
                       ({field: {onChange, value, ...field}}) => (
                         <FormItem>
-                          <FormLabel className={"text-[#667085]"}>Mahsulot rasmi</FormLabel>
+                          <FormLabel className={"text-[#667085]"}>Foydalanuvchi rasmi</FormLabel>
                           <FormControl>
                             <div
                               className={`w-full border-2 border-dashed flex p-4 flex-col items-center justify-center rounded-md cursor-pointer gap-4 ${isDragged ? 'border-primary' : ''}`}
@@ -312,26 +304,19 @@ const Index = () => {
                               {
                                 value ? (
                                   <span className={"w-full min-h-max rounded-md overflow-hidden"}>
-                                    <img
-                                      src={typeof value === "string" ? value : URL.createObjectURL(value)}
-                                      alt="Selected Image"
-                                      width={"100"}
-                                      height={"100"}
-                                      className="w-full object-center object-contain"
-                                    />
-                                  </span>
-                                ) : (
+                        <img src={URL.createObjectURL(value)} alt="Selected Image" width={"100"} height={"100"}
+                             className="w-full object-center object-contain"/>
+                      </span>) : (
                                   <div className={"w-full flex flex-col justify-center items-center gap-4"}>
-                                    <span
-                                      className={"flex items-center justify-center rounded-full w-9 h-9 bg-green-100 text-green-600 p-2"}>
-                                      <IconPhoto className={"icon"}/>
-                                    </span>
+                      <span
+                        className={"flex items-center justify-center rounded-full w-9 h-9 bg-green-100 text-green-600 p-2"}>
+                        <IconPhoto className={"icon"}/>
+                      </span>
                                     <p className={"text-center text-gray-400 text-sm font-normal"}>
                                       Rasmni bu yerga sudrab tashlang yoki rasm qo`shish tugmasini bosing
                                     </p>
                                   </div>
-                                )
-                              }
+                                )}
                               <input
                                 {...field}
                                 type="file"
@@ -388,7 +373,7 @@ const Index = () => {
                   size={"xl"}
                   type={"reset"}
                   variant={"outline"}
-                  onClick={() => navigate("/restaurant-products")}
+                  onClick={() => navigate("/users")}
                   className={"w-full gap-2 items-center"}
                 >
                   <IconX className={"w-5 h-5"}/>
