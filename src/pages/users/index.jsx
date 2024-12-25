@@ -87,7 +87,7 @@ const Index = () => {
         <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0">
           {
             !usersData.isLoading ? (
-              usersData && usersData.data && usersData.isSuccess && !usersData.isError && usersData.data.result &&  (
+              usersData && usersData.data && usersData.isSuccess && !usersData.isError && usersData.data.results && (
                 <div className="rounded-md border min-h-[500px]">
                   <Table>
                     <TableHeader>
@@ -110,8 +110,8 @@ const Index = () => {
                     </TableHeader>
                     <TableBody>
                       {
-                        usersData.data.result.results && usersData.data.result.results.length > 0 ? (
-                          usersData.data.result.results.map((user, index) => (
+                        usersData.data.results.length > 0 ? (
+                          usersData.data.results.map((user, index) => (
                             <TableRow key={index} className={"bg-secondary"}>
                               <TableCell className={"flex gap-2 items-center overflow-hidden"}>
                                 {user.image ? (
@@ -154,7 +154,8 @@ const Index = () => {
                                       </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end" className="w-[160px]">
-                                      <DropdownMenuItem onClick={() => navigate(`update/${user.id}`)}>Edit</DropdownMenuItem>
+                                      <DropdownMenuItem
+                                        onClick={() => navigate(`update/${user.id}`)}>Edit</DropdownMenuItem>
                                       <DropdownMenuSeparator/>
                                       <DropdownMenuItem
                                         onClick={() => handleDelete(user)}
