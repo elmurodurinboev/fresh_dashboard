@@ -36,6 +36,7 @@ const Index = () => {
       volume: "",
       is_active: false,
       stock_level: "",
+      contribution_amount: "",
       contribution_type: contributionType,
     },
   });
