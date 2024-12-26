@@ -29,7 +29,7 @@ const RestaurantService = {
   },
 
   async getOwners() {
-    const {data} = await  api.get("/resturant-owner/")
+    const {data} = await  api.get("/restaurant_owners/")
     return data
   }
 }

@@ -326,7 +326,6 @@ const Index = () => {
                       </FormItem>
                     )}
                   />
-
                 </div>
 
                 <div className={"space-x-4"}>
