@@ -27,10 +27,10 @@ const Index = () => {
       descriptions: "",
       price: "",
       discount_price: "",
-      category: "",
-      count: "",
+      subcategory: "",
       is_active: false,
       stock_level: "",
+      contribution_amount: "",
       contribution_type: contributionType,
     },
   });
@@ -65,6 +65,7 @@ const Index = () => {
   })
 
   const onSubmit = (data) => {
+    data.contribution_type = contributionType
     const formData = new FormData()
     Object.keys(data).forEach(item => formData.append(item, data[item]))
 
@@ -175,49 +176,27 @@ const Index = () => {
                   )}
                 />
 
-                <div className="grid grid-cols-12 gap-3">
-                  <Controller
-                    name="count"
-                    control={form.control}
-                    rules={{required: "Count is required"}}
-                    render={({field, fieldState: {error}}) => (
-                      <div className="col-span-6">
-                        <label className="text-[#667085]">Soni</label>
-                        <InputWithFormat
-                          placeholder="10"
-                          value={field.value}
-                          onValueChange={(e) => field.onChange(e)}
-                        />
-                        {error && (
-                          <p className="text-red-500 text-sm">
-                            {error.message}
-                          </p>
-                        )}
-                      </div>
-                    )}
-                  />
 
-                  <Controller
-                    name="stock_level"
-                    control={form.control}
-                    rules={{required: "Stock level is required"}}
-                    render={({field, fieldState: {error}}) => (
-                      <div className="col-span-6">
-                        <label className="text-[#667085]">Stock level</label>
-                        <InputWithFormat
-                          placeholder="10"
-                          value={field.value}
-                          onValueChange={(e) => field.onChange(e)}
-                        />
-                        {error && (
-                          <p className="text-red-500 text-sm">
-                            {error.message}
-                          </p>
-                        )}
-                      </div>
-                    )}
-                  />
-                </div>
+                <Controller
+                  name="stock_level"
+                  control={form.control}
+                  rules={{required: "Stock level is required"}}
+                  render={({field, fieldState: {error}}) => (
+                    <div className="col-span-6">
+                      <label className="text-[#667085]">Stock level</label>
+                      <InputWithFormat
+                        placeholder="10"
+                        value={field.value}
+                        onValueChange={(e) => field.onChange(e)}
+                      />
+                      {error && (
+                        <p className="text-red-500 text-sm">
+                          {error.message}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                />
 
                 <Controller
                   name="price"
@@ -418,7 +397,7 @@ const Index = () => {
                 className={"w-full"}
                 loading={mutation.isPending}
               >
-                save
+                Qo`shish
               </Button>
 
               <Button
@@ -429,7 +408,7 @@ const Index = () => {
                 className={"w-full gap-2 items-center"}
               >
                 <IconX className={"w-5 h-5"}/>
-                cancel
+                Bekor qilish
               </Button>
             </div>
           </form>
