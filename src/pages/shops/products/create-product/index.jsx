@@ -23,7 +23,7 @@ const formSchema = z.object({
     .min(3, {message: 'Name must be at least 3'}),
   image: z.preprocess(
     (val) => (val instanceof File ? val : undefined), // Ensure the value is a File or undefined
-    z.instanceof(File, { message: "Image is required and must be a file" }) // Validate as File
+    z.instanceof(File, {message: "Image is required and must be a file"}) // Validate as File
   ),
   descriptions: z
     .string()
@@ -168,7 +168,7 @@ const Index = () => {
                       <FormItem className="space-y-1">
                         <FormLabel className={"text-[#667085]"}>Mahsulot soni</FormLabel>
                         <FormControl>
-                          <Input placeholder="10" {...field} onChange={e => field.onChange(+e.target.value)}  />
+                          <Input placeholder="10" {...field} onChange={e => field.onChange(+e.target.value)}/>
                         </FormControl>
                         <FormMessage/>
                       </FormItem>
@@ -182,7 +182,7 @@ const Index = () => {
                       <FormItem className="space-y-1">
                         <FormLabel className={"text-[#667085]"}>Mahsulot narhi</FormLabel>
                         <FormControl>
-                          <Input placeholder="10" {...field} onChange={e => field.onChange(+e.target.value)}  />
+                          <Input placeholder="10" {...field} onChange={e => field.onChange(+e.target.value)}/>
                         </FormControl>
                         <FormMessage/>
                       </FormItem>
@@ -196,7 +196,7 @@ const Index = () => {
                       <FormItem className="space-y-1">
                         <FormLabel className={"text-[#667085]"}>Mahsulotdan beriladigan ulush</FormLabel>
                         <FormControl>
-                          <Input placeholder="1000" {...field} onChange={e => field.onChange(+e.target.value)}  />
+                          <Input placeholder="1000" {...field} onChange={e => field.onChange(+e.target.value)}/>
                         </FormControl>
                         <FormMessage/>
                       </FormItem>
@@ -210,7 +210,7 @@ const Index = () => {
                       <FormItem className="space-y-1">
                         <FormLabel className={"text-[#667085]"}>Mahsulot tavsifi</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="Go'sh, hamir" className={"resize-none"} {...field} rows={5} />
+                          <Textarea placeholder="Go'sh, hamir" className={"resize-none"} {...field} rows={5}/>
                         </FormControl>
                         <FormMessage/>
                       </FormItem>
@@ -252,14 +252,15 @@ const Index = () => {
                               {
                                 value ? (
                                   <span className={"w-full min-h-max rounded-md overflow-hidden"}>
-                        <img src={URL.createObjectURL(value)} alt="Selected Image" width={"100"} height={"100"}
-                             className="w-full object-center object-contain"/>
-                      </span>) : (
+                                    <img src={URL.createObjectURL(value)} alt="Selected Image" width={"100"} height={"100"}
+                                         className="w-full object-center object-contain"/>
+                                  </span>
+                                ) : (
                                   <div className={"w-full flex flex-col justify-center items-center gap-4"}>
-                      <span
-                        className={"flex items-center justify-center rounded-full w-9 h-9 bg-green-100 text-green-600 p-2"}>
-                        <IconPhoto className={"icon"}/>
-                      </span>
+                                    <span
+                                      className={"flex items-center justify-center rounded-full w-9 h-9 bg-green-100 text-green-600 p-2"}>
+                                      <IconPhoto className={"icon"}/>
+                                    </span>
                                     <p className={"text-center text-gray-400 text-sm font-normal"}>
                                       Rasmni bu yerga sudrab tashlang yoki rasm qo`shish tugmasini bosing
                                     </p>
