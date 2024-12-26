@@ -130,7 +130,7 @@ const Index = () => {
 
                               <TableCell>
                                 {
-                                  product?.subcategory.name
+                                  product?.subcategory?.name
                                 }
                               </TableCell>
 
