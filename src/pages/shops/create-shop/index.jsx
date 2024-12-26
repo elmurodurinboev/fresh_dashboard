@@ -135,7 +135,7 @@ const Index = () => {
                       <FormItem className="flex flex-col gap-1 pt-3 items-end">
                         <FormLabel className={"text-[#667085] flex items-center"}>Aktivligi</FormLabel>
                         <FormControl>
-                          <Switch {...field} />
+                          <Switch {...field} checked={field.value} onCheckedChange={val => field.onChange(val)} />
                         </FormControl>
                         <FormMessage/>
                       </FormItem>

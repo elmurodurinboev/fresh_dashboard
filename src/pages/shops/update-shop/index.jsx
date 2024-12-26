@@ -81,8 +81,8 @@ const Index = () => {
         latitude: data.result.latitude ? data.result.latitude : '',
         longitude: data.result.longitude ? data.result.longitude : '',
         is_active: data.result.is_active ? data.result.is_active : false,
-        owner: data.result.owner ? +data.result.owner : null,
-        country: data.result.country ? +data.result.country : null,
+        owner: data.result.owner ? +data.result.owner.id : null,
+        country: data.result.country ? +data.result.country.id : null,
       });
     }
   }, [shopData.isSuccess, shopData.data?.result]);
@@ -161,7 +161,7 @@ const Index = () => {
                       <FormItem className="flex flex-col gap-1 pt-3 items-end">
                         <FormLabel className={"text-[#667085] flex items-center"}>Aktivligi</FormLabel>
                         <FormControl>
-                          <Switch {...field} />
+                          <Switch {...field} checked={field.value} onCheckedChange={val => field.onChange(val)} />
                         </FormControl>
                         <FormMessage/>
                       </FormItem>
