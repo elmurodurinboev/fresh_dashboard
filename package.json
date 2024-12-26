@@ -1,6 +1,7 @@
 {
-  "name": "smart_school_dashboard",
+  "name": "we_drive_dashboard",
   "private": true,
+  "author": "elmurodurinboev",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
