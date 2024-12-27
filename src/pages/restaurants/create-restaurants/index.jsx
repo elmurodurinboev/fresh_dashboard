@@ -36,7 +36,19 @@ const formSchema = z.object({
   rating: z
     .number(),
   is_active: z
-    .boolean()
+    .boolean(),
+  latitude: z
+    .string(),
+  longitude: z
+    .string(),
+  opening_time: z
+    .string(),
+  closing_time: z
+    .string(),
+  contractor: z
+    .string(),
+  address: z
+    .string(),
 })
 
 const Index = () => {
@@ -52,7 +64,13 @@ const Index = () => {
       picture: null,
       description: '',
       rating: "",
-      is_active: false
+      is_active: false,
+      latitude: "",
+      longitude: "",
+      opening_time: "",
+      closing_time: "",
+      contractor: "",
+      address: '',
     }
   })
 
@@ -113,6 +131,34 @@ const Index = () => {
             <form onSubmit={form.handleSubmit(onSubmit)} className={"grid grid-cols-12 gap-4"}>
               <div className={"col-span-12 lg:col-span-8 flex flex-col gap-4"}>
                 <div className={"w-full p-6 bg-white rounded-2xl shadow flex flex-col gap-4"}>
+                  <div className={"flex items-center justify-between gap-3"}>
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({field}) => (
+                        <FormItem className="space-y-1 flex-1">
+                          <FormLabel className={"text-[#667085]"}>Restaran nomi</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Evos" {...field} />
+                          </FormControl>
+                          <FormMessage/>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="is_active"
+                      render={({field}) => (
+                        <FormItem className="flex flex-col gap-1 items-end pt-2">
+                          <FormLabel className={"text-[#667085] flex items-center"}>Aktivligi</FormLabel>
+                          <FormControl>
+                            <Switch {...field} />
+                          </FormControl>
+                          <FormMessage/>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
                   {
                     !owners.isLoading ? (
                       !owners.isError && owners.data && owners.isSuccess && owners.data.result ? (
@@ -131,7 +177,7 @@ const Index = () => {
                                     {
                                       owners.data.result.results.map((item, index) => (
                                         <SelectItem value={item.id}
-                                                    key={index}>{item.first_name} {item.last_name}</SelectItem>
+                                                    key={index}>{item.full_name}</SelectItem>
                                       ))
                                     }
                                   </SelectContent>
@@ -187,10 +233,25 @@ const Index = () => {
 
                   <FormField
                     control={form.control}
-                    name="name"
+                    name="address"
                     render={({field}) => (
                       <FormItem className="space-y-1">
-                        <FormLabel className={"text-[#667085]"}>Restaran nomi</FormLabel>
+                        <FormLabel className={"text-[#667085]"}>Manzil</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Hazorasp" {...field} type={"text"}/>
+                        </FormControl>
+                        <FormMessage/>
+                      </FormItem>
+                    )}
+                  />
+
+
+                  <FormField
+                    control={form.control}
+                    name="contractor"
+                    render={({field}) => (
+                      <FormItem className="space-y-1">
+                        <FormLabel className={"text-[#667085]"}>Contractor</FormLabel>
                         <FormControl>
                           <Input placeholder="Evos" {...field} />
                         </FormControl>
@@ -198,21 +259,6 @@ const Index = () => {
                       </FormItem>
                     )}
                   />
-
-                  <FormField
-                    control={form.control}
-                    name="delivery_time"
-                    render={({field}) => (
-                      <FormItem className="space-y-1">
-                        <FormLabel className={"text-[#667085]"}>Yetkazib berish vaqti</FormLabel>
-                        <FormControl>
-                          <Input placeholder="10" {...field} />
-                        </FormControl>
-                        <FormMessage/>
-                      </FormItem>
-                    )}
-                  />
-
                   <div className={"flex items-center justify-between gap-4"}>
                     <FormField
                       control={form.control}
@@ -227,20 +273,56 @@ const Index = () => {
                         </FormItem>
                       )}
                     />
+                  </div>
 
-                    <FormField
-                      control={form.control}
-                      name="is_active"
-                      render={({field}) => (
-                        <FormItem className="flex  gap-2">
-                          <FormLabel className={"text-[#667085] flex items-center"}>Aktivligi</FormLabel>
-                          <FormControl>
-                            <Switch {...field} />
-                          </FormControl>
-                          <FormMessage/>
-                        </FormItem>
-                      )}
-                    />
+                  <div className={"grid grid-cols-12 items-center gap-3"}>
+                    <div className={"col-span-6 flex justify-between"}>
+                      <FormField
+                        control={form.control}
+                        name="opening_time"
+                        render={({field}) => (
+                          <FormItem className="space-y-1">
+                            <FormLabel className={"text-[#667085]"}>Ochilish vaqti</FormLabel>
+                            <FormControl>
+                              <Input placeholder="30"  {...field} type={"time"} className={"w-auto"}/>
+                            </FormControl>
+                            <FormMessage/>
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="closing_time"
+                        render={({field}) => (
+                          <FormItem className="space-y-1">
+                            <FormLabel className={"text-[#667085]"}>Ochilish vaqti</FormLabel>
+                            <FormControl>
+                              <Input placeholder="30" {...field} type={"time"} className={"w-auto"}/>
+                            </FormControl>
+                            <FormMessage/>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className={"col-span-6"}>
+                      <FormField
+                        control={form.control}
+                        name="delivery_time"
+                        render={({field}) => (
+                          <FormItem className="space-y-1 flex-1">
+                            <FormLabel className={"text-[#667085]"}>Yetkazib berish vaqti</FormLabel>
+                            <FormControl>
+                              <div className={"flex items-center gap-2"}>
+                                <Input placeholder="30" {...field} type={"number"}/>
+                                <span>daqiqa</span>
+                              </div>
+                            </FormControl>
+                            <FormMessage/>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                   </div>
 
                   <FormField
@@ -256,6 +338,38 @@ const Index = () => {
                       </FormItem>
                     )}
                   />
+
+                  <div className={"grid grid-cols-12 gap-3"}>
+                    <div className={"col-span-12"}>
+                      <h3 className={"text-xl font-medium"}>Joylashuv</h3>
+                    </div>
+                    <FormField
+                      control={form.control}
+                      name="latitude"
+                      render={({field}) => (
+                        <FormItem className="space-y-1 col-span-6">
+                          <FormLabel className={"text-[#667085]"}>Latitude</FormLabel>
+                          <FormControl>
+                            <Input placeholder="41.1" {...field} type={"text"}/>
+                          </FormControl>
+                          <FormMessage/>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="longitude"
+                      render={({field}) => (
+                        <FormItem className="space-y-1 col-span-6">
+                          <FormLabel className={"text-[#667085]"}>Longitude</FormLabel>
+                          <FormControl>
+                            <Input placeholder="61.1" {...field} type={"text"}/>
+                          </FormControl>
+                          <FormMessage/>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -352,6 +466,7 @@ const Index = () => {
                   size={"xl"}
                   type={"submit"}
                   className={"w-full"}
+                  loading={mutation.isPending}
                 >
                   Saqlash
                 </Button>
