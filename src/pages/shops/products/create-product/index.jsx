@@ -14,11 +14,13 @@ import {toast} from "@/hooks/use-toast.js";
 import {Textarea} from "@/components/ui/textarea.jsx";
 import {Switch} from "@/components/ui/switch.jsx";
 import InputWithFormat from "@/components/custom/input-with-format.jsx";
+import {Checkbox} from "@/components/ui/checkbox.jsx";
 
 
 const Index = () => {
   const navigate = useNavigate()
   const [isDragged, setIsDragged] = useState(false)
+  const [withDiscount, setWithDiscount] = useState(false)
   const [contributionType, setContributionType] = useState('percent')
   const form = useForm({
     defaultValues: {
@@ -66,10 +68,10 @@ const Index = () => {
 
   const onSubmit = (data) => {
     data.contribution_type = contributionType
+    data.discount_price = data.discount_price === '' ? 0 : data.discount_price
     const formData = new FormData()
-    Object.keys(data).forEach(item => formData.append(item, data[item]))
-
-    formData.append("image", data.image ? data.image[0] : "")
+    Object.keys(data).forEach(item => item !== 'image' && formData.append(item, data[item]))
+    formData.append("image", data.image ? data.image : "")
     mutation.mutate(formData)
   }
 
@@ -98,7 +100,7 @@ const Index = () => {
                     subCategoryData.data.result &&
                     subCategoryData.data.result ? (
                       <Controller
-                        name="category"
+                        name="subcategory"
                         control={form.control}
                         defaultValue={""}
                         rules={{required: "Category is required"}} // Add validation rules here
@@ -183,7 +185,7 @@ const Index = () => {
                   rules={{required: "Stock level is required"}}
                   render={({field, fieldState: {error}}) => (
                     <div className="col-span-6">
-                      <label className="text-[#667085]">Stock level</label>
+                      <label className="text-[#667085]">Maxsulot soni</label>
                       <InputWithFormat
                         placeholder="10"
                         value={field.value}
@@ -220,17 +222,27 @@ const Index = () => {
                 <Controller
                   name="discount_price"
                   control={form.control}
-                  rules={{required: "Discount price is required"}}
+                  rules={{required: false}}
                   render={({field, fieldState: {error}}) => (
                     <div>
-                      <label className="text-[#667085]">
-                        Chegirma
-                      </label>
-                      <InputWithFormat
-                        placeholder="10 000"
-                        value={field.value}
-                        onValueChange={(e) => field.onChange(e)}
-                      />
+                      <div className={"flex items-center gap-2"}>
+                        <label className="text-[#667085]">
+                          Chegirma
+                        </label>
+                        <Checkbox className={"w-5 h-5 rounded-md"} checked={withDiscount} onCheckedChange={val => {
+                          field.onChange("")
+                          setWithDiscount(val)
+                        }} />
+                      </div>
+                      {
+                        withDiscount && (
+                          <InputWithFormat
+                            placeholder="10 000"
+                            value={field.value}
+                            onValueChange={(e) => field.onChange(e)}
+                          />
+                        )
+                      }
                       {error && (
                         <p className="text-red-500 text-sm">{error.message}</p>
                       )}
