@@ -28,6 +28,11 @@ const RestaurantService = {
     return data
   },
 
+  async updatePatch(payload) {
+    const {data} = await api.patch(`/restaurant/${payload.id}/`, payload.formData)
+    return data
+  },
+
   async getOwners() {
     const {data} = await  api.get("/restaurant_owners/")
     return data
