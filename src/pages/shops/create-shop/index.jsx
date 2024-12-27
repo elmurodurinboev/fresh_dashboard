@@ -256,7 +256,7 @@ const Index = () => {
                       name="closing_time"
                       render={({field}) => (
                         <FormItem className="space-y-1">
-                          <FormLabel className={"text-[#667085]"}>Ochilish vaqti</FormLabel>
+                          <FormLabel className={"text-[#667085]"}>Yopilish vaqti</FormLabel>
                           <FormControl>
                             <Input placeholder="30" {...field} type={"time"} className={"w-auto"}/>
                           </FormControl>

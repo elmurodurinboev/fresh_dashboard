@@ -73,13 +73,13 @@ const Index = () => {
       <Layout.Body>
         <div className="mb-2 flex items-center justify-between space-y-2">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight">Products</h2>
+            <h2 className="text-2xl font-bold tracking-tight">Mahsulotlar</h2>
           </div>
           <div>
             <Button
               onClick={() => navigate("create")}
             >
-              Add product
+              Mahsulot qo`shish
             </Button>
           </div>
         </div>
@@ -92,22 +92,25 @@ const Index = () => {
                     <TableHeader>
                       <TableRow>
                         <TableHead>
-                          Image and name
+                          Rasm va nomi
                         </TableHead>
                         <TableHead>
-                          Category
+                          Kategoriyasi
                         </TableHead>
                         <TableHead>
-                          Stock level
+                          Soni
                         </TableHead>
                         <TableHead>
-                          Price
+                          Narhi
                         </TableHead>
                         <TableHead>
-                          Discount price
+                          Chegirmasi
                         </TableHead>
                         <TableHead>
                           Aktivligi
+                        </TableHead>
+                        <TableHead>
+                          Ulush
                         </TableHead>
                         <TableHead className={"text-end"}>
                         </TableHead>
@@ -133,7 +136,7 @@ const Index = () => {
 
                               <TableCell>
                                 {
-                                  product?.category
+                                  product?.category_name
                                 }
                               </TableCell>
 
@@ -157,6 +160,14 @@ const Index = () => {
                               <TableCell>
                                 {
                                   product.is_active ? "Aktiv" : 'Aktiv emas'
+                                }
+                              </TableCell>
+
+                              <TableCell>
+                                {
+                                  product.contribution_type === 'percent' ? (
+                                    product?.contribution_amount + "%"
+                                  ) : (Formatter.currency(product?.contribution_amount))
                                 }
                               </TableCell>
 
