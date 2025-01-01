@@ -60,7 +60,9 @@
     "maintenance_desc": "The site is not available at the moment. <br></br> We'll be back online shortly.",
     "learn_more": "Learn More",
     "unauthorised_title": "Oops! You don't have permission to access this page.",
-    "unauthorised_desc": " It looks like you tried to access a resource that requires proper authentication. <br></br> Please log in with the appropriate credentials."
+    "unauthorised_desc": " It looks like you tried to access a resource that requires proper authentication. <br></br> Please log in with the appropriate credentials.",
+    "not_allowed_title": "Access Denied",
+    "not_allowed_desc": "You do not have permission to access this resource. Please contact your administrator if you believe this is a mistake."
   },
   "userNav": {
     "profile": "Profile",

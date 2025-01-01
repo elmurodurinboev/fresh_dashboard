@@ -6,10 +6,18 @@ import Nav from "./nav"
 import { cn } from "@/lib/utils"
 import { sidelinks } from "@/data/sidelinks"
 import MainLogo from "@/components/custom/main-logo.jsx";
+import {useAuth} from "@/hooks/utils/useAuth.js";
 
 export default function Sidebar({ className, isCollapsed, setIsCollapsed }) {
   const [navOpened, setNavOpened] = useState(false)
 
+  const {session} = useAuth()
+  const filterSidebarItems = (items) => {
+    return items.filter(item => {
+      if (!item.roles) return true
+      return item.roles.some(role => session?.user.user_role === role)
+    })
+  }
   /* Make body not scrollable when navBar is opened */
   useEffect(() => {
     if (navOpened) {
@@ -78,7 +86,7 @@ export default function Sidebar({ className, isCollapsed, setIsCollapsed }) {
           }`}
           closeNav={() => setNavOpened(false)}
           isCollapsed={isCollapsed}
-          links={sidelinks}
+          links={filterSidebarItems((sidelinks))}
         />
 
         {/* Scrollbar width toggle button */}

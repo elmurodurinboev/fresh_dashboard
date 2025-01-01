@@ -1,291 +1,126 @@
-import {createBrowserRouter} from "react-router-dom"
-import GeneralError from "./pages/errors/general-error"
-import NotFoundError from "./pages/errors/not-found-error"
-import MaintenanceError from "./pages/errors/maintenance-error"
+import { createBrowserRouter, Navigate } from "react-router-dom";
+import GeneralError from "./pages/errors/general-error";
+import NotFoundError from "./pages/errors/not-found-error";
+import MaintenanceError from "./pages/errors/maintenance-error";
 import UnauthorisedError from "@/pages/errors/unauthorised-error.jsx";
+import {AuthService} from "@/services/auth.service.js";
+import ROLES from "@/data/roles.js";
+import NotAllowed from "@/pages/errors/not-allowed.jsx";
 
-const router = createBrowserRouter([
+// User's role (dynamically fetch from auth state or context in a real app)
+const session = AuthService.getAuthSession()
+
+// Routes with metadata for role-based access
+const routes = [
   // Auth routes
   {
     path: "/auth/login",
     lazy: async () => ({
-      Component: (await import("./pages/auth/login.jsx")).default
-    })
+      Component: (await import("./pages/auth/login.jsx")).default,
+    }),
   },
 
   // Main routes
   {
-    path: '/',
+    path: "/",
     lazy: async () => ({
-      Component: (await import("./layouts/Protected.jsx")).default
+      Component: (await import("./layouts/Protected.jsx")).default,
     }),
     children: [
       {
         path: "/",
         lazy: async () => {
-          const AppShell = await import("./components/app-shell")
-          return {Component: AppShell.default}
+          const AppShell = await import("./components/app-shell");
+          return { Component: AppShell.default };
         },
-        errorElement: <GeneralError/>,
+        errorElement: <GeneralError />,
         children: [
           {
             index: true,
             lazy: async () => ({
-              Component: (await import("@/pages/dashboard")).default
-            })
+              Component: (await import("@/pages/dashboard")).default,
+            }),
+            meta: { roles: [ROLES.ADMIN, ROLES.SHOP_OWNER, ROLES.RESTAURANT_OWNER] },
           },
-          {
-            path: "tasks",
-            lazy: async () => ({
-              Component: (await import("@/pages/tasks")).default
-            })
-          },
-          // ===========================================
-          // Shop routes
           {
             path: "shops",
             lazy: async () => ({
-              Component: (await import("@/pages/shops")).default
-            })
+              Component: (await import("@/pages/shops")).default,
+            }),
+            meta: { roles: [ROLES.ADMIN] },
           },
           {
             path: "shops/create",
             lazy: async () => ({
-              Component: (await import("@/pages/shops/create-shop")).default
-            })
+              Component: (await import("@/pages/shops/create-shop")).default,
+            }),
+            meta: { roles: [ROLES.ADMIN] },
           },
-          {
-            path: "shops/update/:id",
-            lazy: async () => ({
-              Component: (await import("@/pages/shops/update-shop")).default
-            })
-          },
-
-          // Shop product routes
-          {
-            path: "shop-products",
-            lazy: async () => ({
-              Component: (await import("@/pages/shops/products")).default
-            })
-          },
-          {
-            path: "shop-products/update/:id",
-            lazy: async () => ({
-              Component: (await import("@/pages/shops/products/update-product")).default
-            })
-          },
-
-          {
-            path: "shop-products/create",
-            lazy: async () => ({
-              Component: (await import("@/pages/shops/products/create-product")).default
-            })
-          },
-
-          // ShopCategory
-          {
-            path: "shop-category",
-            lazy: async () => ({
-              Component: (await import("@/pages/shops/category")).default
-            })
-          },
-          {
-            path: "shop-category/create",
-            lazy: async () => ({
-              Component: (await import("@/pages/shops/category/create-category")).default
-            })
-          },
-          {
-            path: "shop-category/update/:id",
-            lazy: async () => ({
-              Component: (await import("@/pages/shops/category/update-category")).default
-            })
-          },
-
-          // SubCategory
-          {
-            path: "subcategory",
-            lazy: async () => ({
-              Component: (await import("@/pages/shops/subcategory")).default
-            })
-          },
-          {
-            path: "subcategory/create",
-            lazy: async () => ({
-              Component: (await import("@/pages/shops/subcategory/create-subcategory")).default
-            })
-          },
-          {
-            path: "subcategory/update/:id",
-            lazy: async () => ({
-              Component: (await import("@/pages/shops/subcategory/update-subcategory")).default
-            })
-          },
-
-          // ======================================================================
-          // Restaurant routes
-          {
-            path: "restaurants",
-            lazy: async () => ({
-              Component: (await import("@/pages/restaurants")).default
-            })
-          },
-          {
-            path: "restaurants/update/:id",
-            lazy: async () => ({
-              Component: (await import("@/pages/restaurants/update-restaurants")).default
-            })
-          },
-          {
-            path: "restaurants/create",
-            lazy: async () => ({
-              Component: (await import("@/pages/restaurants/create-restaurants")).default
-            })
-          },
-
-          // RestaurantProducts routes
-          {
-            path: "restaurant-products",
-            lazy: async () => ({
-              Component: (await import("@/pages/restaurants/products")).default
-            })
-          },
-          {
-            path: "restaurant-products/create",
-            lazy: async () => ({
-              Component: (await import("@/pages/restaurants/products/create-product")).default
-            })
-          },
-          {
-            path: "restaurant-products/update/:id",
-            lazy: async () => ({
-              Component: (await import("@/pages/restaurants/products/update-product")).default
-            })
-          },
-
-          // RestaurantCategory
-          {
-            path: "restaurant-category",
-            lazy: async () => ({
-              Component: (await import("@/pages/restaurants/category")).default
-            })
-          },
-          {
-            path: "restaurant-category/create",
-            lazy: async () => ({
-              Component: (await import("@/pages/restaurants/category/create-category")).default
-            })
-          },
-          {
-            path: "restaurant-category/update/:id",
-            lazy: async () => ({
-              Component: (await import("@/pages/restaurants/category/update-category")).default
-            })
-          },
-
-          // Courier router
-
-          {
-            path: "courier",
-            lazy: async () => ({
-              Component: (await import("@/pages/courier")).default
-            })
-          },
-          {
-            path: "courier/create",
-            lazy: async () => ({
-              Component: (await import("@/pages/courier/create-courier")).default
-            })
-          },
-          {
-            path: "courier/update/:id",
-            lazy: async () => ({
-              Component: (await import("@/pages/courier/update-courier")).default
-            })
-          },
-
-          // Users Routes
-
           {
             path: "users",
             lazy: async () => ({
-              Component: (await import("@/pages/users")).default
-            })
-          },
-          {
-            path: "users/create",
-            lazy: async () => ({
-              Component: (await import("@/pages/users/create-user")).default
-            })
-          },
-
-          {
-            path: "extra-components",
-            lazy: async () => ({
-              Component: (await import("@/pages/extra-components")).default
-            })
+              Component: (await import("@/pages/users")).default,
+            }),
+            meta: { roles: [ROLES.ADMIN] },
           },
           {
             path: "settings",
             lazy: async () => ({
-              Component: (await import("./pages/settings")).default
+              Component: (await import("./pages/settings")).default,
             }),
-            errorElement: <GeneralError/>,
             children: [
               {
                 index: true,
                 lazy: async () => ({
-                  Component: (await import("./pages/settings/profile")).default
-                })
+                  Component: (await import("./pages/settings/profile")).default,
+                }),
+                meta: { roles: [ROLES.ADMIN, ROLES.SHOP_OWNER, ROLES.RESTAURANT_OWNER, ROLES.OPERATOR, ROLES.COURIER, ROLES.CLIENT] },
               },
               {
                 path: "account",
                 lazy: async () => ({
-                  Component: (await import("./pages/settings/account")).default
-                })
-              },
-              {
-                path: "appearance",
-                lazy: async () => ({
-                  Component: (await import("./pages/settings/appearance")).default
-                })
-              },
-              {
-                path: "notifications",
-                lazy: async () => ({
-                  Component: (await import("./pages/settings/notifications/index.jsx"))
-                    .default
-                })
-              },
-              {
-                path: "display",
-                lazy: async () => ({
-                  Component: (await import("./pages/settings/display")).default
-                })
-              },
-              {
-                path: "error-example",
-                lazy: async () => ({
-                  Component: (await import("./pages/settings/error-example"))
-                    .default
+                  Component: (await import("./pages/settings/account")).default,
                 }),
-                errorElement: <GeneralError className="h-[50svh]" minimal/>
-              }
-            ]
-          }
-        ]
+                meta: { roles: [ROLES.ADMIN, ROLES.SHOP_OWNER, ROLES.RESTAURANT_OWNER, ROLES.OPERATOR, ROLES.COURIER, ROLES.CLIENT] },
+              },
+            ],
+          },
+        ],
       },
-    ]
+    ],
   },
 
   // Error routes
-  {path: "/500", Component: GeneralError},
-  {path: "/404", Component: NotFoundError},
-  {path: "/503", Component: MaintenanceError},
-  {path: "/401", Component: UnauthorisedError},
+  { path: "/500", Component: GeneralError },
+  { path: "/404", Component: NotFoundError },
+  { path: "/503", Component: MaintenanceError },
+  { path: "/401", Component: UnauthorisedError },
+  { path: "/403", Component: NotAllowed },
 
   // Fallback 404 route
-  {path: "*", Component: NotFoundError}
-])
+  { path: "*", Component: NotFoundError },
+];
 
-export default router
+// Centralized guard logic
+const applyGuards = (routes, userRole) => {
+  const guardRoute = (route) => {
+    if (!userRole) return { ...route, Component: () => <Navigate to="/500" replace /> };
+    if (route.meta?.roles && !route.meta.roles.includes(userRole)) {
+      return { ...route, Component: () => <Navigate to="/403" replace /> };
+    }
+    if (route.children) {
+      return { ...route, children: route.children.map(guardRoute) };
+    }
+    return route;
+  };
+
+  return routes.map(guardRoute);
+};
+
+// Apply guards
+const guardedRoutes = applyGuards(routes, session?.user?.user_role);
+
+// Create the router
+const router = createBrowserRouter(guardedRoutes);
+
+export default router;
