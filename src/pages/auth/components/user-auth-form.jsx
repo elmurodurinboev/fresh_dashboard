@@ -78,7 +78,7 @@ export function UserAuthForm({className, ...props}) {
 
   function onSubmit(data) {
     setIsLoading(true)
-    data.phone_number = `+998${data.phone_number}`
+    data.phone_number = (`+998${data.phone_number}`).toString().trim()
     mutation.mutate(data)
   }
 
