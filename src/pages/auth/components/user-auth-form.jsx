@@ -95,12 +95,12 @@ export function UserAuthForm({className, ...props}) {
                   <FormLabel>Phone number</FormLabel>
                   <FormControl>
                     <div className="relative flex items-center">
-                      <span className="absolute left-2 text-sm">+99 8</span>
+                      <span className="absolute left-2.5 top-[9px] text-sm">+998</span>
                       <PhoneInput
                         {...field}
                         onChange={() => {}}
                         mask="00 000 0000"
-                        className={"pl-12 flex h-9"}
+                        className={"pl-12 flex h-9 items-center"}
                         placeholder="90 000 0000"
                         onAccept={(val, mask) => {
                           field.onChange(mask._unmaskedValue);
