@@ -92,7 +92,7 @@ export function UserAuthForm({className, ...props}) {
               name="phone_number"
               render={({ field }) => (
                 <FormItem className="space-y-1">
-                  <FormLabel>Phone number</FormLabel>
+                  <FormLabel>Telefon raqam</FormLabel>
                   <FormControl>
                     <div className="relative flex items-center">
                       <span className="absolute left-2.5 top-[9px] text-sm">+998</span>
@@ -119,7 +119,7 @@ export function UserAuthForm({className, ...props}) {
               name="password"
               render={({field}) => (
                 <FormItem className="space-y-1">
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>Parol</FormLabel>
                   <FormControl>
                     <PasswordInput placeholder="********" {...field} />
                   </FormControl>
