@@ -66,4 +66,8 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  .special-cell {
+    padding: 20px 5px;
+  }
 }
