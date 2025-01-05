@@ -1,14 +1,8 @@
 import {Layout} from "@/components/custom/layout.jsx";
 import {Button} from "@/components/custom/button.jsx";
-import {IconPhoto, IconPlus, IconX} from "@tabler/icons-react";
-import {useState} from "react";
 import {Controller, useForm} from "react-hook-form";
-import {z} from "zod";
-import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.jsx";
 import {useNavigate} from "react-router-dom";
 import {useMutation, useQuery} from "@tanstack/react-query";
-import {Input} from "@/components/ui/input.jsx";
-import {zodResolver} from "@hookform/resolvers/zod";
 import {toast} from "@/hooks/use-toast.js";
 import RestaurantService from "@/services/restaurant.service.js";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.jsx";
@@ -151,7 +145,7 @@ const Index = () => {
                           <SelectItem value={"proceeds"}>
                             Kirim
                           </SelectItem>
-                          <SelectItem value={"expenses"}>
+                          <SelectItem value={"expense"}>
                             Chiqim
                           </SelectItem>
                         </SelectContent>

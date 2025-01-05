@@ -3,7 +3,7 @@ import { IntlProvider } from 'use-intl';
 import translations from '../translations';
 
 const initialState = {
-  language: 'en',
+  language: 'uz',
   setLanguage: () => null,
 };
 
@@ -11,7 +11,7 @@ const LanguageProviderContext = createContext(initialState);
 
 export function LanguageProvider({
                                    children,
-                                   defaultLanguage = 'en',
+                                   defaultLanguage = 'uz',
                                    storageKey = 'vite-ui-language',
                                    ...props
                                  }) {

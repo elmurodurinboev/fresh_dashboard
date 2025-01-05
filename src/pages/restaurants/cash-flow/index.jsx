@@ -85,7 +85,7 @@ const Index = () => {
                                   restaurant?.finance_flow_type === "proceeds" ? (
                                     <span className={"bg-green-500 py-1 px-2 rounded-md text-white"}>Kirim</span>
                                   ) : (
-                                    <span className={"bg-rose-500 py-1 px-2 rounded-md"}>Chiqim</span>
+                                    <span className={"bg-rose-500 py-1 px-2 rounded-md text-white"}>Chiqim</span>
                                   )
                                 }
                               </TableCell>
