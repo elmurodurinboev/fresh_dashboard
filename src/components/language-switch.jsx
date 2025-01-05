@@ -13,7 +13,6 @@ export default function LanguageSwitch() {
   const { language, setLanguage } = useLanguage();
 
   const languageText = new Map([
-    ['en', 'English'],
     ['uz', `O'zbekcha`],
   ]);
 

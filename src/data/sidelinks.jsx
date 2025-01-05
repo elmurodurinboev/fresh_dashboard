@@ -5,7 +5,9 @@ import {
   IconBuildingStore,
   IconCategory,
   IconCategory2,
-  IconScooterElectric, IconUsers
+  IconScooterElectric,
+  IconUsers,
+  IconCashRegister
 } from "@tabler/icons-react"
 
 export const sidelinks = [
@@ -73,6 +75,13 @@ export const sidelinks = [
     label: "",
     href: "/courier",
     icon: <IconScooterElectric size={18}/>
+  },
+  {
+    title: "sidebar.cash-flow",
+    label: "",
+    href: "/cash-flow",
+    icon: <IconCashRegister size={18}/>,
+    // roles: [ROLES.ADMIN]
   },
   {
     title: "sidebar.settings",

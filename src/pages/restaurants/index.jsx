@@ -19,6 +19,7 @@ import DeleteConfirmationModal from "@/components/custom/delete-confirmation-mod
 import {useState} from "react";
 import RestaurantService from "@/services/restaurant.service.js";
 import DefaultImage from "@/components/custom/default-image.jsx";
+import {Formatter} from "@/utils/formatter.js";
 
 const Index = () => {
   const [deleteModal, setDeleteModal] = useState(false)
@@ -93,6 +94,9 @@ const Index = () => {
                           Nomi va rasmi
                         </TableHead>
                         <TableHead>
+                          Balansi
+                        </TableHead>
+                        <TableHead>
                           Holati
                         </TableHead>
                         <TableHead className={"text-end"}>
@@ -115,6 +119,10 @@ const Index = () => {
                                   <DefaultImage/>
                                 )}
                                 <span>{restaurant.name}</span>
+                              </TableCell>
+
+                              <TableCell>
+                                {Formatter.currency(restaurant?.balance ? restaurant.balance : 0)}
                               </TableCell>
 
                               <TableCell>
