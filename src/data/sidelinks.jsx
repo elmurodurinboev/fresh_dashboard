@@ -15,7 +15,7 @@ export const sidelinks = [
   {
     title: "sidebar.dashboard",
     label: "",
-    href: "/",
+    href: "/dashboard",
     icon: <IconLayoutDashboard size={18}/>,
     roles: [ROLES.ADMIN, ROLES.SHOP_OWNER, ROLES.RESTAURANT_OWNER]
   },
@@ -92,7 +92,7 @@ export const sidelinks = [
     label: "",
     href: "/cash-flow",
     icon: <IconCashRegister size={18}/>,
-    // roles: [ROLES.ADMIN]
+    roles: [ROLES.ADMIN]
   },
   {
     title: "sidebar.settings",
