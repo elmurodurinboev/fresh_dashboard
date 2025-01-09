@@ -1,10 +1,12 @@
-import { Outlet } from 'react-router-dom';
+import {Outlet} from 'react-router-dom';
 import Sidebar from './sidebar';
 import useIsCollapsed from '@/hooks/use-is-collapsed';
 import SkipToMain from './skip-to-main';
 
 export default function AppShell() {
   const [isCollapsed, setIsCollapsed] = useIsCollapsed();
+  // ToDo
+  // Add navigate to this for each user
   return (
     <div className='relative h-full overflow-hidden bg-background'>
       <SkipToMain />

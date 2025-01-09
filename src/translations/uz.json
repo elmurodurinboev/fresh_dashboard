@@ -63,7 +63,9 @@
     "maintenance_desc": "",
     "learn_more": "Ko'proq ko'rsatish",
     "unauthorised_title": "Hisob Ochilmaganda Xatolik",
-    "unauthorised_desc": ""
+    "unauthorised_desc": "",
+    "not_allowed_title": "Access Denied",
+    "not_allowed_desc": "You do not have permission to access this resource. Please contact your administrator if you believe this is a mistake."
   },
   "userNav": {
     "profile": "Profil",
