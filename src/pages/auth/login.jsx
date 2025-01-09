@@ -29,7 +29,7 @@ export default function Login() {
           </div>
           <Card className="p-6 space-y-4">
             <div className="">
-              <h1 className="text-2xl font-semibold tracking-tight text-center">Login</h1>
+              <h1 className="text-2xl font-semibold tracking-tight text-center">Kirish</h1>
             </div>
             <UserAuthForm />
           </Card>

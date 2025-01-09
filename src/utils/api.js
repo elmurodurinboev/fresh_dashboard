@@ -17,7 +17,7 @@ const refreshToken = async () => {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      "refresh": session.refresh
+      "refresh": session.tokens.refresh
     })
   });
 
@@ -58,7 +58,7 @@ instance.interceptors.request.use(
       //     language = 'uz_Latn'; // Fallback
       // }
 
-      config.headers.Authorization = `Bearer ${session?.access}`;
+      config.headers.Authorization = `Bearer ${session?.tokens?.access}`;
       // config.headers['Accept-Language'] = language;
     }
 
@@ -84,7 +84,7 @@ instance.interceptors.response.use(
         try {
           const data = refreshToken()
           console.log("refresh token req:", data)
-          originalRequest.headers.Authorization = `Bearer ${data.access}`;
+          originalRequest.headers.Authorization = `Bearer ${data.tokens.access}`;
 
           refreshAndRetryQueue.forEach(({ config, resolve, reject }) => {
             instance.request(config)

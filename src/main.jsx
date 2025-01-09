@@ -14,7 +14,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-        <LanguageProvider defaultLanguage="en" storageKey="vite-ui-language">
+        <LanguageProvider defaultLanguage="uz" storageKey="vite-ui-language">
           <RouterProvider router={router}/>
           <Toaster/>
         </LanguageProvider>

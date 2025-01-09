@@ -78,7 +78,7 @@ export function UserAuthForm({className, ...props}) {
 
   function onSubmit(data) {
     setIsLoading(true)
-    data.phone_number = `+998${data.phone_number}`
+    data.phone_number = (`+998${data.phone_number}`).toString().trim()
     mutation.mutate(data)
   }
 
@@ -92,15 +92,15 @@ export function UserAuthForm({className, ...props}) {
               name="phone_number"
               render={({ field }) => (
                 <FormItem className="space-y-1">
-                  <FormLabel>Phone number</FormLabel>
+                  <FormLabel>Telefon raqam</FormLabel>
                   <FormControl>
                     <div className="relative flex items-center">
-                      <span className="absolute left-2 text-sm">+99 8</span>
+                      <span className="absolute left-2.5 top-[9px] text-sm">+998</span>
                       <PhoneInput
                         {...field}
                         onChange={() => {}}
                         mask="00 000 0000"
-                        className={"pl-12 flex h-9"}
+                        className={"pl-12 flex h-9 items-center"}
                         placeholder="90 000 0000"
                         onAccept={(val, mask) => {
                           field.onChange(mask._unmaskedValue);
@@ -119,7 +119,7 @@ export function UserAuthForm({className, ...props}) {
               name="password"
               render={({field}) => (
                 <FormItem className="space-y-1">
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>Parol</FormLabel>
                   <FormControl>
                     <PasswordInput placeholder="********" {...field} />
                   </FormControl>

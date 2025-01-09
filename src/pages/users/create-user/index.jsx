@@ -92,7 +92,7 @@ const Index = () => {
   })
 
   const onSubmit = (data) => {
-    data.phone_number = `+998${data.phone_number}`
+    data.phone_number = (`+998${data.phone_number}`).toString().trim()
     const formData = new FormData()
     Object.keys(data).forEach(item => formData.append(item, data[item]))
     mutation.mutate(formData)
@@ -136,8 +136,9 @@ const Index = () => {
                             <span className="absolute left-2 text-sm">+99 8</span>
                             <PhoneInput
                               {...field}
-                              className="pl-12 flex h-9"
+                              onChange={() => {}}
                               mask="00 000 0000"
+                              className={"pl-12 flex h-9"}
                               placeholder="90 000 0000"
                               onAccept={(val, mask) => {
                                 field.onChange(mask._unmaskedValue);

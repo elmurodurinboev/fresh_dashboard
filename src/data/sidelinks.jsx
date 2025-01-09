@@ -5,7 +5,9 @@ import {
   IconBuildingStore,
   IconCategory,
   IconCategory2,
-  IconScooterElectric, IconUsers
+  IconScooterElectric,
+  IconUsers,
+  IconCashRegister
 } from "@tabler/icons-react"
 import ROLES from "@/data/roles.js";
 
@@ -84,6 +86,13 @@ export const sidelinks = [
     href: "/courier",
     icon: <IconScooterElectric size={18}/>,
     roles: [ROLES.ADMIN]
+  },
+  {
+    title: "sidebar.cash-flow",
+    label: "",
+    href: "/cash-flow",
+    icon: <IconCashRegister size={18}/>,
+    // roles: [ROLES.ADMIN]
   },
   {
     title: "sidebar.settings",
