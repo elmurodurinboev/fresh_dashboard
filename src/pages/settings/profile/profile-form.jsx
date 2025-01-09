@@ -1,188 +1,149 @@
-import { z } from "zod"
-import { Link } from "react-router-dom"
-import { useFieldArray, useForm } from "react-hook-form"
-import { Button } from "@/components/custom/button"
+import { useNavigate} from "react-router-dom"
+import {useForm} from "react-hook-form"
+import {Button} from "@/components/custom/button"
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage
 } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
-import { toast } from "@/hooks/use-toast.js"
-import { cn } from "@/lib/utils"
-import { zodResolver } from "@hookform/resolvers/zod"
+import {Input} from "@/components/ui/input"
 
-const profileFormSchema = z.object({
-  username: z
-    .string()
-    .min(2, {
-      message: "Username must be at least 2 characters."
-    })
-    .max(30, {
-      message: "Username must not be longer than 30 characters."
-    }),
-  email: z
-    .string({
-      required_error: "Please select an email to display."
-    })
-    .email(),
-  bio: z
-    .string()
-    .max(160)
-    .min(4),
-  urls: z
-    .array(
-      z.object({
-        value: z.string().url({ message: "Please enter a valid URL." })
-      })
-    )
-    .optional()
-})
+import {toast} from "@/hooks/use-toast.js"
+import {useAuth} from "@/hooks/utils/useAuth.js";
+import {Formatter} from "@/utils/formatter.js";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.jsx";
+import {UserTypes} from "@/data/user-types.jsx";
+import {useMutation} from "@tanstack/react-query";
+import {AuthService} from "@/services/auth.service.js";
 
-// This can come from your database or API.
-const defaultValues = {
-  bio: "I own a computer.",
-  urls: [
-    { value: "https://shadcn.com" },
-    { value: "http://twitter.com/shadcn" }
-  ]
-}
 
 export default function ProfileForm() {
+  const {session} = useAuth()
+  const navigate = useNavigate()
+
   const form = useForm({
-    resolver: zodResolver(profileFormSchema),
-    defaultValues,
-    mode: "onChange"
+    defaultValues: {
+      full_name: session?.user?.full_name,
+      phone_number: Formatter.formatPhoneNumber(session?.user?.phone_number),
+      user_role: session?.user?.user_role,
+      gender: session?.user?.gender
+    }
   })
 
-  const { fields, append } = useFieldArray({
-    name: "urls",
-    control: form.control
-  })
 
-  function onSubmit(data) {
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      )
-    })
+  function onSubmit() {
+
   }
+
+  const mutation = useMutation({
+    mutationKey: ["logout"],
+    mutationFn: AuthService.logoutAuth,
+    onSuccess: () => {
+      navigate("/auth/login")
+      toast({
+        description: "Logged Out"
+      })
+    }
+  })
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
           control={form.control}
-          name="username"
-          render={({ field }) => (
+          name="full_name"
+          render={({field}) => (
             <FormItem>
-              <FormLabel>Username</FormLabel>
+              <FormLabel>Ism</FormLabel>
               <FormControl>
-                <Input placeholder="shadcn" {...field} />
+                <Input placeholder="User" readOnly {...field} />
               </FormControl>
-              <FormDescription>
-                This is your public display name. It can be your real name or a
-                pseudonym. You can only change this once every 30 days.
-              </FormDescription>
-              <FormMessage />
+              <FormMessage/>
             </FormItem>
           )}
         />
         <FormField
           control={form.control}
-          name="email"
-          render={({ field }) => (
+          name="phone_number"
+          render={({field}) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
+              <FormLabel>Telefon raqam</FormLabel>
+              <FormControl>
+                <Input placeholder="User" readOnly {...field} />
+              </FormControl>
+              <FormMessage/>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="user_role"
+          render={({field}) => (
+            <FormItem className="space-y-1">
+              <FormLabel>User rol</FormLabel>
+              <FormControl>
+                <Select {...field}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a verified email to display" />
+                    <SelectValue placeholder={"Tanlang"}/>
                   </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="m@example.com">m@example.com</SelectItem>
-                  <SelectItem value="m@google.com">m@google.com</SelectItem>
-                  <SelectItem value="m@support.com">m@support.com</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormDescription>
-                You can manage verified email addresses in your{" "}
-                <Link to="/examples/forms">email settings</Link>.
-              </FormDescription>
-              <FormMessage />
+                  <SelectContent>
+                    {
+                      UserTypes && UserTypes.length > 0 && (
+                        UserTypes.map((item, index) => (
+                          <SelectItem
+                            key={index}
+                            value={item.user_role}
+                          >
+                            {item.name}
+                          </SelectItem>
+                        ))
+                      )
+                    }
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage/>
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
-          name="bio"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Bio</FormLabel>
+          name="gender"
+          render={({field}) => (
+            <FormItem className="space-y-1">
+              <FormLabel>Jins</FormLabel>
               <FormControl>
-                <Textarea
-                  placeholder="Tell us a little bit about yourself"
-                  className="resize-none"
-                  {...field}
-                />
+                <Select value={field.value}>
+                  <SelectTrigger>
+                    <SelectValue placeholder={'Tanlang'}/>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={"male"}>Erkak</SelectItem>
+                    <SelectItem value={"female"}>Ayol</SelectItem>
+                  </SelectContent>
+                </Select>
               </FormControl>
-              <FormDescription>
-                You can <span>@mention</span> other users and organizations to
-                link to them.
-              </FormDescription>
-              <FormMessage />
+              <FormMessage/>
             </FormItem>
           )}
         />
-        <div>
-          {fields.map((field, index) => (
-            <FormField
-              control={form.control}
-              key={field.id}
-              name={`urls.${index}.value`}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className={cn(index !== 0 && "sr-only")}>
-                    URLs
-                  </FormLabel>
-                  <FormDescription className={cn(index !== 0 && "sr-only")}>
-                    Add links to your website, blog, or social media profiles.
-                  </FormDescription>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          ))}
+
+        <div className={"space-x-4"}>
+          <Button type="submit" disabled>Saqlash</Button>
           <Button
             type="button"
-            variant="outline"
-            size="sm"
-            className="mt-2"
-            onClick={() => append({ value: "" })}
+            variant={"destructive"}
+            loading={mutation.isPending}
+            onClick={() => mutation.mutate()}
           >
-            Add URL
+            Chiqish
           </Button>
         </div>
-        <Button type="submit">Update profile</Button>
       </form>
     </Form>
   )

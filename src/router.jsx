@@ -285,9 +285,9 @@ const routes = [
                 meta: { roles: [ROLES.ADMIN, ROLES.SHOP_OWNER, ROLES.RESTAURANT_OWNER, ROLES.OPERATOR, ROLES.COURIER, ROLES.CLIENT] },
               },
               {
-                path: "account",
+                path: "appearance",
                 lazy: async () => ({
-                  Component: (await import("./pages/settings/account")).default,
+                  Component: (await import("./pages/settings/appearance")).default,
                 }),
                 meta: { roles: [ROLES.ADMIN, ROLES.SHOP_OWNER, ROLES.RESTAURANT_OWNER, ROLES.OPERATOR, ROLES.COURIER, ROLES.CLIENT] },
               },
