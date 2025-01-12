@@ -171,7 +171,7 @@ const routes = [
           {
             path: "cash-flow",
             lazy: async () => ({
-              Component: (await import("@/pages/restaurants/cash-flow")).default
+              Component: (await import("@/pages/cash-flow/index.jsx")).default
             }),
             meta: { roles: getAllowedUsers('cash-flow') },
           },
@@ -179,7 +179,7 @@ const routes = [
           {
             path: "cash-flow/create",
             lazy: async () => ({
-              Component: (await import("@/pages/restaurants/cash-flow/create")).default
+              Component: (await import("@/pages/cash-flow/create/index.jsx")).default
             }),
             meta: { roles: getAllowedUsers('cash-flow') },
           },

@@ -143,10 +143,10 @@ const Index = () => {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value={"proceeds"}>
-                            Kirim
+                            Balansni to`ldirish
                           </SelectItem>
                           <SelectItem value={"expense"}>
-                            Chiqim
+                            Naqd pul qilish
                           </SelectItem>
                         </SelectContent>
                       </Select>

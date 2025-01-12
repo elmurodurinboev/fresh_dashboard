@@ -32,7 +32,7 @@ const Index = () => {
       <Layout.Body>
         <div className="mb-2 flex items-center justify-between space-y-2">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight">Kirim chiqim</h2>
+            <h2 className="text-2xl font-bold tracking-tight">Restoranlar balansi</h2>
           </div>
           <div>
             <Button
@@ -83,20 +83,20 @@ const Index = () => {
                               <TableCell className={"special-cell"}>
                                 {
                                   restaurant?.finance_flow_type === "proceeds" ? (
-                                    <span className={"bg-green-500 py-1 px-2 rounded-md text-white"}>Kirim</span>
+                                    <span className={"bg-green-500 py-1 px-2 rounded-md text-white"}>To`ldirish</span>
                                   ) : (
-                                    <span className={"bg-rose-500 py-1 px-2 rounded-md text-white"}>Chiqim</span>
+                                    <span className={"bg-rose-500 py-1 px-2 rounded-md text-white"}>Naqd pul qilish</span>
                                   )
                                 }
                               </TableCell>
                               <TableCell className={"special-cell"}>
                                 {
-                                  restaurant.user.full_name ? restaurant.user.full_name : restaurant.user.phone_number
+                                  restaurant.user.full_name ? restaurant.user.full_name : Formatter.formatPhoneNumber(restaurant.user.phone_number)
                                 }
                               </TableCell>
                               <TableCell className={"text-end"}>
                                 {
-                                  format(restaurant?.created_at, 'yyyy-MM-dd')
+                                  format(restaurant?.created_at, 'yyyy-MM-dd HH:MM')
                                 }
                               </TableCell>
                             </TableRow>
