@@ -46,6 +46,7 @@ const Index = () => {
         description: "Successfully added"
       })
       form.reset()
+      navigate("/cash-flow")
     }
   })
 
