@@ -6,6 +6,7 @@ import {
   IconCategory,
   IconCategory2,
   IconScooterElectric,
+  IconCubeSpark,
   IconUsers,
   IconCashRegister
 } from "@tabler/icons-react"
@@ -64,6 +65,13 @@ export const sidelinks = [
     label: "",
     href: "/restaurant-products",
     icon: <IconCube size={18}/>,
+    roles: [ROLES.ADMIN, ROLES.RESTAURANT_OWNER]
+  },
+  {
+    title: "sidebar.best-products",
+    label: "",
+    href: "/best-products",
+    icon: <IconCubeSpark size={18}/>,
     roles: [ROLES.ADMIN, ROLES.RESTAURANT_OWNER]
   },
   {

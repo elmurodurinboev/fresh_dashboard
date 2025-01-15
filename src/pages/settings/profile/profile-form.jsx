@@ -72,7 +72,7 @@ export default function ProfileForm() {
             <FormItem>
               <FormLabel>Telefon raqam</FormLabel>
               <FormControl>
-                <Input placeholder="User" readOnly {...field} />
+                <Input placeholder="Tel" readOnly {...field} />
               </FormControl>
               <FormMessage/>
             </FormItem>
