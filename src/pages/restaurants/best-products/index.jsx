@@ -15,18 +15,18 @@ import {
 } from "@/components/ui/dropdown-menu.jsx";
 import {Button} from "@/components/custom/button.jsx";
 import {DotsHorizontalIcon} from "@radix-ui/react-icons";
-import {Formatter} from "@/utils/formatter.js";
 import {useNavigate} from "react-router-dom";
 import {toast} from "@/hooks/use-toast.js";
 import DeleteConfirmationModal from "@/components/custom/delete-confirmation-modal.jsx";
 import {useState} from "react";
+import {format} from "date-fns";
 
 const Index = () => {
   const [deleteModal, setDeleteModal] = useState(false)
   const [selectedProduct, setSelectedProduct] = useState({})
   const productsData = useQuery({
-    queryKey: ['getAllProducts'],
-    queryFn: RestaurantProductService.getProducts
+    queryKey: ['getAllBestProducts'],
+    queryFn: RestaurantProductService.getBestProducts
   })
 
   const navigate = useNavigate()
@@ -37,11 +37,11 @@ const Index = () => {
   }
 
   const deleteMutation = useMutation({
-    mutationFn: RestaurantProductService.delete,
+    mutationFn: RestaurantProductService.deleteBestProducts,
     onSuccess: async () => {
       toast({
         title: 'OK',
-        description: "Successfully delted"
+        description: "O'chirildi"
       })
       await productsData.refetch()
       reset()
@@ -73,44 +73,32 @@ const Index = () => {
       <Layout.Body>
         <div className="mb-2 flex flex-col md:flex-row items-center justify-between space-y-2">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight">Mahsulotlar</h2>
+            <h2 className="text-2xl font-bold tracking-tight">Eng yaxshi mahsulotlar</h2>
           </div>
           <div className={"space-x-3"}>
             <Button
               onClick={() => navigate("create")}
             >
-              Mahsulot qo`shish
+              Qo`shish
             </Button>
           </div>
         </div>
         <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0">
           {
             !productsData.isLoading ? (
-              productsData && productsData.data && productsData.isSuccess && !productsData.isError && productsData.data.result &&  (
+              productsData && productsData.data && productsData.isSuccess && !productsData.isError && productsData.data.result && (
                 <div className="rounded-md border min-h-[500px]">
                   <Table>
                     <TableHeader>
                       <TableRow>
                         <TableHead>
-                          Rasm va nomi
+                          Logotipi va nomi
                         </TableHead>
                         <TableHead>
-                          Kategoriyasi
+                          Restoran
                         </TableHead>
                         <TableHead>
-                          Soni
-                        </TableHead>
-                        <TableHead>
-                          Narhi
-                        </TableHead>
-                        <TableHead>
-                          Chegirmasi
-                        </TableHead>
-                        <TableHead>
-                          Aktivligi
-                        </TableHead>
-                        <TableHead>
-                          Ulush
+                          Yaratilgan vaqti
                         </TableHead>
                         <TableHead className={"text-end"}>
                         </TableHead>
@@ -122,9 +110,9 @@ const Index = () => {
                           productsData.data.result.results.map((product, index) => (
                             <TableRow key={index} className={"bg-secondary"}>
                               <TableCell className={"flex gap-2 items-center overflow-hidden"}>
-                                {product.picture ? (
+                                {product.logo ? (
                                   <img
-                                    src={product.picture}
+                                    src={product.logo}
                                     alt={"product_image"}
                                     className={"w-[48px] h-[48px] rounded-md object-cover"}
                                   />
@@ -136,38 +124,13 @@ const Index = () => {
 
                               <TableCell>
                                 {
-                                  product?.category_name
+                                  typeof product?.restaurant !== "object" ? product.restaurant : "Object"
                                 }
                               </TableCell>
 
                               <TableCell>
                                 {
-                                  product?.stock_level
-                                }
-                              </TableCell>
-
-                              <TableCell>
-                                {
-                                  Formatter.currency(product?.price)
-                                }
-                              </TableCell>
-
-                              <TableCell>
-                                {
-                                  Formatter.currency(product?.discount_price)
-                                }
-                              </TableCell>
-                              <TableCell>
-                                {
-                                  product.is_active ? "Aktiv" : 'Aktiv emas'
-                                }
-                              </TableCell>
-
-                              <TableCell>
-                                {
-                                  product.contribution_type === 'percent' ? (
-                                    product?.contribution_amount + "%"
-                                  ) : (Formatter.currency(product?.contribution_amount))
+                                  format(product.created_at, 'yyyy-MM-dd')
                                 }
                               </TableCell>
 
@@ -184,7 +147,8 @@ const Index = () => {
                                       </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end" className="w-[160px]">
-                                      <DropdownMenuItem onClick={() => navigate(`update/${product.id}`)}>Edit</DropdownMenuItem>
+                                      <DropdownMenuItem
+                                        onClick={() => navigate(`update/${product.id}`)}>Edit</DropdownMenuItem>
                                       <DropdownMenuSeparator/>
                                       <DropdownMenuItem
                                         onClick={() => handleDelete(product)}
@@ -221,6 +185,7 @@ const Index = () => {
         </div>
         <DeleteConfirmationModal
           open={deleteModal}
+          loading={deleteMutation.isPending}
           setOpen={setDeleteModal}
           handleDelete={() => deleteMutation.mutate(selectedProduct.id)}
           handleClose={() => {

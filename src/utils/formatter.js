@@ -34,6 +34,8 @@ export const Formatter = {
     return formattedNumber;
   },
   formatPhoneNumber: (input, extension) => {
+    if (input === null || input === '')
+      return
     let str = input.toString();
     let regex;
 

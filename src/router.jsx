@@ -207,6 +207,27 @@ const routes = [
             }),
             meta: { roles: getAllowedUsers('restaurant-products') },
           },
+          {
+            path: "best-products",
+            lazy: async () => ({
+              Component: (await import("@/pages/restaurants/best-products")).default
+            }),
+            meta: { roles: getAllowedUsers('best-products') },
+          },
+          {
+            path: "best-products/update/:id",
+            lazy: async () => ({
+              Component: (await import("@/pages/restaurants/best-products/update")).default
+            }),
+            meta: { roles: getAllowedUsers('best-products') },
+          },
+          {
+            path: "best-products/create",
+            lazy: async () => ({
+              Component: (await import("@/pages/restaurants/best-products/create")).default
+            }),
+            meta: { roles: getAllowedUsers('best-products') },
+          },
 
           // RestaurantCategory
           {

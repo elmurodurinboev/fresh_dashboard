@@ -28,7 +28,29 @@ const RestaurantProductService = {
     return data
   },
 
-
+  // Best products
+  async getBestProducts() {
+    const {data} = await api.get("/best-restaurant-product-web/")
+    return data
+  },
+  async bestProductCreate(payload) {
+    const {data} = await api.post("/best-restaurant-product-web/", payload)
+    return data
+  },
+  async deleteBestProducts(id) {
+    const {data} = await api.delete(`/best-restaurant-product-web/${id}`)
+    return data
+  },
+  async getOneBest({queryKey}) {
+    // eslint-disable-next-line no-unused-vars
+    const [_, id] = queryKey
+    const {data} = await api.get(`/best-restaurant-product-web/${id}`)
+    return data
+  },
+  async updatePatchBest(payload) {
+    const {data} = await api.patch(`/best-restaurant-product-web/${payload.id}/`, payload.formData)
+    return data
+  },
 }
 
 export default RestaurantProductService
