@@ -1,28 +1,23 @@
 import {Layout} from "@/components/custom/layout.jsx";
 import {Button} from "@/components/custom/button.jsx";
-import {useForm} from "react-hook-form";
-import {z} from "zod";
-import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.jsx";
-import {useMutation} from "@tanstack/react-query";
+import {Controller, useForm} from "react-hook-form";
+import {useMutation, useQuery} from "@tanstack/react-query";
 import {Input} from "@/components/ui/input.jsx";
-import {zodResolver} from "@hookform/resolvers/zod";
 import {toast} from "@/hooks/use-toast.js";
 import SubcategoryService from "@/services/subcategory.service.js";
 import {useNavigate} from "react-router-dom";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.jsx";
+import {Skeleton} from "@/components/ui/skeleton.jsx";
+import ShopCategoryService from "@/services/shop-category.service.js";
+import {Label} from "@/components/ui/label.jsx";
 
-
-const formSchema = z.object({
-  name: z
-    .string()
-    .min(3, {message: 'Name must be at least 3'}),
-})
 
 const Index = () => {
   const navigate = useNavigate()
   const form = useForm({
-    resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
+      category: ''
     }
   })
 
@@ -56,6 +51,11 @@ const Index = () => {
   const onSubmit = (data) => {
     mutation.mutate(data)
   }
+  const categoryData = useQuery({
+    queryKey: ['getAllCategories'],
+    queryFn: ShopCategoryService.getAllSub
+  })
+
 
   return (
     <Layout>
@@ -64,41 +64,93 @@ const Index = () => {
           <div>
             <h2 className="text-2xl font-bold tracking-tight">Sub Kategoriya yaratish</h2>
           </div>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className={"flex gap-4"}>
-              <div className={"w-full p-6 bg-white rounded-2xl shadow flex flex-col gap-4"}>
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({field}) => (
-                    <FormItem className="space-y-1">
-                      <FormLabel className={"text-[#667085]"}>Sub Kategoriya nomi</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Evos" {...field} />
-                      </FormControl>
-                      <FormMessage/>
-                    </FormItem>
-                  )}
-                />
-                <div className={"space-x-4"}>
-                  <Button
-                    type={'submit'}
-                    size={"lg"}
-                    loading={mutation.isPending}
-                  >
-                    Qo`shish
-                  </Button>
-                  <Button
-                    variant={'outline'}
-                    size={"lg"}
-                    onClick={() => navigate("/subcategory")}
-                  >
-                    Bekor qilish
-                  </Button>
-                </div>
+          <form onSubmit={form.handleSubmit(onSubmit)} className={"flex gap-4"}>
+            <div className={"w-full p-6 bg-white rounded-2xl shadow flex flex-col gap-4"}>
+              {!categoryData.isLoading ? (
+                !categoryData.isError &&
+                categoryData.data &&
+                categoryData.isSuccess &&
+                categoryData.data.result &&
+                categoryData.data.result ? (
+                  <Controller
+                    name="category"
+                    control={form.control}
+                    defaultValue={""}
+                    rules={{required: "Bu maydon tanlanishi shart"}} // Add validation rules here
+                    render={({field, fieldState: {error}}) => (
+                      <div className="flex-1">
+                        <label className="text-[#667085]">
+                          Kategoriya
+                        </label>
+                        <Select
+                          value={+field.value}
+                          onValueChange={field.onChange}
+                        >
+                          <SelectTrigger className="w-full text-black">
+                            <SelectValue placeholder="Select subcategory"/>
+                          </SelectTrigger>
+                          <SelectContent>
+                            {categoryData.data.result.map(
+                              (item, index) => (
+                                <SelectItem value={item.id} key={index}>
+                                  {item.name}
+                                </SelectItem>
+                              )
+                            )}
+                          </SelectContent>
+                        </Select>
+                        {error && (
+                          <p className="text-red-500 text-sm">
+                            {error.message}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  />
+                ) : (
+                  <span className={"text-rose-500"}>
+                        Nimadir xato ketdi!
+                      </span>
+                )
+              ) : (
+                <Skeleton className={"col-span-9 h-9 rounded-md"}/>
+              )}
+              <Controller
+                control={form.control}
+                name="name"
+                rules={{required: "Bu maydon to'ldirilishi shart!"}} // Add validation rules here
+                render={({field, fieldState: {error}}) => (
+                  <div className="space-y-1">
+                    <Label className={"text-[#667085]"}>Sub Kategoriya nomi</Label>
+                    <div>
+                      <Input placeholder="Evos" {...field} />
+                    </div>
+                    {error && (
+                      <p className="text-red-500 text-sm">
+                        {error.message}
+                      </p>
+                    )}
+                  </div>
+                )}
+              />
+              <div className={"space-x-4"}>
+                <Button
+                  type={'submit'}
+                  size={"lg"}
+                  loading={mutation.isPending}
+                >
+                  Qo`shish
+                </Button>
+                <Button
+                  variant={'outline'}
+                  size={"lg"}
+                  onClick={() => navigate("/subcategory")}
+                >
+                  Bekor qilish
+                </Button>
               </div>
-            </form>
-          </Form>
+            </div>
+          </form>
         </div>
       </Layout.Body>
     </Layout>
