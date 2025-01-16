@@ -31,7 +31,8 @@
     "restaurant-category": "Restoran kategoriyalari",
     "courier": "Kuryer",
     "cash-flow": "Kirim-chiqim",
-    "best-products": "Eng yaxshi mahsulotlar"
+    "best-products": "Eng yaxshi mahsulotlar",
+    "order-history": "Buyurtmalar"
   },
   "dashboard": {
     "overview": "Umumiy ko'rinish",
@@ -74,5 +75,12 @@
     "settings": "Profil Sozlamalari",
     "new_team": "Yangi jamoa",
     "log_out": "Chiqish"
+  },
+  "order": {
+    "new": "Yangi",
+    "returned": "Qaytarilgan",
+    "delivery": "Yetkazilgan",
+    "completed": "Tugatilgan",
+    "undefined": "Noma'lum"
   }
 }
