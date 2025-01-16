@@ -18,10 +18,12 @@ export const Formatter = {
   },
 
   currency: (number) => {
-    const formatter = new Intl.NumberFormat()
+    const formatter = new Intl.NumberFormat('fr-FR', {
+      useGrouping: true,
+    });
     const formattedNumber = formatter.format(number);
 
-    return `${formattedNumber}`
+    return `${formattedNumber}`;
   },
   intl_format: (number) => {
     let numStr = number.toString();
