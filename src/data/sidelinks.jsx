@@ -8,7 +8,8 @@ import {
   IconScooterElectric,
   IconCubeSpark,
   IconUsers,
-  IconCashRegister
+  IconCashRegister,
+  IconBaselineDensityMedium
 } from "@tabler/icons-react"
 import ROLES from "@/data/roles.js";
 
@@ -18,6 +19,13 @@ export const sidelinks = [
     label: "",
     href: "/dashboard",
     icon: <IconLayoutDashboard size={18}/>,
+    roles: [ROLES.ADMIN, ROLES.SHOP_OWNER, ROLES.RESTAURANT_OWNER]
+  },
+  {
+    title: "sidebar.order-history",
+    label: "",
+    href: "/order-history",
+    icon: <IconBaselineDensityMedium size={18}/>,
     roles: [ROLES.ADMIN, ROLES.SHOP_OWNER, ROLES.RESTAURANT_OWNER]
   },
 
