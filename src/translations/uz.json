@@ -79,8 +79,11 @@
   "order": {
     "new": "Yangi",
     "returned": "Qaytarilgan",
-    "delivery": "Yetkazilgan",
+    "delivery": "Yetkazilyapdi",
     "completed": "Tugatilgan",
-    "undefined": "Noma'lum"
+    "undefined": "Noma'lum",
+    "accepted": "Qabul qilingan",
+    "pay": "To'langan",
+    "canceled": "Bekor qilingan"
   }
 }

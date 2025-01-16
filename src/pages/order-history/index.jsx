@@ -5,12 +5,11 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/c
 import { useQuery} from "@tanstack/react-query";
 import {Skeleton} from "@/components/ui/skeleton.jsx";
 
-import {Button} from "@/components/custom/button.jsx";
-import {useNavigate} from "react-router-dom";
 import OrderService from "@/services/order.service.js";
 import {format} from "date-fns";
 import {cn} from "@/lib/utils.js";
 import {useTranslations} from "use-intl";
+import {Formatter} from "@/utils/formatter.js";
 
 const Index = () => {
   const t = useTranslations("order")
@@ -23,19 +22,24 @@ const Index = () => {
   const getRowClass = (status) => {
     switch (status) {
       case "new":
-        return "bg-yellow-100 hover:bg-yellow-200"; // Light blue for "new"
-      case "delivery":
-        return "bg-blue-100 hover:bg-blue-200"; // Light green for "delivery"
-      case "returned":
-        return "bg-red-100 hover:bg-red-200"; // Light red for "returned"
+        return "bg-blue-100 hover:bg-blue-200"; // Light blue for "new"
+      case "paid":
+        return "bg-green-50 hover:bg-green-100"; // Light green for "pay"
+      case "accepted":
+        return "bg-orange-100 hover:bg-orange-200"; // Light orange for "accepted"
+      case "delivering":
+        return "bg-purple-100 hover:bg-purple-200"; // Light purple for "delivery"
       case "completed":
-        return "bg-green-300 hover:bg-green-400"; // Light red for "returned"
+        return "bg-green-100 hover:bg-green-200"; // Light green for "completed"
+      case "canceled":
+        return "bg-red-200 hover:bg-red-300"; // Light red for "canceled"
+      case "returned":
+        return "bg-pink-100 hover:bg-pink-200"; // Light pink for "returned"
       default:
         return "bg-gray-100 hover:bg-gray-200"; // Default gray
     }
   };
 
-  const navigate = useNavigate()
 
   return (
     <Layout>
@@ -51,13 +55,6 @@ const Index = () => {
         <div className="mb-2 flex items-center justify-between space-y-2">
           <div>
             <h2 className="text-2xl font-bold tracking-tight">Buyurtmalar</h2>
-          </div>
-          <div>
-            <Button
-              onClick={() => navigate("create")}
-            >
-              Do`kon qo`shish
-            </Button>
           </div>
         </div>
         <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0">
@@ -102,18 +99,18 @@ const Index = () => {
                               </TableCell>
                               <TableCell>
                                 {
-                                  order?.amount
+                                  Formatter.currency(order?.amount)
                                 }
                               </TableCell>
                               <TableCell>
                                 {
-                                  order?.delivery_fee
+                                  Formatter.currency(order?.delivery_fee)
                                 }
                               </TableCell>
 
                               <TableCell className={"text-end"}>
                                 {
-                                  format(order?.created_at, 'yyyy-MM-dd HH:MM')
+                                  format(order?.created_at, 'dd-MM-yyyy HH:MM')
                                 }
                               </TableCell>
                             </TableRow>
