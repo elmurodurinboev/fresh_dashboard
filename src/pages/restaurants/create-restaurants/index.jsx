@@ -1,11 +1,9 @@
 import {Layout} from "@/components/custom/layout.jsx";
 import {Button} from "@/components/custom/button.jsx";
-import {useForm} from "react-hook-form";
-import {z} from "zod";
-import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.jsx";
+import {useForm, Controller} from "react-hook-form";
+
 import {useMutation, useQuery} from "@tanstack/react-query";
 import {Input} from "@/components/ui/input.jsx";
-import {zodResolver} from "@hookform/resolvers/zod";
 import {toast} from "@/hooks/use-toast.js";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.jsx";
 import {Skeleton} from "@/components/ui/skeleton.jsx";
@@ -17,49 +15,13 @@ import {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {Switch} from "@/components/ui/switch.jsx";
 import PhoneInput from "@/components/custom/phone-input.jsx";
-
-
-const formSchema = z.object({
-  name: z
-    .string()
-    .min(3, {message: 'Name must be at least 3'}),
-  delivery_time: z
-    .string()
-    .min(2, {message: "Bu maydon bo'sh bo'lmasligi kerak"}),
-  country: z
-    .number(),
-  owner: z
-    .number(),
-  picture: z
-    .any(),
-  description: z
-    .string(),
-  rating: z
-    .number(),
-  is_active: z
-    .boolean(),
-  latitude: z
-    .string(),
-  longitude: z
-    .string(),
-  opening_time: z
-    .string(),
-  closing_time: z
-    .string(),
-  contractor: z
-    .string(),
-  address: z
-    .string(),
-  phone_number: z
-    .string()
-    .min(9, {message: "Yaroqli telefon raqam kiriting!"}),
-})
+import {Label} from "@/components/ui/label.jsx"
+import InputWithFormat from "@/components/custom/input-with-format.jsx";
 
 const Index = () => {
   const [isDragged, setIsDragged] = useState(false)
   const navigate = useNavigate()
   const form = useForm({
-    resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
       delivery_time: '',
@@ -133,47 +95,48 @@ const Index = () => {
           <div>
             <h2 className="text-2xl font-bold tracking-tight">Restaran yaratish</h2>
           </div>
-          <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className={"grid grid-cols-12 gap-4"}>
               <div className={"col-span-12 lg:col-span-8 flex flex-col gap-4"}>
                 <div className={"w-full p-6 bg-white rounded-2xl shadow flex flex-col gap-4"}>
                   <div className={"flex items-center justify-between gap-3"}>
-                    <FormField
+                    <Controller
                       control={form.control}
                       name="name"
-                      render={({field}) => (
-                        <FormItem className="space-y-1 flex-1">
-                          <FormLabel className={"text-[#667085]"}>Restaran nomi</FormLabel>
-                          <FormControl>
+                      rules={{required: "Bu maydon to'ldirilishi shart!"}}
+                      render={({field, fieldState: {error}}) => (
+                        <div className="space-y-1 flex-1">
+                          <Label className={"text-[#667085]"}>Restaran nomi</Label>
+                          <>
                             <Input placeholder="Evos" {...field} />
-                          </FormControl>
-                          <FormMessage/>
-                        </FormItem>
+                          </>
+                          {error && <p className="text-red-500">{error.message}</p>}
+                        </div>
                       )}
                     />
-                    <FormField
+                    <Controller
                       control={form.control}
                       name="is_active"
-                      render={({field}) => (
-                        <FormItem className="flex flex-col gap-1 items-end pt-2">
-                          <FormLabel
-                            className={"text-[#667085] flex items-center"}>Aktivligi</FormLabel>
-                          <FormControl>
+                      render={({field, fieldState: {error}}) => (
+                        <div className="flex flex-col gap-1 items-end pt-2">
+                          <Label
+                            className={"text-[#667085] flex items-center"}>Aktivligi</Label>
+                          <>
                             <Switch {...field} checked={field.value}
                                     onCheckedChange={val => field.onChange(val)}/>
-                          </FormControl>
-                          <FormMessage/>
-                        </FormItem>
+                          </>
+                          {error && <p className="text-red-500">{error.message}</p>}
+                        </div>
                       )}
                     />
                   </div>
-                  <FormField
+                  <Controller
                     control={form.control}
                     name="phone_number"
-                    render={({field}) => (
-                      <FormItem className="space-y-1">
-                        <FormLabel>Telefon raqam</FormLabel>
-                        <FormControl>
+                    rules={{required: "Bu maydon to'ldirilishi shart!"}}
+                    render={({field, fieldState: {error}}) => (
+                      <div className="space-y-1">
+                        <Label>Telefon raqam</Label>
+                        <>
                           <div className="relative flex items-center">
                                                         <span
                                                           className="absolute left-2.5 top-[9px] text-sm">+998</span>
@@ -190,22 +153,23 @@ const Index = () => {
                             />
                           </div>
 
-                        </FormControl>
-                        <FormMessage/>
-                      </FormItem>
+                        </>
+                        {error && <p className="text-red-500">{error.message}</p>}
+                      </div>
                     )}
                   />
                   {
                     !owners.isLoading ? (
                       !owners.isError && owners.data && owners.isSuccess && owners.data.result ? (
-                        <FormField
+                        <Controller
                           control={form.control}
                           name="owner"
-                          render={({field}) => (
-                            <FormItem className="space-y-1">
-                              <FormLabel className={"text-[#667085]"}>Restaran
-                                egasi</FormLabel>
-                              <FormControl>
+                          rules={{required: "Bu maydon to'ldirilishi shart!"}}
+                          render={({field, fieldState: {error}}) => (
+                            <div className="space-y-1">
+                              <Label className={"text-[#667085]"}>Restaran
+                                egasi</Label>
+                              <>
                                 <Select value={+field.value}
                                         onValueChange={(val) => field.onChange(+val)}>
                                   <SelectTrigger className="w-full text-black">
@@ -220,9 +184,9 @@ const Index = () => {
                                     }
                                   </SelectContent>
                                 </Select>
-                              </FormControl>
-                              <FormMessage/>
-                            </FormItem>
+                              </>
+                              {error && <p className="text-red-500">{error.message}</p>}
+                            </div>
                           )
                           }
                         />
@@ -236,13 +200,14 @@ const Index = () => {
                   {
                     !country.isLoading ? (
                       !country.isError && country.data && country.isSuccess && country.data.result ? (
-                        <FormField
+                        <Controller
                           control={form.control}
                           name="country"
-                          render={({field}) => (
-                            <FormItem className="space-y-1">
-                              <FormLabel className={"text-[#667085]"}>Hudud</FormLabel>
-                              <FormControl>
+                          rules={{required: "Bu maydon to'ldirilishi shart!"}}
+                          render={({field, fieldState: {error}}) => (
+                            <div className="space-y-1">
+                              <Label className={"text-[#667085]"}>Hudud</Label>
+                              <>
                                 <Select value={+field.value}
                                         onValueChange={(val) => field.onChange(+val)}>
                                   <SelectTrigger className="w-full text-black">
@@ -257,9 +222,9 @@ const Index = () => {
                                     }
                                   </SelectContent>
                                 </Select>
-                              </FormControl>
-                              <FormMessage/>
-                            </FormItem>
+                              </>
+                              {error && <p className="text-red-500">{error.message}</p>}
+                            </div>
                           )
                           }
                         />
@@ -271,118 +236,125 @@ const Index = () => {
                     )
                   }
 
-                  <FormField
+                  <Controller
                     control={form.control}
                     name="address"
-                    render={({field}) => (
-                      <FormItem className="space-y-1">
-                        <FormLabel className={"text-[#667085]"}>Manzil</FormLabel>
-                        <FormControl>
+                    render={({field, fieldState: {error}}) => (
+                      <div className="space-y-1">
+                        <Label className={"text-[#667085]"}>Manzil</Label>
+                        <>
                           <Input placeholder="Hazorasp" {...field} type={"text"}/>
-                        </FormControl>
-                        <FormMessage/>
-                      </FormItem>
+                        </>
+                        {error && <p className="text-red-500">{error.message}</p>}
+                      </div>
                     )}
                   />
 
 
-                  <FormField
+                  <Controller
                     control={form.control}
                     name="contractor"
-                    render={({field}) => (
-                      <FormItem className="space-y-1">
-                        <FormLabel className={"text-[#667085]"}>Contractor</FormLabel>
-                        <FormControl>
+                    render={({field, fieldState: {error}}) => (
+                      <div className="space-y-1">
+                        <Label className={"text-[#667085]"}>Contractor</Label>
+                        <>
                           <Input placeholder="Evos" {...field} />
-                        </FormControl>
-                        <FormMessage/>
-                      </FormItem>
+                        </>
+                        {error && <p className="text-red-500">{error.message}</p>}
+                      </div>
                     )}
                   />
                   <div className={"flex items-center justify-between gap-4"}>
-                    <FormField
+                    <Controller
                       control={form.control}
                       name="rating"
-                      render={({field}) => (
-                        <FormItem className="space-y-1 flex-1">
-                          <FormLabel className={"text-[#667085]"}>Restor reytinggi</FormLabel>
-                          <FormControl>
-                            <Input placeholder="10" {...field}
-                                   onChange={e => field.onChange(+e.target.value)}/>
-                          </FormControl>
-                          <FormMessage/>
-                        </FormItem>
+                      rules={{required: "Bu maydon to'ldirilishi shart!"}}
+                      render={({field, fieldState: {error}}) => (
+                        <div className="space-y-1 flex-1">
+                          <Label className={"text-[#667085]"}>Restor reytinggi</Label>
+                          <InputWithFormat
+                            placeholder="5"
+                            value={field.value}
+                            onValueChange={(e) => field.onChange(e)}
+                          />
+                          {error && <p className="text-red-500">{error.message}</p>}
+                        </div>
                       )}
                     />
                   </div>
 
                   <div className={"grid grid-cols-12 items-center gap-3"}>
                     <div className={"col-span-6 flex justify-between"}>
-                      <FormField
+                      <Controller
                         control={form.control}
                         name="opening_time"
-                        render={({field}) => (
-                          <FormItem className="space-y-1">
-                            <FormLabel className={"text-[#667085]"}>Ochilish
-                              vaqti</FormLabel>
-                            <FormControl>
+                        render={({field, fieldState: {error}}) => (
+                          <div className="space-y-1">
+                            <Label className={"text-[#667085]"}>Ochilish
+                              vaqti</Label>
+                            <>
                               <Input placeholder="30"  {...field} type={"time"}
                                      className={"w-auto"}/>
-                            </FormControl>
-                            <FormMessage/>
-                          </FormItem>
+                            </>
+                            {error && <p className="text-red-500">{error.message}</p>}
+                          </div>
                         )}
                       />
 
-                      <FormField
+                      <Controller
                         control={form.control}
                         name="closing_time"
-                        render={({field}) => (
-                          <FormItem className="space-y-1">
-                            <FormLabel className={"text-[#667085]"}>Ochilish
-                              vaqti</FormLabel>
-                            <FormControl>
+                        render={({field, fieldState: {error}}) => (
+                          <div className="space-y-1">
+                            <Label className={"text-[#667085]"}>Ochilish
+                              vaqti</Label>
+                            <>
                               <Input placeholder="30" {...field} type={"time"}
                                      className={"w-auto"}/>
-                            </FormControl>
-                            <FormMessage/>
-                          </FormItem>
+                            </>
+                            {error && <p className="text-red-500">{error.message}</p>}
+                          </div>
                         )}
                       />
                     </div>
                     <div className={"col-span-6"}>
-                      <FormField
+                      <Controller
                         control={form.control}
                         name="delivery_time"
-                        render={({field}) => (
-                          <FormItem className="space-y-1 flex-1">
-                            <FormLabel className={"text-[#667085]"}>Yetkazib berish
-                              vaqti</FormLabel>
-                            <FormControl>
+                        rules={{required: "Bu maydon to'ldirilishi shart!"}}
+                        render={({field, fieldState: {error}}) => (
+                          <div className="space-y-1 flex-1">
+                            <Label className={"text-[#667085]"}>Yetkazib berish
+                              vaqti</Label>
+                            <>
                               <div className={"flex items-center gap-2"}>
-                                <Input placeholder="30" {...field} type={"number"}/>
+                                <InputWithFormat
+                                  placeholder="10"
+                                  value={field.value}
+                                  onValueChange={(e) => field.onChange(e)}
+                                />
                                 <span>daqiqa</span>
                               </div>
-                            </FormControl>
-                            <FormMessage/>
-                          </FormItem>
+                            </>
+                            {error && <p className="text-red-500">{error.message}</p>}
+                          </div>
                         )}
                       />
                     </div>
                   </div>
 
-                  <FormField
+                  <Controller
                     control={form.control}
                     name="description"
-                    render={({field}) => (
-                      <FormItem className="space-y-1">
-                        <FormLabel className={"text-[#667085]"}>Restoran tavsifi</FormLabel>
-                        <FormControl>
+                    render={({field, fieldState: {error}}) => (
+                      <div className="space-y-1">
+                        <Label className={"text-[#667085]"}>Restoran tavsifi</Label>
+                        <>
                           <Textarea placeholder="Go'sh, hamir"
                                     className={"resize-none"} {...field} rows={5}/>
-                        </FormControl>
-                        <FormMessage/>
-                      </FormItem>
+                        </>
+                        {error && <p className="text-red-500">{error.message}</p>}
+                      </div>
                     )}
                   />
 
@@ -390,30 +362,30 @@ const Index = () => {
                     <div className={"col-span-12"}>
                       <h3 className={"text-xl font-medium"}>Joylashuv</h3>
                     </div>
-                    <FormField
+                    <Controller
                       control={form.control}
                       name="latitude"
-                      render={({field}) => (
-                        <FormItem className="space-y-1 col-span-6">
-                          <FormLabel className={"text-[#667085]"}>Latitude</FormLabel>
-                          <FormControl>
+                      render={({field, fieldState: {error}}) => (
+                        <div className="space-y-1 col-span-6">
+                          <Label className={"text-[#667085]"}>Latitude</Label>
+                          <>
                             <Input placeholder="41.1" {...field} type={"text"}/>
-                          </FormControl>
-                          <FormMessage/>
-                        </FormItem>
+                          </>
+                          {error && <p className="text-red-500">{error.message}</p>}
+                        </div>
                       )}
                     />
-                    <FormField
+                    <Controller
                       control={form.control}
                       name="longitude"
-                      render={({field}) => (
-                        <FormItem className="space-y-1 col-span-6">
-                          <FormLabel className={"text-[#667085]"}>Longitude</FormLabel>
-                          <FormControl>
+                      render={({field, fieldState: {error}}) => (
+                        <div className="space-y-1 col-span-6">
+                          <Label className={"text-[#667085]"}>Longitude</Label>
+                          <>
                             <Input placeholder="61.1" {...field} type={"text"}/>
-                          </FormControl>
-                          <FormMessage/>
-                        </FormItem>
+                          </>
+                          {error && <p className="text-red-500">{error.message}</p>}
+                        </div>
                       )}
                     />
                   </div>
@@ -423,14 +395,15 @@ const Index = () => {
               {/*Product Image*/}
               <div className={"col-span-12 lg:col-span-4 flex flex-col gap-3"}>
                 <div className={"flex flex-col bg-white rounded-2xl shadow p-6"}>
-                  <FormField
+                  <Controller
                     name="picture"
                     control={form.control}
+                    rules={{required: "Bu maydon to'ldirilishi shart!"}}
                     render={
-                      ({field: {onChange, value, ...field}}) => (
-                        <FormItem>
-                          <FormLabel className={"text-[#667085]"}>Restoran rasmi</FormLabel>
-                          <FormControl>
+                      ({field: {onChange, value, ...field}, fieldState: {error}}) => (
+                        <div>
+                          <Label className={"text-[#667085]"}>Restoran rasmi</Label>
+                          <>
                             <div
                               className={`w-full border-2 border-dashed flex p-4 flex-col items-center justify-center rounded-md cursor-pointer gap-4 ${isDragged ? 'border-primary' : ''}`}
                               onDragEnter={(e) => {
@@ -505,9 +478,9 @@ const Index = () => {
                                       Rasm qo‘shish
                                     </label>)}
                             </div>
-                          </FormControl>
-                          <FormMessage/>
-                        </FormItem>
+                          </>
+                          {error && <p className="text-red-500">{error.message}</p>}
+                        </div>
                       )
                     }
                   />
@@ -533,7 +506,6 @@ const Index = () => {
                 </Button>
               </div>
             </form>
-          </Form>
         </div>
       </Layout.Body>
     </Layout>
