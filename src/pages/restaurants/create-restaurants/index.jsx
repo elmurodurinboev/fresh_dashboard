@@ -16,6 +16,7 @@ import RestaurantService from "@/services/restaurant.service.js";
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {Switch} from "@/components/ui/switch.jsx";
+import PhoneInput from "@/components/custom/phone-input.jsx";
 
 
 const formSchema = z.object({
@@ -49,6 +50,9 @@ const formSchema = z.object({
     .string(),
   address: z
     .string(),
+  phone_number: z
+    .string()
+    .min(9, {message: "Yaroqli telefon raqam kiriting!"}),
 })
 
 const Index = () => {
@@ -71,6 +75,7 @@ const Index = () => {
       closing_time: "",
       contractor: "",
       address: '',
+      phone_number: "",
     }
   })
 
@@ -87,7 +92,7 @@ const Index = () => {
   const mutation = useMutation({
     mutationFn: RestaurantService.create,
     onError: (error) => {
-      const {result: {errors: serverErrors}, status} = error.response;
+      const {data: {errors: serverErrors}, status} = error.response;
       if (status === 422) {
         Object.entries(serverErrors).forEach(([key, value]) => {
           form.setError(key, {
@@ -151,15 +156,45 @@ const Index = () => {
                       name="is_active"
                       render={({field}) => (
                         <FormItem className="flex flex-col gap-1 items-end pt-2">
-                          <FormLabel className={"text-[#667085] flex items-center"}>Aktivligi</FormLabel>
+                          <FormLabel
+                            className={"text-[#667085] flex items-center"}>Aktivligi</FormLabel>
                           <FormControl>
-                            <Switch {...field} checked={field.value} onCheckedChange={val => field.onChange(val)} />
+                            <Switch {...field} checked={field.value}
+                                    onCheckedChange={val => field.onChange(val)}/>
                           </FormControl>
                           <FormMessage/>
                         </FormItem>
                       )}
                     />
                   </div>
+                  <FormField
+                    control={form.control}
+                    name="phone_number"
+                    render={({field}) => (
+                      <FormItem className="space-y-1">
+                        <FormLabel>Telefon raqam</FormLabel>
+                        <FormControl>
+                          <div className="relative flex items-center">
+                                                        <span
+                                                          className="absolute left-2.5 top-[9px] text-sm">+998</span>
+                            <PhoneInput
+                              {...field}
+                              onChange={() => {
+                              }}
+                              mask="00 000 0000"
+                              className={"pl-12 flex h-9 items-center"}
+                              placeholder="90 000 0000"
+                              onAccept={(val, mask) => {
+                                field.onChange(mask._unmaskedValue);
+                              }}
+                            />
+                          </div>
+
+                        </FormControl>
+                        <FormMessage/>
+                      </FormItem>
+                    )}
+                  />
                   {
                     !owners.isLoading ? (
                       !owners.isError && owners.data && owners.isSuccess && owners.data.result ? (
@@ -168,9 +203,11 @@ const Index = () => {
                           name="owner"
                           render={({field}) => (
                             <FormItem className="space-y-1">
-                              <FormLabel className={"text-[#667085]"}>Restaran egasi</FormLabel>
+                              <FormLabel className={"text-[#667085]"}>Restaran
+                                egasi</FormLabel>
                               <FormControl>
-                                <Select value={+field.value} onValueChange={(val) => field.onChange(+val)}>
+                                <Select value={+field.value}
+                                        onValueChange={(val) => field.onChange(+val)}>
                                   <SelectTrigger className="w-full text-black">
                                     <SelectValue placeholder="Select Owner"/>
                                   </SelectTrigger>
@@ -206,14 +243,16 @@ const Index = () => {
                             <FormItem className="space-y-1">
                               <FormLabel className={"text-[#667085]"}>Hudud</FormLabel>
                               <FormControl>
-                                <Select value={+field.value} onValueChange={(val) => field.onChange(+val)}>
+                                <Select value={+field.value}
+                                        onValueChange={(val) => field.onChange(+val)}>
                                   <SelectTrigger className="w-full text-black">
                                     <SelectValue placeholder="Select country"/>
                                   </SelectTrigger>
                                   <SelectContent>
                                     {
                                       country.data.result.map((item, index) => (
-                                        <SelectItem value={item.id} key={index}>{item.name}</SelectItem>
+                                        <SelectItem value={item.id}
+                                                    key={index}>{item.name}</SelectItem>
                                       ))
                                     }
                                   </SelectContent>
@@ -268,7 +307,8 @@ const Index = () => {
                         <FormItem className="space-y-1 flex-1">
                           <FormLabel className={"text-[#667085]"}>Restor reytinggi</FormLabel>
                           <FormControl>
-                            <Input placeholder="10" {...field} onChange={e => field.onChange(+e.target.value)}/>
+                            <Input placeholder="10" {...field}
+                                   onChange={e => field.onChange(+e.target.value)}/>
                           </FormControl>
                           <FormMessage/>
                         </FormItem>
@@ -283,9 +323,11 @@ const Index = () => {
                         name="opening_time"
                         render={({field}) => (
                           <FormItem className="space-y-1">
-                            <FormLabel className={"text-[#667085]"}>Ochilish vaqti</FormLabel>
+                            <FormLabel className={"text-[#667085]"}>Ochilish
+                              vaqti</FormLabel>
                             <FormControl>
-                              <Input placeholder="30"  {...field} type={"time"} className={"w-auto"}/>
+                              <Input placeholder="30"  {...field} type={"time"}
+                                     className={"w-auto"}/>
                             </FormControl>
                             <FormMessage/>
                           </FormItem>
@@ -297,9 +339,11 @@ const Index = () => {
                         name="closing_time"
                         render={({field}) => (
                           <FormItem className="space-y-1">
-                            <FormLabel className={"text-[#667085]"}>Ochilish vaqti</FormLabel>
+                            <FormLabel className={"text-[#667085]"}>Ochilish
+                              vaqti</FormLabel>
                             <FormControl>
-                              <Input placeholder="30" {...field} type={"time"} className={"w-auto"}/>
+                              <Input placeholder="30" {...field} type={"time"}
+                                     className={"w-auto"}/>
                             </FormControl>
                             <FormMessage/>
                           </FormItem>
@@ -312,7 +356,8 @@ const Index = () => {
                         name="delivery_time"
                         render={({field}) => (
                           <FormItem className="space-y-1 flex-1">
-                            <FormLabel className={"text-[#667085]"}>Yetkazib berish vaqti</FormLabel>
+                            <FormLabel className={"text-[#667085]"}>Yetkazib berish
+                              vaqti</FormLabel>
                             <FormControl>
                               <div className={"flex items-center gap-2"}>
                                 <Input placeholder="30" {...field} type={"number"}/>
@@ -333,7 +378,8 @@ const Index = () => {
                       <FormItem className="space-y-1">
                         <FormLabel className={"text-[#667085]"}>Restoran tavsifi</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="Go'sh, hamir" className={"resize-none"} {...field} rows={5}/>
+                          <Textarea placeholder="Go'sh, hamir"
+                                    className={"resize-none"} {...field} rows={5}/>
                         </FormControl>
                         <FormMessage/>
                       </FormItem>
@@ -406,17 +452,20 @@ const Index = () => {
                             >
                               {
                                 value ? (
-                                  <span className={"w-full min-h-max rounded-md overflow-hidden"}>
+                                  <span
+                                    className={"w-full min-h-max rounded-md overflow-hidden"}>
                         <img src={URL.createObjectURL(value)} alt="Selected Image" width={"100"} height={"100"}
                              className="w-full object-center object-contain"/>
                       </span>) : (
-                                  <div className={"w-full flex flex-col justify-center items-center gap-4"}>
+                                  <div
+                                    className={"w-full flex flex-col justify-center items-center gap-4"}>
                       <span
                         className={"flex items-center justify-center rounded-full w-9 h-9 bg-green-100 text-green-600 p-2"}>
                         <IconPhoto className={"icon"}/>
                       </span>
                                     <p className={"text-center text-gray-400 text-sm font-normal"}>
-                                      Rasmni bu yerga sudrab tashlang yoki rasm qo`shish tugmasini bosing
+                                      Rasmni bu yerga sudrab tashlang yoki rasm
+                                      qo`shish tugmasini bosing
                                     </p>
                                   </div>
                                 )}
