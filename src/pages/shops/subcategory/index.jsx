@@ -68,7 +68,7 @@ const Index = () => {
       </Layout.Header>
 
       <Layout.Body>
-        <div className="mb-2 flex items-center justify-between space-y-2">
+        <div className="mb-2 flex items-center justify-between space-y-2 flex-wrap">
           <div>
             <h2 className="text-2xl font-bold tracking-tight">Sub Kategoriyalar</h2>
           </div>
@@ -109,7 +109,7 @@ const Index = () => {
 
                               <TableCell>
                                 {
-                                  format(category?.created_at, 'yyyy-MM-dd')
+                                  format(category?.created_at, 'dd-MM-yyyy HH:MM')
                                 }
                               </TableCell>
                               <TableCell className={"text-end"}>
