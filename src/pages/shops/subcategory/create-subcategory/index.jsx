@@ -10,21 +10,25 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import {Skeleton} from "@/components/ui/skeleton.jsx";
 import ShopCategoryService from "@/services/shop-category.service.js";
 import {Label} from "@/components/ui/label.jsx";
+import {IconPhoto, IconPlus, IconX} from "@tabler/icons-react";
+import {useState} from "react";
 
 
 const Index = () => {
   const navigate = useNavigate()
+  const [isDragged, setIsDragged] = useState(false)
   const form = useForm({
     defaultValues: {
       name: '',
-      category: ''
+      category: '',
+      image: ''
     }
   })
 
   const mutation = useMutation({
     mutationFn: SubcategoryService.create,
     onError: (error) => {
-      const {result: {errors: serverErrors}, status} = error.response;
+      const {data: {errors: serverErrors}, status} = error.response;
       if (status === 422) {
         Object.entries(serverErrors).forEach(([key, value]) => {
           form.setError(key, {
@@ -49,7 +53,9 @@ const Index = () => {
   })
 
   const onSubmit = (data) => {
-    mutation.mutate(data)
+    const formData = new FormData
+    Object.keys(data).forEach(item => formData.append(item, data[item]))
+    mutation.mutate(formData)
   }
   const categoryData = useQuery({
     queryKey: ['getAllCategories'],
@@ -64,8 +70,8 @@ const Index = () => {
           <div>
             <h2 className="text-2xl font-bold tracking-tight">Sub Kategoriya yaratish</h2>
           </div>
-          <form onSubmit={form.handleSubmit(onSubmit)} className={"flex gap-4"}>
-            <div className={"w-full p-6 bg-white rounded-2xl shadow flex flex-col gap-4"}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className={"grid grid-cols-12 gap-4"}>
+            <div className={"col-span-12 lg:col-span-8 flex flex-col gap-4 justify-start"}>
               {!categoryData.isLoading ? (
                 !categoryData.isError &&
                 categoryData.data &&
@@ -78,7 +84,7 @@ const Index = () => {
                     defaultValue={""}
                     rules={{required: "Bu maydon tanlanishi shart"}} // Add validation rules here
                     render={({field, fieldState: {error}}) => (
-                      <div className="flex-1">
+                      <div className={"w-full p-6 bg-white rounded-2xl shadow flex flex-col gap-4"}>
                         <label className="text-[#667085]">
                           Kategoriya
                         </label>
@@ -120,7 +126,7 @@ const Index = () => {
                 name="name"
                 rules={{required: "Bu maydon to'ldirilishi shart!"}} // Add validation rules here
                 render={({field, fieldState: {error}}) => (
-                  <div className="space-y-1">
+                  <div className={"w-full p-6 bg-white rounded-2xl shadow flex flex-col gap-4"}>
                     <Label className={"text-[#667085]"}>Sub Kategoriya nomi</Label>
                     <div>
                       <Input placeholder="Evos" {...field} />
@@ -133,22 +139,119 @@ const Index = () => {
                   </div>
                 )}
               />
-              <div className={"space-x-4"}>
-                <Button
-                  type={'submit'}
-                  size={"lg"}
-                  loading={mutation.isPending}
-                >
-                  Qo`shish
-                </Button>
-                <Button
-                  variant={'outline'}
-                  size={"lg"}
-                  onClick={() => navigate("/subcategory")}
-                >
-                  Bekor qilish
-                </Button>
+            </div>
+            {/*Product Image*/}
+            <div className={"col-span-12 lg:col-span-4 flex flex-col gap-3"}>
+              <div className={"flex flex-col bg-white rounded-2xl shadow p-6"}>
+                <Controller
+                  name="image"
+                  control={form.control}
+                  rules={{required: "Bu maydon to'ldirilishi shart!"}} // Add validation rules here
+                  render={
+                    ({field: {onChange, value, ...field}, fieldState: {error}}) => (
+                      <div>
+                        <Label className={"text-[#667085]"}>Kategoriya rasmi</Label>
+                        <>
+                          <div
+                            className={`w-full border-2 border-dashed flex p-4 flex-col items-center justify-center rounded-md cursor-pointer gap-4 ${isDragged ? 'border-primary' : ''}`}
+                            onDragEnter={(e) => {
+                              e.preventDefault();
+                              setIsDragged(true);
+                            }}
+                            onDragOver={(e) => {
+                              e.preventDefault();
+                              setIsDragged(true);
+                            }}
+                            onDragLeave={() => {
+                              setIsDragged(false);
+                            }}
+                            onDrop={(e) => {
+                              e.preventDefault();
+                              setIsDragged(false);
+                              onChange(e.dataTransfer.files[0]);
+                            }}
+                          >
+                            {
+                              value ? (
+                                <span className={"w-full min-h-max rounded-md overflow-hidden"}>
+                        <img src={URL.createObjectURL(value)} alt="Selected Image" width={"100"} height={"100"}
+                             className="w-full object-center object-contain"/>
+                      </span>) : (
+                                <div className={"w-full flex flex-col justify-center items-center gap-4"}>
+                      <span
+                        className={"flex items-center justify-center rounded-full w-9 h-9 bg-green-100 text-green-600 p-2"}>
+                        <IconPhoto className={"icon"}/>
+                      </span>
+                                  <p className={"text-center text-gray-400 text-sm font-normal"}>
+                                    Rasmni bu yerga sudrab tashlang yoki rasm qo`shish tugmasini bosing
+                                  </p>
+                                </div>
+                              )}
+                            <input
+                              {...field}
+                              type="file"
+                              id={"imageField"}
+                              className={"hidden"}
+                              accept={"image/png, image/jpeg, image/jpg, image/heic"}
+                              value={value?.fileName}
+                              onChange={(e) => onChange(e.target.files[0])}
+                            />
+                            {
+                              value ? (
+                                  <div className={"w-full flex gap-4 items-center"}>
+                                    <Button
+                                      type={"button"}
+                                      variant={"danger"}
+                                      className={"w-1/2"}
+                                      onClick={() => onChange(null)} // This line clears the selected image
+                                    >
+                                      O`chirish
+                                    </Button>
+                                    <label
+                                      htmlFor={"imageField"}
+                                      className={"w-1/2 h-10 py-[10px] px-3 font-medium text-brand bg-secondary border-none flex items-center transition-all justify-center gap-2 rounded-md cursor-pointer"}
+                                    >
+                                      Almashtirish
+                                    </label>
+                                  </div>) :
+                                (
+                                  <label
+                                    htmlFor={"imageField"}
+                                    className={"h-10 py-[10px] px-3 font-medium text-green-600 bg-green-50 border-none flex items-center hover:bg-green-500 hover:text-white transition-all justify-center gap-2 rounded-md cursor-pointer"}
+                                  >
+                                    <IconPlus className={"w-5 h-5"}/>
+                                    Rasm qo‘shish
+                                  </label>)}
+                          </div>
+                        </>
+                        {error && (
+                          <p className="text-red-500 text-sm">
+                            {error.message}
+                          </p>
+                        )}
+                      </div>
+                    )
+                  }
+                />
               </div>
+              <Button
+                size={"xl"}
+                type={"submit"}
+                className={"w-full"}
+              >
+                Saqlash
+              </Button>
+
+              <Button
+                size={"xl"}
+                type={"reset"}
+                variant={"outline"}
+                onClick={() => navigate("/subcategory")}
+                className={"w-full gap-2 items-center"}
+              >
+                <IconX className={"w-5 h-5"}/>
+                Bekor qilish
+              </Button>
             </div>
           </form>
         </div>

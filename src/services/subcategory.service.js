@@ -14,8 +14,8 @@ const SubcategoryService = {
     return data
   },
 
-  async update(payload) {
-    const {data} = await Api.put(`/shop_subcategory/${payload.id}/`, payload)
+  async update(formData) {
+    const {data} = await Api.patch(`/shop_subcategory/${formData.get("id")}/`, formData)
     return data
   },
 
