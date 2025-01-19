@@ -164,8 +164,8 @@ const Index = () => {
                   rules={{required: "Video is required"}}
                   render={({field, fieldState: {error}}) => (
                     <div>
-                      <label className="text-[#667085]">Video url</label>
-                      <Input placeholder="https://video.com/lavash" {...field} type={"url"}/>
+                      <label className="text-[#667085]">Video</label>
+                      <Input {...field} type={"file"}/>
                       {error && (
                         <p className="text-red-500 text-sm">{error.message}</p>
                       )}

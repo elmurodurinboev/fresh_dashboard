@@ -210,21 +210,21 @@ const routes = [
           {
             path: "best-products",
             lazy: async () => ({
-              Component: (await import("@/pages/restaurants/best-products")).default
+              Component: (await import("@/pages/best-products")).default
             }),
             meta: { roles: getAllowedUsers('best-products') },
           },
           {
             path: "best-products/update/:id",
             lazy: async () => ({
-              Component: (await import("@/pages/restaurants/best-products/update")).default
+              Component: (await import("@/pages/best-products/update")).default
             }),
             meta: { roles: getAllowedUsers('best-products') },
           },
           {
             path: "best-products/create",
             lazy: async () => ({
-              Component: (await import("@/pages/restaurants/best-products/create")).default
+              Component: (await import("@/pages/best-products/create")).default
             }),
             meta: { roles: getAllowedUsers('best-products') },
           },
