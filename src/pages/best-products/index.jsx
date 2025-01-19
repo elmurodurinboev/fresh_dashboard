@@ -20,6 +20,7 @@ import {toast} from "@/hooks/use-toast.js";
 import DeleteConfirmationModal from "@/components/custom/delete-confirmation-modal.jsx";
 import {useState} from "react";
 import {format} from "date-fns";
+import {IconLink} from "@tabler/icons-react"
 
 const Index = () => {
   const [deleteModal, setDeleteModal] = useState(false)
@@ -98,6 +99,9 @@ const Index = () => {
                           Restoran
                         </TableHead>
                         <TableHead>
+                          Videoga havola
+                        </TableHead>
+                        <TableHead>
                           Yaratilgan vaqti
                         </TableHead>
                         <TableHead className={"text-end"}>
@@ -124,8 +128,12 @@ const Index = () => {
 
                               <TableCell>
                                 {
-                                  typeof product?.restaurant !== "object" ? product.restaurant : "Object"
+                                  product?.restaurant?.name ? product.restaurant.name : "Nomalum"
                                 }
+                              </TableCell>
+
+                              <TableCell>
+                                <a href={product.video_url} target={"_blank"}><IconLink size={24}/></a>
                               </TableCell>
 
                               <TableCell>
