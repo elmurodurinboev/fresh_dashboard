@@ -46,7 +46,7 @@ const Index = () => {
     },
     onError: (error) => {
       toast({
-        variant: 'success',
+        variant: 'destructive',
         title: "Error",
         description: error.message || "Messages.error_occurred"
       })

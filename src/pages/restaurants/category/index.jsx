@@ -44,6 +44,7 @@ const Index = () => {
     },
     onError: (error) => {
       toast({
+        variant: "destructive",
         title: "Error",
         description: error.message || "Messages.error_occurred"
       })
@@ -134,7 +135,7 @@ const Index = () => {
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end" className="w-[160px]">
                                       <DropdownMenuItem
-                                        onClick={() => navigate(`/category/update/${category.id}`)}>Edit</DropdownMenuItem>
+                                        onClick={() => navigate(`/restaurant-category/update/${category.id}`)}>Edit</DropdownMenuItem>
                                       <DropdownMenuSeparator/>
                                       <DropdownMenuItem
                                         onClick={() => handleDelete(category)}
