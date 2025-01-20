@@ -20,9 +20,11 @@ import {Textarea} from "@/components/ui/textarea.jsx";
 import RestaurantCategoryService from "@/services/restaurant-category.service.js";
 import {Switch} from "@/components/ui/switch.jsx";
 import InputWithFormat from "@/components/custom/input-with-format";
+import {Checkbox} from "@/components/ui/checkbox.jsx";
 
 const Index = () => {
   const navigate = useNavigate();
+  const [withDiscount, setWithDiscount] = useState(false)
   const [isDragged, setIsDragged] = useState(false);
   const [contributionType, setContributionType] = useState('percent')
   const form = useForm({
@@ -92,7 +94,7 @@ const Index = () => {
         <div className="mb-2 flex flex-col gap-4">
           <div>
             <h2 className="text-2xl font-bold tracking-tight">
-              Create Products
+              Mahsulot yaratish
             </h2>
           </div>
           <form
@@ -116,7 +118,7 @@ const Index = () => {
                         name="category"
                         control={form.control}
                         defaultValue={""}
-                        rules={{required: "Category is required"}} // Add validation rules here
+                        rules={{required: "Bu maydon to'ldirilishi shart"}} // Add validation rules here
                         render={({field, fieldState: {error}}) => (
                           <div className="flex-1">
                             <label className="text-[#667085]">
@@ -159,7 +161,7 @@ const Index = () => {
                   <Controller
                     name="is_active"
                     control={form.control}
-                    rules={{required: "This field is required"}}
+                    rules={{required: false}}
                     render={({field, fieldState: {error}}) => (
                       <div className="flex flex-col">
                         <label className="text-[#667085]">Aktivligi</label>
@@ -180,7 +182,7 @@ const Index = () => {
                 <Controller
                   name="name"
                   control={form.control}
-                  rules={{required: "Name is required"}}
+                  rules={{required: "Bu maydon to'ldirilishi shart"}}
                   render={({field, fieldState: {error}}) => (
                     <div>
                       <label className="text-[#667085]">Mahsulot nomi</label>
@@ -196,7 +198,7 @@ const Index = () => {
                   <Controller
                     name="volume"
                     control={form.control}
-                    rules={{required: "Volume is required"}}
+                    rules={{required: false}}
                     render={({field, fieldState: {error}}) => (
                       <div className="col-span-6">
                         <label className="text-[#667085]">Volume</label>
@@ -217,10 +219,10 @@ const Index = () => {
                   <Controller
                     name="stock_level"
                     control={form.control}
-                    rules={{required: "Stock level is required"}}
+                    rules={{required: "Bu maydon to'ldirilishi shart"}}
                     render={({field, fieldState: {error}}) => (
                       <div className="col-span-6">
-                        <label className="text-[#667085]">Stock level</label>
+                        <label className="text-[#667085]">Mahsulotlar soni</label>
                         <InputWithFormat
                           placeholder="10"
                           value={field.value}
@@ -239,7 +241,7 @@ const Index = () => {
                 <Controller
                   name="price"
                   control={form.control}
-                  rules={{required: "Price is required"}}
+                  rules={{required: "Bu maydon to'ldirilishi shart"}}
                   render={({field, fieldState: {error}}) => (
                     <div>
                       <label className="text-[#667085]">Mahsulot narhi</label>
@@ -258,17 +260,27 @@ const Index = () => {
                 <Controller
                   name="discount_price"
                   control={form.control}
-                  rules={{required: "Discount price is required"}}
+                  rules={{required: false}}
                   render={({field, fieldState: {error}}) => (
                     <div>
-                      <label className="text-[#667085]">
-                        Chegirma
-                      </label>
-                      <InputWithFormat
-                        placeholder="10 000"
-                        value={field.value}
-                        onValueChange={(e) => field.onChange(e)}
-                      />
+                      <div className={"flex items-center gap-2"}>
+                        <label className="text-[#667085]">
+                          Chegirma
+                        </label>
+                        <Checkbox className={"w-5 h-5 rounded-md"} checked={withDiscount} onCheckedChange={val => {
+                          field.onChange("")
+                          setWithDiscount(val)
+                        }} />
+                      </div>
+                      {
+                        withDiscount && (
+                          <InputWithFormat
+                            placeholder="10 000"
+                            value={field.value}
+                            onValueChange={(e) => field.onChange(e)}
+                          />
+                        )
+                      }
                       {error && (
                         <p className="text-red-500 text-sm">{error.message}</p>
                       )}
@@ -279,7 +291,7 @@ const Index = () => {
                 <Controller
                   name="contribution_amount"
                   control={form.control}
-                  rules={{required: "contribution amount is required"}}
+                  rules={{required: "Bu maydon to'ldirilishi shart"}}
                   render={({field, fieldState: {error}}) => (
                     <div className={"flex flex-col gap-1"}>
                       <label className="text-[#667085]">
@@ -317,7 +329,7 @@ const Index = () => {
                 <Controller
                   name="description"
                   control={form.control}
-                  rules={{required: "Description is required"}}
+                  rules={{required: false}}
                   render={({field, fieldState: {error}}) => (
                     <div>
                       <label className="text-[#667085]">Mahsulot tavsifi</label>
@@ -342,7 +354,7 @@ const Index = () => {
                 <Controller
                   name="picture"
                   control={form.control}
-                  rules={{required: "Image is required"}}
+                  rules={{required: "Bu maydon to'ldirilishi shart"}}
                   render={({
                              field: {onChange, value},
                              fieldState: {error},

@@ -49,8 +49,9 @@ const Index = () => {
   useEffect(() => {
     if (categoryData && categoryData.data && categoryData.isSuccess && categoryData.data.result && !categoryData.isError) {
       form.reset({
-        name: categoryData.data.result.name,
-        image: categoryData.data.result.image,
+        name: categoryData.data.result.name && categoryData.data.result.name,
+        image: categoryData.data.result.image && categoryData.data.result.image,
+        restaurant: categoryData.data.result.restaurant && categoryData.data.result.restaurant,
       })
     }
   }, [categoryData.isSuccess, categoryData.data?.result]);
@@ -77,17 +78,18 @@ const Index = () => {
     onSuccess: () => {
       toast({
         title: 'OK',
-        description: "Successfully added"
+        description: "O'zgartirildi!"
       })
       form.reset()
+      navigate("/restaurant-category")
     }
   })
 
   const onSubmit = (data) => {
     const formData = new FormData()
+    formData.append("id", params.id)
     Object.keys(data).forEach(item => item !== 'image' && formData.append(item, data[item]))
-
-    data.image && formData.append("image", data.image)
+    typeof data.image === "object" && formData.append("image", data.image)
     mutation.mutate(formData)
   }
 
@@ -102,7 +104,7 @@ const Index = () => {
       <Layout.Body>
         <div className="mb-2 flex flex-col gap-4">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight">update category</h2>
+            <h2 className="text-2xl font-bold tracking-tight">Kategoriyani o`zgartirish</h2>
           </div>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className={"grid grid-cols-12 gap-4"}>
@@ -264,6 +266,7 @@ const Index = () => {
                 <Button
                   size={"xl"}
                   type={"submit"}
+                  loading={mutation.isPending}
                   className={"w-full"}
                 >
                   Saqlash
@@ -273,7 +276,7 @@ const Index = () => {
                   size={"xl"}
                   type={"reset"}
                   variant={"outline"}
-                  onClick={() => navigate("/category")}
+                  onClick={() => navigate("/restaurant-category")}
                   className={"w-full gap-2 items-center"}
                 >
                   <IconX className={"w-5 h-5"}/>
