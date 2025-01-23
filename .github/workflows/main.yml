@@ -29,5 +29,6 @@ jobs:
           script: |
             cd /var/www/we_drive_dashboard
             git pull origin master
+            sudo su
             npm i
             pm2 restart 0
