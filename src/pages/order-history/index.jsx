@@ -2,7 +2,7 @@ import {Layout} from "@/components/custom/layout.jsx";
 import ThemeSwitch from "@/components/theme-switch.jsx";
 import {UserNav} from "@/components/user-nav.jsx";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.jsx";
-import { useQuery} from "@tanstack/react-query";
+import {useQuery} from "@tanstack/react-query";
 import {Skeleton} from "@/components/ui/skeleton.jsx";
 
 import OrderService from "@/services/order.service.js";
@@ -10,13 +10,18 @@ import {format} from "date-fns";
 import {cn} from "@/lib/utils.js";
 import {useTranslations} from "use-intl";
 import {Formatter} from "@/utils/formatter.js";
+import {Collapsible, CollapsibleContent, CollapsibleTrigger} from "@/components/ui/collapsible.jsx";
+import OrdersItem from "@/components/orders/orders-item.jsx";
+import {Button} from "@/components/ui/button.jsx";
+import {
+  IconSelector
+} from "@tabler/icons-react"
 
 const Index = () => {
   const t = useTranslations("order")
   const orderData = useQuery({
     queryKey: ['getAllOrders'],
     queryFn: OrderService.getAll,
-
   })
 
   const getRowClass = (status) => {
@@ -39,7 +44,6 @@ const Index = () => {
         return "bg-gray-100 hover:bg-gray-200"; // Default gray
     }
   };
-
 
   return (
     <Layout>
@@ -80,40 +84,59 @@ const Index = () => {
                         <TableHead className={"text-end"}>
                           Yaratilgan sana
                         </TableHead>
+                        <TableHead>
+
+                        </TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {
                         orderData.data.result.length > 0 ? (
                           orderData.data.result.map((order, index) => (
-                            <TableRow key={index} className={cn("",getRowClass(order.status))}>
-                              <TableCell>
-                                {
-                                  order?.org_type
-                                }
-                              </TableCell>
-                              <TableCell>
-                                {
-                                  t(order.status.toString())
-                                }
-                              </TableCell>
-                              <TableCell>
-                                {
-                                  Formatter.currency(order?.amount)
-                                }
-                              </TableCell>
-                              <TableCell>
-                                {
-                                  Formatter.currency(order?.delivery_fee)
-                                }
-                              </TableCell>
+                            <Collapsible key={order.id} asChild>
+                              <>
+                                <TableRow key={index} className={cn("", getRowClass(order.status))}>
+                                  <TableCell>
+                                    {
+                                      order?.org_type
+                                    }
+                                  </TableCell>
+                                  <TableCell>
+                                    {
+                                      t(order.status.toString())
+                                    }
+                                  </TableCell>
+                                  <TableCell>
+                                    {
+                                      Formatter.currency(order?.amount)
+                                    }
+                                  </TableCell>
+                                  <TableCell>
+                                    {
+                                      Formatter.currency(order?.delivery_fee)
+                                    }
+                                  </TableCell>
 
-                              <TableCell className={"text-end"}>
-                                {
-                                  format(order?.created_at, 'dd-MM-yyyy HH:MM')
-                                }
-                              </TableCell>
-                            </TableRow>
+                                  <TableCell className={"text-end"}>
+                                    {
+                                      format(order?.created_at, 'dd-MM-yyyy HH:MM')
+                                    }
+                                  </TableCell>
+                                  <TableCell className={"text-end"}>
+                                    <CollapsibleTrigger asChild>
+                                      <Button variant={"outline"}>
+                                        <IconSelector size={20} />
+                                      </Button>
+                                    </CollapsibleTrigger>
+                                  </TableCell>
+                                </TableRow>
+                                <CollapsibleContent asChild className={"!bg-[#f7f7f7]"}>
+                                  {
+                                    order.items && order.items.length > 0 && <OrdersItem orderItems={order.items} />
+                                  }
+                                </CollapsibleContent>
+                              </>
+                            </Collapsible>
                           ))
 
                         ) : (
