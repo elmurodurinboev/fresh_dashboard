@@ -5,7 +5,6 @@ import {
   IconBuildingStore,
   IconCategory,
   IconCategory2,
-  IconScooterElectric,
   IconCubeSpark,
   IconUsers,
   IconCashRegister,
@@ -29,6 +28,44 @@ export const sidelinks = [
     roles: [ROLES.ADMIN, ROLES.SHOP_OWNER, ROLES.RESTAURANT_OWNER]
   },
 
+  // restaurants
+  {
+    title: "sidebar.restaurants",
+    label: "",
+    href: "/restaurants",
+    icon: <IconBuildingStore size={18}/>,
+    roles: [ROLES.ADMIN]
+  },
+  {
+    title: "sidebar.restaurant-products",
+    label: "",
+    href: "/restaurant-products",
+    icon: <IconCube size={18}/>,
+    roles: [ROLES.ADMIN, ROLES.RESTAURANT_OWNER]
+  },
+  {
+    title: "sidebar.restaurant-category",
+    label: "",
+    href: "/restaurant-category",
+    icon: <IconCategory size={18}/>,
+    roles: [ROLES.ADMIN, ROLES.RESTAURANT_OWNER]
+  },
+  {
+    title: "sidebar.best-products",
+    label: "",
+    href: "/best-products",
+    icon: <IconCubeSpark size={18}/>,
+    roles: [ROLES.ADMIN, ROLES.RESTAURANT_OWNER]
+  },
+
+  // Shops
+  {
+    title: "sidebar.shops",
+    label: "",
+    href: "/shops",
+    icon: <IconBuildingStore size={18}/>,
+    roles: [ROLES.ADMIN]
+  },
   {
     title: "sidebar.shop-products",
     label: "",
@@ -50,44 +87,6 @@ export const sidelinks = [
     href: "/subcategory",
     icon: <IconCategory2 size={18}/>,
     roles: [ROLES.ADMIN, ROLES.SHOP_OWNER]
-  },
-
-  {
-    title: "sidebar.shops",
-    label: "",
-    href: "/shops",
-    icon: <IconBuildingStore size={18}/>,
-    roles: [ROLES.ADMIN]
-  },
-
-  {
-    title: "sidebar.restaurants",
-    label: "",
-    href: "/restaurants",
-    icon: <IconBuildingStore size={18}/>,
-    roles: [ROLES.ADMIN]
-  },
-
-  {
-    title: "sidebar.restaurant-products",
-    label: "",
-    href: "/restaurant-products",
-    icon: <IconCube size={18}/>,
-    roles: [ROLES.ADMIN, ROLES.RESTAURANT_OWNER]
-  },
-  {
-    title: "sidebar.best-products",
-    label: "",
-    href: "/best-products",
-    icon: <IconCubeSpark size={18}/>,
-    roles: [ROLES.ADMIN, ROLES.RESTAURANT_OWNER]
-  },
-  {
-    title: "sidebar.restaurant-category",
-    label: "",
-    href: "/restaurant-category",
-    icon: <IconCategory size={18}/>,
-    roles: [ROLES.ADMIN, ROLES.RESTAURANT_OWNER]
   },
   {
     title: "sidebar.users",
