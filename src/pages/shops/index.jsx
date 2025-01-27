@@ -18,7 +18,8 @@ import {toast} from "@/hooks/use-toast.js";
 import DeleteConfirmationModal from "@/components/custom/delete-confirmation-modal.jsx";
 import {useState} from "react";
 import ShopService from "@/services/shop.service.js";
-import {format} from "date-fns";
+import DefaultImage from "@/components/custom/default-image.jsx";
+import {Formatter} from "@/utils/formatter.js";
 
 const Index = () => {
   const [deleteModal, setDeleteModal] = useState(false)
@@ -88,10 +89,16 @@ const Index = () => {
                     <TableHeader>
                       <TableRow>
                         <TableHead>
+                          Do`kon egasi
+                        </TableHead>
+                        <TableHead>
                           Nomi
                         </TableHead>
                         <TableHead>
-                          Yaratilgan sana
+                          Telefon raqami
+                        </TableHead>
+                        <TableHead>
+                          Hudud
                         </TableHead>
                         <TableHead className={"text-end"}>
                         </TableHead>
@@ -102,17 +109,37 @@ const Index = () => {
                         shopData.data.result.length > 0 ? (
                           shopData.data.result.map((shop, index) => (
                             <TableRow key={index} className={"bg-secondary"}>
+                              <TableCell className={"flex gap-2 items-center overflow-hidden"}>
+                                {shop.owner.image ? (
+                                  <img
+                                    src={shop.owner.image}
+                                    alt={"product_image"}
+                                    className={"w-[48px] h-[48px] rounded-md object-cover"}
+                                  />
+                                ) : (
+                                  <DefaultImage/>
+                                )}
+                                <div className={"flex flex-col"}>
+                                  <span>{shop.owner.full_name}</span>
+                                  <span className={"text-xs text-foreground"}>{shop.owner.phone_number && Formatter.formatPhoneNumber(shop.owner.phone_number)}</span>
+                                </div>
+                              </TableCell>
                               <TableCell>
                                 {
                                   shop?.name
                                 }
                               </TableCell>
-
                               <TableCell>
                                 {
-                                  format(shop?.created_at, 'yyyy-MM-dd')
+                                  shop?.phone_number
                                 }
                               </TableCell>
+                              <TableCell>
+                                {
+                                  shop?.country?.name
+                                }
+                              </TableCell>
+
                               <TableCell className={"text-end"}>
                                 <div className={"w-auto flex justify-end items-center"}>
                                   <DropdownMenu>

@@ -26,8 +26,8 @@ export default [
     rules: {
       "react/jsx-uses-vars": "error",
       "react/jsx-uses-react": "error",
-      "react/no-unescaped-entities": "off",
       "no-unused-vars": "off",
+      'react/no-unescaped-entities': 'off',
       "react/display-name": "off",
       ...js.configs.recommended.rules,
       ...react.configs.recommended.rules,
