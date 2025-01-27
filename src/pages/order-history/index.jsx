@@ -98,7 +98,7 @@ const Index = () => {
                                 <TableRow key={index} className={cn("", getRowClass(order.status))}>
                                   <TableCell>
                                     {
-                                      order?.org_type
+                                      order?.org_name
                                     }
                                   </TableCell>
                                   <TableCell>
@@ -130,9 +130,9 @@ const Index = () => {
                                     </CollapsibleTrigger>
                                   </TableCell>
                                 </TableRow>
-                                <CollapsibleContent asChild className={"!bg-[#f7f7f7]"}>
+                                <CollapsibleContent asChild className={"bg-green-500"}>
                                   {
-                                    order.items && order.items.length > 0 && <OrdersItem orderItems={order.items} />
+                                    order.items && order.items.length > 0 && <OrdersItem orderItems={order.items} client={order.client} />
                                   }
                                 </CollapsibleContent>
                               </>
