@@ -306,7 +306,7 @@ const Index = () => {
                         name="closing_time"
                         render={({field, fieldState: {error}}) => (
                           <div className="space-y-1">
-                            <Label className={"text-[#667085]"}>Ochilish
+                            <Label className={"text-[#667085]"}>Yopilish
                               vaqti</Label>
                             <>
                               <Input placeholder="30" {...field} type={"time"}
