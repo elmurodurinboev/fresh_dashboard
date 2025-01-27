@@ -1,4 +1,3 @@
-import React from "react"
 import ReactDOM from "react-dom/client"
 import {RouterProvider} from "react-router-dom"
 import {Toaster} from "@/components/ui/toaster"
@@ -11,15 +10,13 @@ import {ReactQueryDevtools} from "@tanstack/react-query-devtools";
 
 const queryClient = new QueryClient();
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-        <LanguageProvider defaultLanguage="uz" storageKey="vite-ui-language">
-          <RouterProvider router={router}/>
-          <Toaster/>
-        </LanguageProvider>
-      </ThemeProvider>
-      <ReactQueryDevtools initialIsOpen={false}/>
-    </QueryClientProvider>
-  </React.StrictMode>
+  <QueryClientProvider client={queryClient}>
+    <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+      <LanguageProvider defaultLanguage="uz" storageKey="vite-ui-language">
+        <RouterProvider router={router}/>
+        <Toaster/>
+      </LanguageProvider>
+    </ThemeProvider>
+    <ReactQueryDevtools initialIsOpen={false}/>
+  </QueryClientProvider>
 )
