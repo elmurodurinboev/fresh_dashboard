@@ -41,8 +41,8 @@ const Reports = () => {
     }
   }
 
-  const [start_date, setStart_Date] = useState(getTime().start_of_today)
-  const [end_date, setEnd_Date] = useState(getTime().end_of_today)
+  const [start_date, setStart_Date] = useState(getTime().startOfMonth)
+  const [end_date, setEnd_Date] = useState(getTime().endOfMonth)
   const [type, setType] = useState("day")
 
   const handleChangeDate = (start, end, type) => {
