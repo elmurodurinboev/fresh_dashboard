@@ -292,6 +292,13 @@ const routes = [
             }),
             meta: { roles: getAllowedUsers('users') }
           },
+          {
+            path: "users/update/:id",
+            lazy: async () => ({
+              Component: (await import("@/pages/users/update-user")).default
+            }),
+            meta: { roles: getAllowedUsers('users') }
+          },
 
 
           // OrderHistory
