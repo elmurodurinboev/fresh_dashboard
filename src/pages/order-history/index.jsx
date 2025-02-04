@@ -35,7 +35,7 @@ import OrdersItem from "@/components/orders/orders-item.jsx";
 import { Button } from "@/components/ui/button.jsx";
 import { IconSelector } from "@tabler/icons-react";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
-import {toast} from "@/hooks/use-toast.js";
+import { toast } from "@/hooks/use-toast.js";
 
 const Index = () => {
   const t = useTranslations("order");
@@ -70,18 +70,18 @@ const Index = () => {
       value: "new",
       label: "Yangi",
     },
-    {
-      value: "paid",
-      label: "To'langan",
-    },
+    // {
+    //   value: "paid",
+    //   label: "To'langan",
+    // },
     {
       value: "accepted",
       label: "Qabul qilingan",
     },
-    {
-      value: "delivering",
-      label: "Yetkazilyapdi",
-    },
+    // {
+    //   value: "delivering",
+    //   label: "Yetkazilyapdi",
+    // },
     {
       value: "completed",
       label: "Tugallangan",
@@ -109,13 +109,20 @@ const Index = () => {
         description: error.message || "Messages.error_occurred",
       });
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      if (data.success) {
+        toast({
+          title: "OK",
+          variant: "success",
+          description: "Muvaffaqiyatli o'zgartirildi!",
+        });
+        return queryClient.invalidateQueries(["getAllOrders"]);
+      }
       toast({
-        title: "OK",
-        variant: "success",
-        description: "Muvaffaqiyatli o'zgartirildi!",
-      });
-      queryClient.invalidateQueries(["getAllOrders"]);
+        title: "Error",
+        variant: "destructive",
+        description: data?.result?.status[0] || "Nimadir xato ketdi!"
+      })
     },
   });
   return (
@@ -216,6 +223,7 @@ const Index = () => {
                                               className={"cursor-pointer"}
                                               onClick={() =>
                                                 mutation.mutate({
+                                                  id: order.id,
                                                   type: order.org_type,
                                                   status: status.value,
                                                 })
