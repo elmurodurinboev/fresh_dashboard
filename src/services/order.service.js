@@ -6,7 +6,7 @@ const OrderService = {
     return data
   },
   async change(payload) {
-    const {data} = await Api.patch(`/order/update/4/?type=${payload.type}`, {status: payload.status})
+    const {data} = await Api.patch(`/order/update/${payload.id}/?type=${payload.type}`, {status: payload.status})
     return data
   }
 }
