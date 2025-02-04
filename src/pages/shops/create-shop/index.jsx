@@ -14,10 +14,13 @@ import {Textarea} from "@/components/ui/textarea.jsx";
 import {Label} from "@/components/ui/label.jsx";
 import PhoneInput from "@/components/custom/phone-input.jsx";
 import InputWithFormat from "@/components/custom/input-with-format.jsx";
+import LocationPicker from "@/components/custom/location-picker.jsx";
+import {useState} from "react";
 
 
 const Index = () => {
   const navigate = useNavigate()
+  const [withMap, setWithMap] = useState(true)
   const form = useForm({
     defaultValues: {
       name: '',
@@ -26,8 +29,8 @@ const Index = () => {
       owner: null,
       description: '',
       is_active: false,
-      latitude: "",
-      longitude: "",
+      latitude: "41.55039",
+      longitude: "60.6315",
       opening_time: "",
       closing_time: "",
       address: '',
@@ -77,6 +80,14 @@ const Index = () => {
     queryKey: ["getCountries"],
     queryFn: CountryService.getAll
   })
+
+  const setSelectedLocation = (lat, lng) => {
+    form.reset({
+      ...form.getValues(),
+      latitude: lat,
+      longitude: lng
+    })
+  }
 
   return (
     <Layout>
@@ -317,37 +328,58 @@ const Index = () => {
                   )}
                 />
 
-                <div className={"grid grid-cols-12 gap-3"}>
-                  <div className={"col-span-12"}>
-                    <h3 className={"text-xl font-medium"}>Joylashuv</h3>
-                  </div>
-                  <Controller
-                    control={form.control}
-                    name="latitude"
-                    render={({field, fieldState: {error}}) => (
-                      <div className="space-y-1 col-span-6">
-                        <Label className={"text-[#667085]"}>Latitude</Label>
-                        <>
-                          <Input placeholder="41.1" {...field} type={"text"}/>
-                        </>
-                        {error && <p className="text-red-500">{error.message}</p>}
+                {
+                  withMap ? (
+                    <div className={"w-full space-y-2"}>
+                      <div className={"w-full flex justify-between rounded-md overflow-hidden"}>
+                        <h3 className={"text-xl font-medium"}>Joylashuv</h3>
+                        <Button variant={"link"} onClick={() => setWithMap(false)} type={"button"}>
+                          Qo`lda kiritish
+                        </Button>
                       </div>
-                    )}
-                  />
-                  <Controller
-                    control={form.control}
-                    name="longitude"
-                    render={({field, fieldState: {error}}) => (
-                      <div className="space-y-1 col-span-6">
-                        <Label className={"text-[#667085]"}>Longitude</Label>
-                        <>
-                          <Input placeholder="61.1" {...field} type={"text"}/>
-                        </>
-                        {error && <p className="text-red-500">{error.message}</p>}
+                      <LocationPicker onLocationSelect={setSelectedLocation}/>
+                    </div>
+                  ) : (
+                    <div className={"grid grid-cols-12 gap-3"}>
+                      <div className={"col-span-12 flex justify-between"}>
+                        <h3 className={"text-xl font-medium"}>Joylashuv</h3>
+                        <Button variant={"link"} onClick={() => setWithMap(true)} type={"button"}>
+                          Xaritadan tanlash
+                        </Button>
                       </div>
-                    )}
-                  />
-                </div>
+                      <Controller
+                        control={form.control}
+                        name="latitude"
+                        render={({field, fieldState: {error}}) => (
+                          <div className="space-y-1 col-span-6">
+                            <Label className={"text-[#667085]"}>Latitude</Label>
+                            <>
+                              <Input placeholder="41.1" {...field} type={"text"}/>
+                            </>
+                            {error && (
+                              <p className="text-red-500">{error.message}</p>
+                            )}
+                          </div>
+                        )}
+                      />
+                      <Controller
+                        control={form.control}
+                        name="longitude"
+                        render={({field, fieldState: {error}}) => (
+                          <div className="space-y-1 col-span-6">
+                            <Label className={"text-[#667085]"}>Longitude</Label>
+                            <>
+                              <Input placeholder="61.1" {...field} type={"text"}/>
+                            </>
+                            {error && (
+                              <p className="text-red-500">{error.message}</p>
+                            )}
+                          </div>
+                        )}
+                      />
+                    </div>
+                  )
+                }
               </div>
               <div className={"space-x-4 mt-4"}>
                 <Button
