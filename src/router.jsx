@@ -253,7 +253,6 @@ const routes = [
           },
 
           // Courier router
-
           {
             path: "courier",
             lazy: async () => ({
@@ -274,6 +273,29 @@ const routes = [
               Component: (await import("@/pages/courier/update-courier")).default
             }),
             meta: { roles: getAllowedUsers('courier') },
+          },
+
+          // Ads router
+          {
+            path: "ads",
+            lazy: async () => ({
+              Component: (await import("@/pages/ads")).default
+            }),
+            meta: { roles: getAllowedUsers('ads') },
+          },
+          {
+            path: "ads/create",
+            lazy: async () => ({
+              Component: (await import("@/pages/ads/create")).default
+            }),
+            meta: { roles: getAllowedUsers('ads') },
+          },
+          {
+            path: "ads/update/:id",
+            lazy: async () => ({
+              Component: (await import("@/pages/ads/update")).default
+            }),
+            meta: { roles: getAllowedUsers('ads') },
           },
 
           // Users Routes
