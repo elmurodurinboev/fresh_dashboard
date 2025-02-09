@@ -8,7 +8,8 @@ import {
   IconCubeSpark,
   IconUsers,
   IconCashRegister,
-  IconBaselineDensityMedium
+  IconBaselineDensityMedium,
+  IconBadgeAd
 } from "@tabler/icons-react"
 import ROLES from "@/data/roles.js";
 
@@ -93,6 +94,13 @@ export const sidelinks = [
     label: "",
     href: "/users",
     icon: <IconUsers size={18}/>,
+    roles: [ROLES.ADMIN]
+  },
+  {
+    title: "sidebar.ads",
+    label: "",
+    href: "/ads",
+    icon: <IconBadgeAd size={18}/>,
     roles: [ROLES.ADMIN]
   },
   // {
