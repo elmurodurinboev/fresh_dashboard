@@ -15,6 +15,8 @@ import RestaurantCategoryService from "@/services/restaurant-category.service.js
 import {Switch} from "@/components/ui/switch.jsx";
 import InputWithFormat from "@/components/custom/input-with-format.jsx";
 import {Checkbox} from "@/components/ui/checkbox.jsx";
+import ROLES from "@/data/roles.js";
+import {useAuth} from "@/hooks/utils/useAuth.js";
 
 
 const Index = () => {
@@ -30,6 +32,7 @@ const Index = () => {
       description: "",
       price: "",
       discount_price: "",
+      isApproved: false,
       category: "",
       volume: "",
       is_active: false,
@@ -44,6 +47,7 @@ const Index = () => {
     queryFn: RestaurantProductService.getOne,
     enabled: !!params && !!params.id
   })
+  const {session: {user}} = useAuth()
 
   useEffect(() => {
     const {isSuccess, data} = productData;
@@ -60,6 +64,7 @@ const Index = () => {
         discount_price: data?.result?.discount_price && data.result.discount_price,
         category: data?.result?.category && data.result.category,
         is_active: data?.result?.is_active && data.result.is_active,
+        isApproved: data?.result?.isApproved && data.result.isApproved,
         stock_level: data?.result?.stock_level && data.result.stock_level,
         contribution_amount: data?.result?.contribution_amount && data.result.contribution_amount,
       });
@@ -195,6 +200,30 @@ const Index = () => {
                       </div>
                     )}
                   />
+
+                  {
+                    user.user_role === ROLES.ADMIN && (
+                      <Controller
+                        name="isApproved"
+                        control={form.control}
+                        rules={{required: false}}
+                        render={({field, fieldState: {error}}) => (
+                          <div className="flex flex-col">
+                            <label className="text-[#667085]">Tasdiqlash</label>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                            {error && (
+                              <p className="text-red-500 text-sm">
+                                {error.message}
+                              </p>
+                            )}
+                          </div>
+                        )}
+                      />
+                    )
+                  }
                 </div>
 
                 <Controller
@@ -470,7 +499,7 @@ const Index = () => {
                 className={"w-full"}
                 loading={mutation.isPending}
               >
-                save
+                Saqlash
               </Button>
 
               <Button
@@ -481,7 +510,7 @@ const Index = () => {
                 className={"w-full gap-2 items-center"}
               >
                 <IconX className={"w-5 h-5"}/>
-                cancel
+                Bekor qilish
               </Button>
             </div>
           </form>

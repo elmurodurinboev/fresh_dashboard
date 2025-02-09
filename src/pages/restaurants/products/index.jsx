@@ -41,7 +41,33 @@ const Index = () => {
     onSuccess: async () => {
       toast({
         title: 'OK',
-        description: "Successfully delted"
+        description: "Muvaffaqiyatli o'zgartirildi"
+      })
+      await productsData.refetch()
+      reset()
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        variant: "success",
+        description: error.message || "Messages.error_occurred"
+      })
+      reset()
+    },
+  })
+
+  const handleDelete = (product) => {
+    setSelectedProduct(product)
+    setDeleteModal(true)
+  }
+
+  const approvedMutation = useMutation({
+    mutationFn: RestaurantProductService.updatePatch,
+    onSuccess: async () => {
+      toast({
+        title: 'OK',
+        variant: "success",
+        description: "Muvaffaqiyatli o'zgartirildi"
       })
       await productsData.refetch()
       reset()
@@ -54,11 +80,6 @@ const Index = () => {
       reset()
     },
   })
-
-  const handleDelete = (product) => {
-    setSelectedProduct(product)
-    setDeleteModal(true)
-  }
 
   return (
     <Layout>
@@ -86,7 +107,7 @@ const Index = () => {
         <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0">
           {
             !productsData.isLoading ? (
-              productsData && productsData.data && productsData.isSuccess && !productsData.isError && productsData.data.result &&  (
+              productsData && productsData.data && productsData.isSuccess && !productsData.isError && productsData.data.result && (
                 <div className="rounded-md border min-h-[500px]">
                   <Table>
                     <TableHeader>
@@ -120,7 +141,8 @@ const Index = () => {
                       {
                         productsData.data.result.results && productsData.data.result.results.length > 0 ? (
                           productsData.data.result.results.map((product, index) => (
-                            <TableRow key={index} className={"bg-secondary"}>
+                            <TableRow key={index}
+                                      className={product.isApproved ? "bg-secondary" : "bg-orange-100 hover:bg-orange-200"}>
                               <TableCell className={"flex gap-2 items-center overflow-hidden"}>
                                 {product.picture ? (
                                   <img
@@ -184,7 +206,16 @@ const Index = () => {
                                       </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end" className="w-[160px]">
-                                      <DropdownMenuItem onClick={() => navigate(`update/${product.id}`)}>Edit</DropdownMenuItem>
+                                      <DropdownMenuItem
+                                        onClick={() => navigate(`update/${product.id}`)}>Edit</DropdownMenuItem>
+                                      {
+                                        !product.isApproved && (
+                                          <DropdownMenuItem
+                                            onClick={() => approvedMutation.mutate({id: product.id, formData: {isApproved: true}})}>
+                                              Tasdiqlash
+                                            </DropdownMenuItem>
+                                        )
+                                      }
                                       <DropdownMenuSeparator/>
                                       <DropdownMenuItem
                                         onClick={() => handleDelete(product)}

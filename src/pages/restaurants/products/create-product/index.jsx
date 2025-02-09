@@ -21,6 +21,8 @@ import RestaurantCategoryService from "@/services/restaurant-category.service.js
 import {Switch} from "@/components/ui/switch.jsx";
 import InputWithFormat from "@/components/custom/input-with-format";
 import {Checkbox} from "@/components/ui/checkbox.jsx";
+import {useAuth} from "@/hooks/utils/useAuth.js";
+import ROLES from "@/data/roles.js";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -34,6 +36,7 @@ const Index = () => {
       description: "",
       price: "",
       discount_price: "",
+      isApproved: false,
       category: "",
       volume: "",
       is_active: false,
@@ -43,6 +46,7 @@ const Index = () => {
     },
   });
 
+  const {session: {user}} = useAuth()
   const mutation = useMutation({
     mutationFn: RestaurantProductService.create,
     onError: (error) => {
@@ -177,6 +181,30 @@ const Index = () => {
                       </div>
                     )}
                   />
+
+                  {
+                    user.user_role === ROLES.ADMIN && (
+                      <Controller
+                        name="isApproved"
+                        control={form.control}
+                        rules={{required: false}}
+                        render={({field, fieldState: {error}}) => (
+                          <div className="flex flex-col">
+                            <label className="text-[#667085]">Tasdiqlash</label>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                            {error && (
+                              <p className="text-red-500 text-sm">
+                                {error.message}
+                              </p>
+                            )}
+                          </div>
+                        )}
+                      />
+                    )
+                  }
                 </div>
 
                 <Controller
@@ -270,7 +298,7 @@ const Index = () => {
                         <Checkbox className={"w-5 h-5 rounded-md"} checked={withDiscount} onCheckedChange={val => {
                           field.onChange("")
                           setWithDiscount(val)
-                        }} />
+                        }}/>
                       </div>
                       {
                         withDiscount && (
@@ -314,7 +342,7 @@ const Index = () => {
                           }}
                         >
                           {
-                            contributionType === 'price' ? <IconCash size={20} /> : <IconPercentage size={20} />
+                            contributionType === 'price' ? <IconCash size={20}/> : <IconPercentage size={20}/>
                           }
                         </Button>
                       </div>
@@ -384,7 +412,8 @@ const Index = () => {
                         {
                           value ? (
                             <span className={"w-full min-h-max rounded-md overflow-hidden"}>
-                                    <img src={URL.createObjectURL(value)} alt="Selected Image" width={"100"} height={"100"}
+                                    <img src={URL.createObjectURL(value)} alt="Selected Image" width={"100"}
+                                         height={"100"}
                                          className="w-full object-center object-contain"/>
                                   </span>
                           ) : (
