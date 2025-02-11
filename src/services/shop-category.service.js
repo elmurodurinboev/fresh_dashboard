@@ -13,7 +13,7 @@ const ShopCategoryService = {
   },
 
   async update(payload) {
-    const {data} = await  Api.put(`/shop_category/${payload.id}/`, payload.formData)
+    const {data} = await  Api.patch(`/shop_category/${payload.id}/`, payload.formData)
     return data
   },
 

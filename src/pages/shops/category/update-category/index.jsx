@@ -53,7 +53,7 @@ const Index = () => {
   const mutation = useMutation({
     mutationFn: ShopCategoryService.update,
     onError: (error) => {
-      const {result: {errors: serverErrors}, status} = error.response;
+      const {data: {errors: serverErrors}, status} = error.response;
       if (status === 422) {
         Object.entries(serverErrors).forEach(([key, value]) => {
           form.setError(key, {
@@ -71,7 +71,7 @@ const Index = () => {
     onSuccess: () => {
       toast({
         title: 'OK',
-        description: "Successfully updated"
+        description: "Muvaffaqiyatli yangilandi!"
       })
       form.reset()
       navigate('/shop-category')
@@ -81,8 +81,8 @@ const Index = () => {
   const onSubmit = (data) => {
     const formData = new FormData()
     Object.keys(data).forEach(item => item !== 'image' && formData.append(item, data[item]))
-
-    data.image && formData.append("image", data.image)
+    const imgType = typeof data.image
+    data.image && imgType === 'object' && formData.append("image", data.image)
     mutation.mutate({formData, id: params.id})
   }
 
@@ -91,7 +91,7 @@ const Index = () => {
       <Layout.Body>
         <div className="mb-2 flex flex-col gap-4">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight">Update Caetegory</h2>
+            <h2 className="text-2xl font-bold tracking-tight">Kategoriyani yangilash</h2>
           </div>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className={"grid grid-cols-12 gap-4"}>
@@ -217,6 +217,7 @@ const Index = () => {
                   size={"xl"}
                   type={"submit"}
                   className={"w-full"}
+                  loading={mutation.isPending}
                 >
                   Saqlash
                 </Button>
