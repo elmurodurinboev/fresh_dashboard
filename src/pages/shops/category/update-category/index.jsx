@@ -80,7 +80,9 @@ const Index = () => {
 
   const onSubmit = (data) => {
     const formData = new FormData()
-    Object.keys(data).forEach(item => item !== 'image' && formData.append(item, data[item]))
+    Object.entries(data).forEach(([key, value]) => {
+      key !== 'image' && formData.append(key, value ?? "");
+    });
     const imgType = typeof data.image
     data.image && imgType === 'object' && formData.append("image", data.image)
     mutation.mutate({formData, id: params.id})

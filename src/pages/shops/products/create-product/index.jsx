@@ -71,7 +71,9 @@ const Index = () => {
     data.contribution_type = contributionType
     data.discount_price = data.discount_price === '' ? 0 : data.discount_price
     const formData = new FormData()
-    Object.keys(data).forEach(item => item !== 'image' && formData.append(item, data[item]))
+    Object.entries(data).forEach(([key, value]) => {
+      key !== 'image' && formData.append(key, value ?? "");
+    });
     formData.append("image", data.image ? data.image : "")
     mutation.mutate(formData)
   }

@@ -95,7 +95,9 @@ const Index = () => {
   const onSubmit = (data) => {
     data.phone_number = (`+998${data.phone_number}`).toString().trim()
     const formData = new FormData()
-    Object.keys(data).forEach(item => formData.append(item, data[item]))
+    Object.entries(data).forEach(([key, value]) => {
+      formData.append(key, value ?? "");
+    });
     mutation.mutate(formData)
   }
 

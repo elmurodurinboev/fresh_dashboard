@@ -20,6 +20,13 @@ import {useNavigate} from "react-router-dom";
 import {toast} from "@/hooks/use-toast.js";
 import DeleteConfirmationModal from "@/components/custom/delete-confirmation-modal.jsx";
 import {useState} from "react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import {IconInfoCircle} from "@tabler/icons-react"
 
 const Index = () => {
   const [deleteModal, setDeleteModal] = useState(false)
@@ -194,7 +201,21 @@ const Index = () => {
                               </TableCell>
 
                               <TableCell className={"text-end"}>
-                                <div className={"w-auto flex justify-end items-center"}>
+                                <div className={"w-auto flex justify-end gap-4 items-center"}>
+                                  {
+                                    !product.isApproved && (
+                                      <TooltipProvider>
+                                        <Tooltip>
+                                          <TooltipTrigger>
+                                            <IconInfoCircle/>
+                                          </TooltipTrigger>
+                                          <TooltipContent className={"p-3 bg-secondary"}>
+                                            <p className={"text-black text-sm"}>Qo`shilgan mahsulotlar Fresh jamoasi tomonidan tasdiqlanadi!</p>
+                                          </TooltipContent>
+                                        </Tooltip>
+                                      </TooltipProvider>
+                                    )
+                                  }
                                   <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
                                       <Button
@@ -211,9 +232,12 @@ const Index = () => {
                                       {
                                         !product.isApproved && (
                                           <DropdownMenuItem
-                                            onClick={() => approvedMutation.mutate({id: product.id, formData: {isApproved: true}})}>
-                                              Tasdiqlash
-                                            </DropdownMenuItem>
+                                            onClick={() => approvedMutation.mutate({
+                                              id: product.id,
+                                              formData: {isApproved: true}
+                                            })}>
+                                            Tasdiqlash
+                                          </DropdownMenuItem>
                                         )
                                       }
                                       <DropdownMenuSeparator/>

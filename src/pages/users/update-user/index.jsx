@@ -122,10 +122,10 @@ const Index = () => {
   
     const formData = new FormData();
     formData.append("id", id);
-  
-    Object.keys(data).forEach(item => {
-      if (item !== "image" && item !== "password") {
-        formData.append(item, data[item]);
+
+    Object.entries(data).forEach(([key, value]) => {
+      if (key !== "image" && key !== "password") {
+        formData.append(key, value);
       }
     });
   

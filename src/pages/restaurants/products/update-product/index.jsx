@@ -101,7 +101,9 @@ const Index = () => {
   const onSubmit = (data) => {
     data.contribution_type = contributionType
     const formData = new FormData()
-    Object.keys(data).forEach(item => item !== 'picture' && formData.append(item, data[item]))
+    Object.entries(data).forEach(([key, value]) => {
+      key !== 'picture' && formData.append(key, value ?? "");
+    });
     const imgType = typeof data?.picture
     data.picture && imgType === 'object' && formData.append("picture", data.picture ? data.picture[0] : productData?.picture)
     mutation.mutate({formData, id: params.id})

@@ -14,7 +14,6 @@ import {IconPhoto, IconPlus, IconX} from "@tabler/icons-react";
 import ShopCategoryService from "@/services/shop-category.service.js";
 
 
-
 const Index = () => {
   const navigate = useNavigate()
   const [isDragged, setIsDragged] = useState(false)
@@ -35,7 +34,7 @@ const Index = () => {
 
 
   useEffect(() => {
-    const { isSuccess, data } = subData;
+    const {isSuccess, data} = subData;
 
     if (isSuccess && data?.result !== 0) {
       form.reset({
@@ -74,15 +73,11 @@ const Index = () => {
   })
 
   const onSubmit = (data) => {
-
-    Object.keys(data).forEach(item => {
-      if (data[item] === null || data[item] === undefined) {
-        data[item] = ""
-      }
-    })
     const formData = new FormData()
     formData.append("id", params.id)
-    Object.keys(data).forEach(item => item !== "image" && formData.append(item, data[item]))
+    Object.entries(data).forEach(([key, value]) => {
+      key !== 'image' && formData.append(key, value ?? "");
+    });
     const imgType = typeof data?.image
     data.image && imgType === "object" && formData.append("image", data.image)
     mutation.mutate(formData)

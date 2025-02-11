@@ -18,8 +18,8 @@ import ShopCategoryService from "@/services/shop-category.service.js";
 import { Label } from "@/components/ui/label.jsx";
 import { IconPhoto, IconPlus, IconX } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
-import ShopService from "../../../../services/shop.service";
-import { useAuth } from "../../../../hooks/utils/useAuth";
+import ShopService from "@/services/shop.service";
+import { useAuth } from "@/hooks/utils/useAuth";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -71,7 +71,9 @@ const Index = () => {
 
   const onSubmit = (data) => {
     const formData = new FormData();
-    Object.keys(data).forEach((item) => formData.append(item, data[item]));
+    Object.entries(data).forEach(([key, value]) => {
+      formData.append(key, value ?? "");
+    });
     mutation.mutate(formData);
   };
   const categoryData = useQuery({
@@ -122,7 +124,7 @@ const Index = () => {
                       "w-full p-6 bg-white rounded-2xl shadow flex flex-col gap-4"
                     }
                   >
-                    <label className="text-[#667085]">Do'kon</label>
+                    <label className="text-[#667085]">Do`kon</label>
                     <Select
                       value={+shopId}
                       onValueChange={(val) => setShopId(val)}

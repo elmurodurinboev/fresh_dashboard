@@ -64,7 +64,9 @@ const Index = () => {
 
   const onSubmit = (data) => {
     const formData = new FormData();
-    Object.keys(data).forEach((item) => formData.append(item, data[item]));
+    Object.entries(data).forEach(([key, value]) => {
+      formData.append(key, value ?? "");
+    });
     mutation.mutate(formData);
   };
 

@@ -116,7 +116,9 @@ const Index = () => {
       }
     })
     const formData = new FormData()
-    Object.keys(data).forEach(item => item !== 'picture' && formData.append(item, data[item]))
+    Object.entries(data).forEach(([key, value]) => {
+      key !== 'picture' && formData.append(key, value ?? "");
+    });
     const imgType = typeof data?.picture
     data.picture && imgType === 'object' && formData.append("picture", data.picture)
     mutation.mutate({formData, id: params.id})
@@ -126,7 +128,7 @@ const Index = () => {
       <Layout.Body>
         <div className="mb-2 flex flex-col gap-4">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight">Restaranni o'zgartirish</h2>
+            <h2 className="text-2xl font-bold tracking-tight">Restaranni o`zgartirish</h2>
           </div>
           <form onSubmit={form.handleSubmit(onSubmit)} className={"grid grid-cols-12 gap-4"}>
             <div className={"col-span-12 lg:col-span-8 flex flex-col gap-4"}>
