@@ -27,7 +27,6 @@ export default [
       "react/jsx-uses-vars": "error",
       "react/jsx-uses-react": "error",
       "no-unused-vars": "off",
-      'react/no-unescaped-entities': 'off',
       "react/display-name": "off",
       ...js.configs.recommended.rules,
       ...react.configs.recommended.rules,
@@ -36,6 +35,7 @@ export default [
       'react/jsx-no-target-blank': 'off',
       "react/prop-types": 0,
       "react-hooks/exhaustive-deps": 'off',
+      "react/no-unescaped-entities": "off",
       'react-refresh/only-export-components': [
         'warn',
         { allowConstantExport: true },
