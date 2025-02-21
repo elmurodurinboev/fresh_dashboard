@@ -13,24 +13,41 @@ import {
 } from "@/components/ui/dropdown-menu.jsx";
 import {Button} from "@/components/custom/button.jsx";
 import {DotsHorizontalIcon} from "@radix-ui/react-icons";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 import {toast} from "@/hooks/use-toast.js";
 import DeleteConfirmationModal from "@/components/custom/delete-confirmation-modal.jsx";
 import {useState} from "react";
 import RestaurantService from "@/services/restaurant.service.js";
 import DefaultImage from "@/components/custom/default-image.jsx";
 import {Formatter} from "@/utils/formatter.js";
+import {PaginationControls} from "@/components/custom/pagination-controls.jsx";
 
 const Index = () => {
   const [deleteModal, setDeleteModal] = useState(false)
   const [selectedRestaurant, setSelectedRestaurant] = useState({})
-  const restaurantsData = useQuery({
-    queryKey: ['getAllRestaurants'],
-    queryFn: RestaurantService.getAll
-  })
 
 
   const navigate = useNavigate()
+
+
+  const handlePageChange = (number) => {
+    const params = new URLSearchParams()
+    setPage(number)
+    params.append("page", number)
+    if (searchParams.get("page_size")) params.append("page_size", page_size)
+    navigate(`${location.pathname}?${params.toString()}`)
+  }
+
+  const [searchParams] = useSearchParams()
+
+  const [page, setPage] = useState(searchParams.get("page") ?? "1")
+  const [page_size] = useState(searchParams.get("per_page") ?? "10")
+
+  const restaurantsData = useQuery({
+    queryKey: ['getAllRestaurants', page, page_size],
+    queryFn: RestaurantService.getAll
+  })
+
 
   const deleteMutation = useMutation({
     mutationFn: RestaurantService.delete,
@@ -58,6 +75,8 @@ const Index = () => {
     setSelectedRestaurant(product)
     setDeleteModal(true)
   }
+
+  console.log(restaurantsData.data)
 
   return (
     <Layout>
@@ -143,7 +162,8 @@ const Index = () => {
                                       </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end" className="w-[160px]">
-                                      <DropdownMenuItem onClick={() => navigate(`update/${restaurant.id}`)}>Edit</DropdownMenuItem>
+                                      <DropdownMenuItem
+                                        onClick={() => navigate(`update/${restaurant.id}`)}>Edit</DropdownMenuItem>
                                       <DropdownMenuSeparator/>
                                       <DropdownMenuItem
                                         onClick={() => handleDelete(restaurant)}
@@ -171,6 +191,14 @@ const Index = () => {
 
                     </TableBody>
                   </Table>
+                  <div className="pagination px-6 py-[18px] border-t border-primary">
+                    <PaginationControls
+                      total={restaurantsData?.data?.count}
+                      current_page={Number(page)}
+                      page_size={Number(page_size)}
+                      onPageChange={handlePageChange}
+                    />
+                  </div>
                 </div>
               )
             ) : (
