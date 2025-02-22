@@ -3,9 +3,10 @@ import api from "@/utils/api.js";
 const RestaurantService = {
   async getAll({queryKey}) {
     // eslint-disable-next-line no-unused-vars
-    const [_, page, page_size] = queryKey
+    const [_, page, page_size, search] = queryKey
     const params = new URLSearchParams()
     !!page && params.append("page", page)
+    !!search && params.append("search", search)
     !!page_size && params.append("page_size", page_size)
     const {data} = await api.get(`/restaurant/?${params.toString()}`)
     return data.result

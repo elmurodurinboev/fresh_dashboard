@@ -10,7 +10,7 @@ const SearchBar = React.forwardRef(({ className, placeholder, onSearch, ...props
     clearTimeout(timeoutID.current);
     timeoutID.current = setTimeout(() => {
       onSearch(value);
-    }, 150);
+    }, 200);
   };
 
   const handleKeyDown = (e) => {
@@ -37,7 +37,7 @@ const SearchBar = React.forwardRef(({ className, placeholder, onSearch, ...props
       </button>
       <Input
         ref={ref}
-        type={"text"}
+        type={"search"}
         className={cn("border-0 pl-10 h-10 shadow-none bg-secondary w-full")}
         placeholder={placeholder}
         onChange={() => handleSearch(ref.current.value)}

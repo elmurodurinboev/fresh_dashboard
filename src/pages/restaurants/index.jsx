@@ -16,35 +16,46 @@ import {DotsHorizontalIcon} from "@radix-ui/react-icons";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import {toast} from "@/hooks/use-toast.js";
 import DeleteConfirmationModal from "@/components/custom/delete-confirmation-modal.jsx";
-import {useState} from "react";
+import {useRef, useState} from "react";
 import RestaurantService from "@/services/restaurant.service.js";
 import DefaultImage from "@/components/custom/default-image.jsx";
 import {Formatter} from "@/utils/formatter.js";
 import {PaginationControls} from "@/components/custom/pagination-controls.jsx";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.jsx";
+import SearchBar from "@/components/custom/search-bar.jsx";
 
 const Index = () => {
   const [deleteModal, setDeleteModal] = useState(false)
   const [selectedRestaurant, setSelectedRestaurant] = useState({})
-
-
+  const [search, setSearch] = useState("")
+  const searchRef = useRef()
   const navigate = useNavigate()
 
-
-  const handlePageChange = (number) => {
+  const handlePageChange = (number, page_size = page_size) => {
     const params = new URLSearchParams()
     setPage(number)
+    setPageSize(page_size)
     params.append("page", number)
+    params.append("page_size", page_size)
     if (searchParams.get("page_size")) params.append("page_size", page_size)
+    navigate(`${location.pathname}?${params.toString()}`)
+  }
+
+  const handlePageSizeChange = (page_size) => {
+    const params = new URLSearchParams()
+    setPageSize(page_size)
+    params.append("page_size", page_size)
+    if (searchParams.get("page")) params.append("page", page)
     navigate(`${location.pathname}?${params.toString()}`)
   }
 
   const [searchParams] = useSearchParams()
 
   const [page, setPage] = useState(searchParams.get("page") ?? "1")
-  const [page_size] = useState(searchParams.get("per_page") ?? "10")
+  const [page_size, setPageSize] = useState(searchParams.get("per_page") ?? "10")
 
   const restaurantsData = useQuery({
-    queryKey: ['getAllRestaurants', page, page_size],
+    queryKey: ['getAllRestaurants', page, page_size, search],
     queryFn: RestaurantService.getAll
   })
 
@@ -100,6 +111,19 @@ const Index = () => {
               Restoran qo`shish
             </Button>
           </div>
+        </div>
+        <div className={"mb-2"}>
+          <SearchBar
+            className={"w-[300px]"}
+            ref={searchRef}
+            placeholder={"Qidirish"}
+            onSearch={(val) => {
+              if (Number(page) !== 1) {
+                handlePageChange(1)
+              }
+              setSearch(val)
+            }}
+          />
         </div>
         <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0">
           {
@@ -181,9 +205,9 @@ const Index = () => {
                           <TableRow>
                             <TableCell
                               colSpan={6}
-                              className="h-24 text-center text-rose-500 font-medium"
+                              className="h-14 text-center text-rose-500 font-medium"
                             >
-                              No results.
+                              Ma'lumot topilmadi.
                             </TableCell>
                           </TableRow>
                         )
@@ -191,14 +215,35 @@ const Index = () => {
 
                     </TableBody>
                   </Table>
-                  <div className="pagination px-6 py-[18px] border-t border-primary">
-                    <PaginationControls
-                      total={restaurantsData?.data?.count}
-                      current_page={Number(page)}
-                      page_size={Number(page_size)}
-                      onPageChange={handlePageChange}
-                    />
-                  </div>
+                  {
+                    restaurantsData?.data?.count > 10 &&
+                    <div
+                      className="pagination flex items-center justify-between bg-white px-6 py-[18px] border-t border-gray-300">
+                      <PaginationControls
+                        total={restaurantsData?.data?.count}
+                        current_page={Number(page)}
+                        page_size={Number(page_size)}
+                        onPageChange={handlePageChange}
+                      />
+                      <div>
+                        <Select value={page_size}
+                                onValueChange={handlePageSizeChange}>
+                          <SelectTrigger>
+                            <SelectValue/>
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value={"10"}>10</SelectItem>
+                            {
+                              restaurantsData?.data?.count > 10 && <SelectItem value={"20"}>20</SelectItem>
+                            }
+                            {
+                              restaurantsData?.data?.count > 20 && <SelectItem value={"30"}>30</SelectItem>
+                            }
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  }
                 </div>
               )
             ) : (
