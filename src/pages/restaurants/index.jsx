@@ -29,6 +29,7 @@ import {IconFilter} from "@tabler/icons-react";
 const Index = () => {
   const [deleteModal, setDeleteModal] = useState(false)
   const [selectedRestaurant, setSelectedRestaurant] = useState({})
+  const [owner, setOwner] = useState("")
   const [search, setSearch] = useState("")
   const searchRef = useRef()
   const navigate = useNavigate()
@@ -56,7 +57,7 @@ const Index = () => {
   const [page_size, setPageSize] = useState(searchParams.get("per_page") ?? "10")
 
   const restaurantsData = useQuery({
-    queryKey: ['getAllRestaurants', page, page_size, search],
+    queryKey: ['getAllRestaurants', page, page_size, search, owner],
     queryFn: RestaurantService.getAll
   })
 
@@ -88,14 +89,11 @@ const Index = () => {
     setDeleteModal(true)
   }
 
-  const [owner, setOwner] = useState("")
 
   const restaurantOwner = useQuery({
     queryKey: ["getRestaurantOwners"],
     queryFn: RestaurantService.getOwners
   })
-
-  console.log(restaurantOwner?.data?.result?.results)
 
   return (
     <Layout>
@@ -133,52 +131,60 @@ const Index = () => {
             }}
           />
           <div>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant={owner ? "" : "outline"} size={"icon"}>
-                  <IconFilter size={18}/>
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-72" align={"end"}>
-                <div className={"flex flex-col gap-1"}>
-                  <span className={"text-sm font-medium text-gray-400"}>Restoran egasi</span>
-                  <Select value={owner} onValueChange={setOwner}>
-                    <SelectTrigger>
-                      <SelectValue placeholder={"Tanlang"}/>
-                    </SelectTrigger>
-                    <SelectContent>
-                      {
-                        restaurantOwner && restaurantOwner?.data && restaurantOwner?.data?.result && restaurantOwner?.data?.result?.results > 0 && (
-                          restaurantOwner?.data?.result?.results.map((item, index) => (
-                            <SelectItem
-                              key={index}
-                              value={item.id}
-                            >
-                              {item.full_name}
-                            </SelectItem>
-                          ))
-                        )
-                      }
-                    </SelectContent>
-                  </Select>
-                  <div className={"flex justify-end"}>
-                    <Button variant={"destructive"} onClick={() => setOwner("")}>Tozalash</Button>
+            {!restaurantOwner.isLoading && restaurantOwner.data && restaurantOwner?.data?.result && (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant={owner ? "" : "outline"} size={"icon"}>
+                    <IconFilter size={18}/>
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-72" align={"end"}>
+                  <div className={"flex flex-col gap-1"}>
+                    <span className={"text-sm font-medium text-gray-400"}>Restoran egasi</span>
+                    <Select value={owner} onValueChange={val => {
+                      handlePageChange(1)
+                      setOwner(val)
+                    }}>
+                      <SelectTrigger>
+                        <SelectValue placeholder={"Tanlang"}/>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {
+                          restaurantOwner?.data?.result?.results && (
+                            restaurantOwner?.data?.result?.results.map((item, index) => (
+                              <SelectItem
+                                key={index}
+                                value={item.id}
+                              >
+                                {item.full_name}
+                              </SelectItem>
+                            ))
+                          )
+                        }
+                      </SelectContent>
+                    </Select>
+                    <div className={"flex justify-end"}>
+                      <Button variant={"destructive"} onClick={() => setOwner("")}>Tozalash</Button>
+                    </div>
                   </div>
-                </div>
-              </PopoverContent>
-            </Popover>
+                </PopoverContent>
+              </Popover>
+            )}
           </div>
         </div>
         <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0">
           {
             !restaurantsData.isLoading ? (
               restaurantsData && restaurantsData.data && restaurantsData.isSuccess && !restaurantsData.isError && (
-                <div className="rounded-md border min-h-[500px]">
+                <div className="rounded-md border min-h-[600px] flex flex-col justify-between">
                   <Table>
                     <TableHeader>
                       <TableRow>
                         <TableHead>
                           Nomi va rasmi
+                        </TableHead>
+                        <TableHead>
+                          Egasi
                         </TableHead>
                         <TableHead>
                           Balansi
@@ -206,6 +212,12 @@ const Index = () => {
                                   <DefaultImage/>
                                 )}
                                 <span>{restaurant.name}</span>
+                              </TableCell>
+
+                              <TableCell>
+                                {
+                                  restaurant.owner
+                                }
                               </TableCell>
 
                               <TableCell>
