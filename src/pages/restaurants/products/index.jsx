@@ -66,7 +66,6 @@ const Index = () => {
   }
 
   const [searchParams] = useSearchParams()
-
   const [page, setPage] = useState(searchParams.get("page") ?? "1")
   const [page_size, setPageSize] = useState(searchParams.get("per_page") ?? "10")
 
