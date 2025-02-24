@@ -42,7 +42,7 @@ const Index = () => {
   const mutation = useMutation({
     mutationFn: RestaurantCategoryService.create,
     onError: (error) => {
-      const {result: {errors: serverErrors}, status} = error.response;
+      const {data: {errors: serverErrors}, status} = error.response;
       if (status === 422) {
         Object.entries(serverErrors).forEach(([key, value]) => {
           form.setError(key, {
@@ -54,7 +54,7 @@ const Index = () => {
       toast({
         variant: 'destructive',
         title: "Error",
-        description: error.message || "Messages.error_occurred"
+        description: error?.message || "Messages.error_occurred"
       })
     },
     onSuccess: () => {

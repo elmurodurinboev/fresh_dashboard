@@ -27,7 +27,7 @@ export default function ProfileForm() {
   const form = useForm({
     defaultValues: {
       full_name: session?.user?.full_name,
-      phone_number: Formatter.formatPhoneNumber(session?.user?.phone_number),
+      phone_number: session?.user?.phone_number && Formatter.formatPhoneNumber(session.user.phone_number),
       user_role: session?.user?.user_role,
       gender: session?.user?.gender
     }
