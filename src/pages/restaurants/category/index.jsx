@@ -1,9 +1,9 @@
-import {Layout} from "@/components/custom/layout.jsx";
+import { Layout } from "@/components/custom/layout.jsx";
 import ThemeSwitch from "@/components/theme-switch.jsx";
-import {UserNav} from "@/components/user-nav.jsx";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.jsx";
-import {useMutation, useQuery} from "@tanstack/react-query";
-import {Skeleton} from "@/components/ui/skeleton.jsx";
+import { UserNav } from "@/components/user-nav.jsx";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table.jsx";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { Skeleton } from "@/components/ui/skeleton.jsx";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,22 +11,21 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu.jsx";
-import {Button} from "@/components/custom/button.jsx";
-import {DotsHorizontalIcon} from "@radix-ui/react-icons";
-import {useNavigate} from "react-router-dom";
-import {toast} from "@/hooks/use-toast.js";
+import { Button } from "@/components/custom/button.jsx";
+import { DotsHorizontalIcon } from "@radix-ui/react-icons";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { toast } from "@/hooks/use-toast.js";
 import DeleteConfirmationModal from "@/components/custom/delete-confirmation-modal.jsx";
-import {useState} from "react";
+import { useRef, useState } from "react";
 import RestaurantCategoryService from "@/services/restaurant-category.service.js";
 import DefaultImage from "@/components/custom/default-image.jsx";
+import SearchBar from "@/components/custom/search-bar.jsx";
+import {PaginationControls} from "@/components/custom/pagination-controls.jsx";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.jsx";
 
 const Index = () => {
   const [deleteModal, setDeleteModal] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState({})
-  const categoryData = useQuery({
-    queryKey: ['getAllCategories'],
-    queryFn: RestaurantCategoryService.getAll
-  })
 
 
   const navigate = useNavigate()
@@ -57,13 +56,48 @@ const Index = () => {
     setDeleteModal(true)
   }
 
+  // Pagination
+
+  const [search, setSearch] = useState("");
+  const searchRef = useRef()
+
+  const handlePageChange = (number) => {
+    const params = new URLSearchParams()
+    setPage(number)
+    setPageSize(page_size)
+    params.append("page", number)
+    if (searchParams.get("page_size")) params.append("page_size", page_size)
+    navigate(`${location.pathname}?${params.toString()}`)
+  }
+
+  const handlePageSizeChange = (page_size) => {
+    const params = new URLSearchParams()
+    setPageSize(page_size)
+    setPage(1)
+    params.append("page_size", page_size)
+    params.append("page", 1)
+    navigate(`${location.pathname}?${params.toString()}`)
+  }
+
+  const [searchParams] = useSearchParams()
+
+  const [page, setPage] = useState(searchParams.get("page") ?? "1")
+  const [page_size, setPageSize] = useState(searchParams.get("per_page") ?? "10")
+
+
+  const categoryData = useQuery({
+    queryKey: ['getAllCategories', page, page_size, search],
+    queryFn: RestaurantCategoryService.getAll
+  })
+
+
   return (
     <Layout>
       {/* ===== Top Heading ===== */}
       <Layout.Header sticky>
         <div className="ml-auto flex items-center space-x-4">
-          <ThemeSwitch/>
-          <UserNav/>
+          <ThemeSwitch />
+          <UserNav />
         </div>
       </Layout.Header>
 
@@ -80,11 +114,24 @@ const Index = () => {
             </Button>
           </div>
         </div>
+        <div className={"mb-2 flex items-center justify-between"}>
+          <SearchBar
+            className={"w-[300px]"}
+            ref={searchRef}
+            placeholder={"Qidirish"}
+            onSearch={(val) => {
+              if (Number(page) !== 1) {
+                handlePageChange(1)
+              }
+              setSearch(val)
+            }}
+          />
+        </div>
         <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0">
           {
             !categoryData.isLoading ? (
-              categoryData && categoryData.data && categoryData.isSuccess && !categoryData.isError && categoryData.data.result && (
-                <div className="rounded-md border min-h-[500px]">
+              categoryData && categoryData.data && categoryData.isSuccess && !categoryData.isError && categoryData.data && (
+                <div className="rounded-md border min-h-[600px] flex flex-col justify-between">
                   <Table>
                     <TableHeader>
                       <TableRow>
@@ -100,8 +147,8 @@ const Index = () => {
                     </TableHeader>
                     <TableBody>
                       {
-                        categoryData.data.result.results && categoryData.data.result.results.length > 0 ? (
-                          categoryData.data.result.results.map((category, index) => (
+                        categoryData.data.results && categoryData.data.results.length > 0 ? (
+                          categoryData.data.results.map((category, index) => (
                             <TableRow key={index} className={"bg-secondary"}>
                               <TableCell className={"flex gap-2 items-center overflow-hidden"}>
                                 {category.image ? (
@@ -111,7 +158,7 @@ const Index = () => {
                                     className={"w-[48px] h-[48px] rounded-md object-cover"}
                                   />
                                 ) : (
-                                  <DefaultImage/>
+                                  <DefaultImage />
                                 )}
                                 <span>{category.name}</span>
                               </TableCell>
@@ -129,14 +176,14 @@ const Index = () => {
                                         variant="ghost"
                                         className="flex h-8 w-8 p-0 data-[state=open]:bg-muted"
                                       >
-                                        <DotsHorizontalIcon className="h-4 w-4"/>
+                                        <DotsHorizontalIcon className="h-4 w-4" />
                                         <span className="sr-only">Open menu</span>
                                       </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end" className="w-[160px]">
                                       <DropdownMenuItem
                                         onClick={() => navigate(`/restaurant-category/update/${category.id}`)}>Edit</DropdownMenuItem>
-                                      <DropdownMenuSeparator/>
+                                      <DropdownMenuSeparator />
                                       <DropdownMenuItem
                                         onClick={() => handleDelete(category)}
                                       >
@@ -163,10 +210,39 @@ const Index = () => {
 
                     </TableBody>
                   </Table>
+                  {
+                    categoryData?.data?.count > 10 &&
+                    <div
+                      className="pagination flex items-center justify-between bg-white px-6 py-[18px] border-t border-gray-300">
+                      <PaginationControls
+                        total={categoryData?.data?.count}
+                        current_page={Number(page)}
+                        page_size={Number(page_size)}
+                        onPageChange={handlePageChange}
+                      />
+                      <div>
+                        <Select value={page_size}
+                                onValueChange={handlePageSizeChange}>
+                          <SelectTrigger>
+                            <SelectValue/>
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value={"10"}>10</SelectItem>
+                            {
+                              categoryData?.data?.count > 10 && <SelectItem value={"20"}>20</SelectItem>
+                            }
+                            {
+                              categoryData?.data?.count > 20 && <SelectItem value={"30"}>30</SelectItem>
+                            }
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  }
                 </div>
               )
             ) : (
-              <Skeleton className={"rounded-md border h-[500px]"}/>
+              <Skeleton className={"rounded-md border h-[500px]"} />
             )
           }
         </div>

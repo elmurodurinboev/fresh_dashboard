@@ -118,8 +118,8 @@ const Index = () => {
                     !categoryData.isError &&
                     categoryData.data &&
                     categoryData.isSuccess &&
-                    categoryData.data.result &&
-                    categoryData.data.result.results ? (
+                    categoryData.data &&
+                    categoryData.data.results ? (
                       <Controller
                         name="category"
                         control={form.control}
@@ -138,7 +138,7 @@ const Index = () => {
                                 <SelectValue placeholder="Select subcategory"/>
                               </SelectTrigger>
                               <SelectContent>
-                                {categoryData.data.result.results.map(
+                                {categoryData?.data?.results?.map(
                                   (item, index) => (
                                     <SelectItem value={item.id} key={index}>
                                       {item.name}

@@ -29,6 +29,9 @@ import {
 import {IconInfoCircle} from "@tabler/icons-react"
 import {PaginationControls} from "@/components/custom/pagination-controls.jsx";
 import SearchBar from "@/components/custom/search-bar.jsx";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.jsx";
+import {useAuth} from "@/hooks/utils/useAuth.js";
+import ROLES from "@/data/roles.js";
 
 const Index = () => {
   const [deleteModal, setDeleteModal] = useState(false)
@@ -51,10 +54,21 @@ const Index = () => {
     navigate(`${location.pathname}?${params.toString()}`)
   }
 
+  const {session: {user}} = useAuth()
+
+  const handlePageSizeChange = (page_size) => {
+    const params = new URLSearchParams()
+    setPageSize(page_size)
+    setPage(1)
+    params.append("page_size", page_size)
+    params.append("page", 1)
+    navigate(`${location.pathname}?${params.toString()}`)
+  }
+
   const [searchParams] = useSearchParams()
 
   const [page, setPage] = useState(searchParams.get("page") ?? "1")
-  const [page_size] = useState(searchParams.get("per_page") ?? "10")
+  const [page_size, setPageSize] = useState(searchParams.get("per_page") ?? "10")
 
   const productsData = useQuery({
     queryKey: ['getAllProducts', page, page_size, search],
@@ -100,7 +114,7 @@ const Index = () => {
     onError: (error) => {
       toast({
         title: "Error",
-        description: error.message || "Messages.error_occurred"
+        description: error.message || "Xatolik yuz berdi!"
       })
       reset()
     },
@@ -130,7 +144,7 @@ const Index = () => {
           </div>
         </div>
 
-        <div className={"mb-2"}>
+        <div className={"mb-2 flex items-center justify-between"}>
           <SearchBar
             className={"w-[300px]"}
             ref={searchRef}
@@ -142,6 +156,10 @@ const Index = () => {
               setSearch(val)
             }}
           />
+
+          <div>
+
+          </div>
         </div>
         <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0">
           {
@@ -263,7 +281,7 @@ const Index = () => {
                                       <DropdownMenuItem
                                         onClick={() => navigate(`update/${product.id}`)}>Edit</DropdownMenuItem>
                                       {
-                                        !product.isApproved && (
+                                        user && user?.user_role === ROLES.ADMIN && !product?.isApproved  && (
                                           <DropdownMenuItem
                                             onClick={() => approvedMutation.mutate({
                                               id: product.id,
@@ -302,13 +320,31 @@ const Index = () => {
                   </Table>
                   {
                     productsData?.data?.result?.count > 10 &&
-                    <div className="pagination bg-white px-6 py-[18px] border-t border-gray-300">
+                    <div
+                      className="pagination flex items-center justify-between bg-white px-6 py-[18px] border-t border-gray-300">
                       <PaginationControls
                         total={productsData?.data?.result?.count}
                         current_page={Number(page)}
                         page_size={Number(page_size)}
                         onPageChange={handlePageChange}
                       />
+                      <div>
+                        <Select value={page_size}
+                                onValueChange={handlePageSizeChange}>
+                          <SelectTrigger>
+                            <SelectValue/>
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value={"10"}>10</SelectItem>
+                            {
+                              productsData?.data?.result?.count > 10 && <SelectItem value={"20"}>20</SelectItem>
+                            }
+                            {
+                              productsData?.data?.result?.count > 20 && <SelectItem value={"30"}>30</SelectItem>
+                            }
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
                   }
                 </div>

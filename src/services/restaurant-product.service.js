@@ -1,4 +1,5 @@
 import api from "@/utils/api.js";
+import Api from "@/utils/api.js";
 
 const RestaurantProductService = {
   async getProducts({queryKey}) {
@@ -35,9 +36,15 @@ const RestaurantProductService = {
   },
 
   // Best products
-  async getBestProducts() {
-    const {data} = await api.get("/best-restaurant-product-web/")
-    return data
+  async getBestProducts({queryKey}) {
+    // eslint-disable-next-line no-unused-vars
+    const [_, page, page_size, search] = queryKey
+    const params = new URLSearchParams()
+    !!page && params.append("page", page)
+    !!page_size && params.append("page_size", page_size)
+    !!search && params.append("search", search)
+    const {data} = await Api.get(`/best-restaurant-product-web/?${params.toString()}`)
+    return data.result
   },
   async bestProductCreate(payload) {
     const {data} = await api.post("/best-restaurant-product-web/", payload)

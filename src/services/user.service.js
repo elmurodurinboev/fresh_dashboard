@@ -1,8 +1,15 @@
 import Api from "@/utils/api.js";
 
 const UserService = {
-  async getAll() {
-    const {data} = await Api.get("/user/")
+  async getAll({queryKey}) {
+    // eslint-disable-next-line no-unused-vars
+    const [_, page, page_size, search, role] = queryKey
+    const params = new URLSearchParams()
+    !!page && params.append("page", page)
+    !!search && params.append("search", search)
+    !!role && params.append("user_role", role)
+    !!page_size && params.append("page_size", page_size)
+    const {data} = await Api.get(`/user/?${params.toString()}`)
     return data
   },
 

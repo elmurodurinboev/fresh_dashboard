@@ -39,7 +39,7 @@ const Index = () => {
         name: data?.result?.name && data.result.name,
         logo: data?.result?.logo && data.result.logo,
         video_url: data?.result?.video_url && data.result.video_url,
-        restaurant: data?.result?.restaurant && +data.result.restaurant
+        restaurant: data?.result?.restaurant && +data.result.restaurant.id
       });
     }
   }, [productData.isSuccess, productData.data?.result]);

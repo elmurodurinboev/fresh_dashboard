@@ -1,10 +1,15 @@
 import Api from "@/utils/api.js";
-import api from "@/utils/api.js";
 
 const RestaurantCategoryService = {
-  async getAll() {
-    const {data} = await Api.get("/restaurant-category/")
-    return data
+  async getAll({queryKey}) {
+    // eslint-disable-next-line no-unused-vars
+    const [_, page, page_size, search] = queryKey
+    const params = new URLSearchParams()
+    !!page && params.append("page", page)
+    !!page_size && params.append("page_size", page_size)
+    !!search && params.append("search", search)
+    const {data} = await Api.get(`/restaurant-category/?${params.toString()}`)
+    return data.result
   },
 
   async create(payload) {
@@ -25,12 +30,12 @@ const RestaurantCategoryService = {
   async getOne({queryKey}) {
     // eslint-disable-next-line no-unused-vars
     const [_, id] = queryKey
-    const {data} = await api.get(`/restaurant-category/${id}/`)
+    const {data} = await Api.get(`/restaurant-category/${id}/`)
     return data
   },
 
   async delete(id) {
-    const {data} = await api.delete(`/restaurant-category/${id}/`)
+    const {data} = await Api.delete(`/restaurant-category/${id}/`)
     return data
   },
 
