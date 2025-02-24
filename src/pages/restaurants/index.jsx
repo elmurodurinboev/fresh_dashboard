@@ -23,6 +23,8 @@ import {Formatter} from "@/utils/formatter.js";
 import {PaginationControls} from "@/components/custom/pagination-controls.jsx";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.jsx";
 import SearchBar from "@/components/custom/search-bar.jsx";
+import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover.jsx";
+import {IconFilter} from "@tabler/icons-react";
 
 const Index = () => {
   const [deleteModal, setDeleteModal] = useState(false)
@@ -31,12 +33,11 @@ const Index = () => {
   const searchRef = useRef()
   const navigate = useNavigate()
 
-  const handlePageChange = (number, page_size = page_size) => {
+  const handlePageChange = (number) => {
     const params = new URLSearchParams()
     setPage(number)
     setPageSize(page_size)
     params.append("page", number)
-    params.append("page_size", page_size)
     if (searchParams.get("page_size")) params.append("page_size", page_size)
     navigate(`${location.pathname}?${params.toString()}`)
   }
@@ -87,7 +88,14 @@ const Index = () => {
     setDeleteModal(true)
   }
 
-  console.log(restaurantsData.data)
+  const [owner, setOwner] = useState("")
+
+  const restaurantOwner = useQuery({
+    queryKey: ["getRestaurantOwners"],
+    queryFn: RestaurantService.getOwners
+  })
+
+  console.log(restaurantOwner?.data?.result?.results)
 
   return (
     <Layout>
@@ -112,7 +120,7 @@ const Index = () => {
             </Button>
           </div>
         </div>
-        <div className={"mb-2"}>
+        <div className={"mb-2 flex items-center justify-between"}>
           <SearchBar
             className={"w-[300px]"}
             ref={searchRef}
@@ -124,6 +132,42 @@ const Index = () => {
               setSearch(val)
             }}
           />
+          <div>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant={owner ? "" : "outline"} size={"icon"}>
+                  <IconFilter size={18}/>
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-72" align={"end"}>
+                <div className={"flex flex-col gap-1"}>
+                  <span className={"text-sm font-medium text-gray-400"}>Restoran egasi</span>
+                  <Select value={owner} onValueChange={setOwner}>
+                    <SelectTrigger>
+                      <SelectValue placeholder={"Tanlang"}/>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {
+                        restaurantOwner && restaurantOwner?.data && restaurantOwner?.data?.result && restaurantOwner?.data?.result?.results > 0 && (
+                          restaurantOwner?.data?.result?.results.map((item, index) => (
+                            <SelectItem
+                              key={index}
+                              value={item.id}
+                            >
+                              {item.full_name}
+                            </SelectItem>
+                          ))
+                        )
+                      }
+                    </SelectContent>
+                  </Select>
+                  <div className={"flex justify-end"}>
+                    <Button variant={"destructive"} onClick={() => setOwner("")}>Tozalash</Button>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
+          </div>
         </div>
         <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0">
           {
