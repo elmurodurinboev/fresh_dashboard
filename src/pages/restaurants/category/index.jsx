@@ -20,6 +20,8 @@ import { useRef, useState } from "react";
 import RestaurantCategoryService from "@/services/restaurant-category.service.js";
 import DefaultImage from "@/components/custom/default-image.jsx";
 import SearchBar from "@/components/custom/search-bar.jsx";
+import {PaginationControls} from "@/components/custom/pagination-controls.jsx";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.jsx";
 
 const Index = () => {
   const [deleteModal, setDeleteModal] = useState(false)
@@ -71,8 +73,9 @@ const Index = () => {
   const handlePageSizeChange = (page_size) => {
     const params = new URLSearchParams()
     setPageSize(page_size)
+    setPage(1)
     params.append("page_size", page_size)
-    if (searchParams.get("page")) params.append("page", page)
+    params.append("page", 1)
     navigate(`${location.pathname}?${params.toString()}`)
   }
 
@@ -127,8 +130,8 @@ const Index = () => {
         <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0">
           {
             !categoryData.isLoading ? (
-              categoryData && categoryData.data && categoryData.isSuccess && !categoryData.isError && categoryData.data.result && (
-                <div className="rounded-md border min-h-[500px]">
+              categoryData && categoryData.data && categoryData.isSuccess && !categoryData.isError && categoryData.data && (
+                <div className="rounded-md border min-h-[600px] flex flex-col justify-between">
                   <Table>
                     <TableHeader>
                       <TableRow>
@@ -144,8 +147,8 @@ const Index = () => {
                     </TableHeader>
                     <TableBody>
                       {
-                        categoryData.data.result.results && categoryData.data.result.results.length > 0 ? (
-                          categoryData.data.result.results.map((category, index) => (
+                        categoryData.data.results && categoryData.data.results.length > 0 ? (
+                          categoryData.data.results.map((category, index) => (
                             <TableRow key={index} className={"bg-secondary"}>
                               <TableCell className={"flex gap-2 items-center overflow-hidden"}>
                                 {category.image ? (
@@ -207,6 +210,35 @@ const Index = () => {
 
                     </TableBody>
                   </Table>
+                  {
+                    categoryData?.data?.count > 10 &&
+                    <div
+                      className="pagination flex items-center justify-between bg-white px-6 py-[18px] border-t border-gray-300">
+                      <PaginationControls
+                        total={categoryData?.data?.count}
+                        current_page={Number(page)}
+                        page_size={Number(page_size)}
+                        onPageChange={handlePageChange}
+                      />
+                      <div>
+                        <Select value={page_size}
+                                onValueChange={handlePageSizeChange}>
+                          <SelectTrigger>
+                            <SelectValue/>
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value={"10"}>10</SelectItem>
+                            {
+                              categoryData?.data?.count > 10 && <SelectItem value={"20"}>20</SelectItem>
+                            }
+                            {
+                              categoryData?.data?.count > 20 && <SelectItem value={"30"}>30</SelectItem>
+                            }
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  }
                 </div>
               )
             ) : (

@@ -120,7 +120,7 @@ const Index = () => {
       <Layout.Body>
         <div className="mb-2 flex flex-col gap-4">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight">Update Products</h2>
+            <h2 className="text-2xl font-bold tracking-tight">Mahsulotni yangilash</h2>
           </div>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -137,8 +137,8 @@ const Index = () => {
                     !categoryData.isError &&
                     categoryData.data &&
                     categoryData.isSuccess &&
-                    categoryData.data.result &&
-                    categoryData.data.result.results ? (
+                    categoryData.data &&
+                    categoryData.data.results ? (
                       <Controller
                         name="category"
                         control={form.control}
@@ -157,7 +157,7 @@ const Index = () => {
                                 <SelectValue placeholder="Select subcategory"/>
                               </SelectTrigger>
                               <SelectContent>
-                                {categoryData.data.result.results.map(
+                                {categoryData?.data?.results?.map(
                                   (item, index) => (
                                     <SelectItem value={item.id} key={index}>
                                       {item.name}

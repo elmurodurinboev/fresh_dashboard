@@ -8,8 +8,8 @@ const RestaurantCategoryService = {
     !!page && params.append("page", page)
     !!page_size && params.append("page_size", page_size)
     !!search && params.append("search", search)
-    const {data} = await Api.get(`/restaurant-category/${params.toString()}`)
-    return data
+    const {data} = await Api.get(`/restaurant-category/?${params.toString()}`)
+    return data.result
   },
 
   async create(payload) {

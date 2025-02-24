@@ -46,8 +46,9 @@ const Index = () => {
   const handlePageSizeChange = (page_size) => {
     const params = new URLSearchParams()
     setPageSize(page_size)
+    setPage(1)
     params.append("page_size", page_size)
-    if (searchParams.get("page")) params.append("page", page)
+    params.append("page", 1)
     navigate(`${location.pathname}?${params.toString()}`)
   }
 
