@@ -17,8 +17,8 @@ const customIcon = new L.Icon({
   shadowSize: [41, 41],
 });
 
-const LocationPicker = ({ onLocationSelect }) => {
-  const [position, setPosition] = useState([41.55039, 60.6315]); // Default to Urgench
+const LocationPicker = ({ onLocationSelect, loc=[41.55039, 60.6315] }) => {
+  const [position, setPosition] = useState(loc); // Default to Urgench
 
   const LocationMarker = () => {
     useMapEvents({

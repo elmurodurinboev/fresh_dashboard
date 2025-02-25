@@ -16,18 +16,18 @@ import {
 import {Button} from "@/components/custom/button.jsx";
 import {DotsHorizontalIcon} from "@radix-ui/react-icons";
 import {Formatter} from "@/utils/formatter.js";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 import {toast} from "@/hooks/use-toast.js";
 import DeleteConfirmationModal from "@/components/custom/delete-confirmation-modal.jsx";
-import {useState} from "react";
+import {useRef, useState} from "react";
+import SearchBar from "@/components/custom/search-bar.jsx";
+import {PaginationControls} from "@/components/custom/pagination-controls.jsx";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.jsx";
 
 const Index = () => {
   const [deleteModal, setDeleteModal] = useState(false)
   const [selectedProduct, setSelectedProduct] = useState({})
-  const productsData = useQuery({
-    queryKey: ['getAllProducts'],
-    queryFn: ShopProductService.getProducts
-  })
+
 
   const navigate = useNavigate()
 
@@ -60,6 +60,39 @@ const Index = () => {
     setDeleteModal(true)
   }
 
+  // Pagination logic
+
+  const [search, setSearch] = useState("");
+  const searchRef = useRef()
+
+  const handlePageChange = (number) => {
+    const params = new URLSearchParams()
+    setPage(number)
+    setPageSize(page_size)
+    params.append("page", number)
+    if (searchParams.get("page_size")) params.append("page_size", page_size)
+    navigate(`${location.pathname}?${params.toString()}`)
+  }
+
+  const handlePageSizeChange = (page_size) => {
+    const params = new URLSearchParams()
+    setPageSize(page_size)
+    setPage(1)
+    params.append("page_size", page_size)
+    params.append("page", 1)
+    navigate(`${location.pathname}?${params.toString()}`)
+  }
+
+  const [searchParams] = useSearchParams()
+
+  const [page, setPage] = useState(searchParams.get("page") ?? "1")
+  const [page_size, setPageSize] = useState(searchParams.get("per_page") ?? "10")
+
+  const productsData = useQuery({
+    queryKey: ['getAllProducts', page, page_size, search],
+    queryFn: ShopProductService.getProducts
+  })
+
   return (
     <Layout>
       {/* ===== Top Heading ===== */}
@@ -83,11 +116,24 @@ const Index = () => {
             </Button>
           </div>
         </div>
+        <div className={"mb-2 flex items-center justify-between"}>
+          <SearchBar
+            className={"w-[300px]"}
+            ref={searchRef}
+            placeholder={"Qidirish"}
+            onSearch={(val) => {
+              if (Number(page) !== 1) {
+                handlePageChange(1)
+              }
+              setSearch(val)
+            }}
+          />
+        </div>
         <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0">
           {
             !productsData.isLoading ? (
               productsData && productsData.data && productsData.isSuccess && !productsData.isError && (
-                <div className="rounded-md border min-h-[500px]">
+                <div className="rounded-md border min-h-[600px] flex flex-col justify-between">
                   <Table>
                     <TableHeader>
                       <TableRow>
@@ -115,8 +161,8 @@ const Index = () => {
                     </TableHeader>
                     <TableBody>
                       {
-                        productsData.data.result.length > 0 ? (
-                          productsData.data.result.map((product, index) => (
+                        productsData.data.results && productsData.data.results.length > 0 ? (
+                          productsData.data.results.map((product, index) => (
                             <TableRow key={index} className={"bg-secondary"}>
                               <TableCell className={"flex gap-2 items-center overflow-hidden"}>
                                 {product.image ? (
@@ -175,7 +221,8 @@ const Index = () => {
                                       </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end" className="w-[160px]">
-                                      <DropdownMenuItem onClick={() => navigate(`update/${product.id}`)}>O`zgartirish</DropdownMenuItem>
+                                      <DropdownMenuItem
+                                        onClick={() => navigate(`update/${product.id}`)}>O`zgartirish</DropdownMenuItem>
                                       <DropdownMenuSeparator/>
                                       <DropdownMenuItem
                                         onClick={() => handleDelete(product)}
@@ -203,6 +250,35 @@ const Index = () => {
 
                     </TableBody>
                   </Table>
+                  {
+                    productsData?.data?.count > 10 &&
+                    <div
+                      className="pagination flex items-center justify-between bg-white px-6 py-[18px] border-t border-gray-300">
+                      <PaginationControls
+                        total={productsData?.data?.count}
+                        current_page={Number(page)}
+                        page_size={Number(page_size)}
+                        onPageChange={handlePageChange}
+                      />
+                      <div>
+                        <Select value={page_size}
+                                onValueChange={handlePageSizeChange}>
+                          <SelectTrigger>
+                            <SelectValue/>
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value={"10"}>10</SelectItem>
+                            {
+                              productsData?.data?.count > 10 && <SelectItem value={"20"}>20</SelectItem>
+                            }
+                            {
+                              productsData?.data?.count > 20 && <SelectItem value={"30"}>30</SelectItem>
+                            }
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  }
                 </div>
               )
             ) : (

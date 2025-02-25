@@ -53,7 +53,7 @@ const Index = () => {
           {
             !couriersData.isLoading ? (
               couriersData && couriersData.data && couriersData.isSuccess && !couriersData.isError && (
-                <div className="rounded-md border min-h-[500px]">
+                <div className="rounded-md border min-h-[600px] flex flex-col justify-between">
                   <Table>
                     <TableHeader>
                       <TableRow>

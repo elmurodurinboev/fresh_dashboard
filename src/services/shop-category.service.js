@@ -2,9 +2,15 @@ import Api from "@/utils/api.js";
 import api from "@/utils/api.js";
 
 const ShopCategoryService = {
-  async getAllSub() {
-    const {data} = await Api.get("/shop_category/")
-    return data
+  async getAllSub({queryKey}) {
+    // eslint-disable-next-line no-unused-vars
+    const [_, page, page_size, search] = queryKey
+    const params = new URLSearchParams()
+    !!page && params.append("page", page)
+    !!page_size && params.append("page_size", page_size)
+    !!search && params.append("search", search)
+    const {data} = await Api.get(`/shop_category/?${params.toString()}`)
+    return data.result
   },
 
   async create(payload) {

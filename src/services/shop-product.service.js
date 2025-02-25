@@ -1,9 +1,15 @@
 import api from "@/utils/api.js";
 
 const ShopProductService = {
-  async getProducts() {
-    const {data} = await api.get("/shop_product/")
-    return data
+  async getProducts({queryKey}) {
+    // eslint-disable-next-line no-unused-vars
+    const [_, page, page_size, search] = queryKey
+    const params = new URLSearchParams()
+    !!page && params.append("page", page)
+    !!page_size && params.append("page_size", page_size)
+    !!search && params.append("search", search)
+    const {data} = await api.get(`/shop_product/?${params.toString()}`)
+    return data.result
   },
   async create(payload) {
     const {data} = await api.post("/shop_product/", payload)
