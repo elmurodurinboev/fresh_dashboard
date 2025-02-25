@@ -6,7 +6,7 @@ import {Input} from "@/components/ui/input.jsx";
 import {toast} from "@/hooks/use-toast.js";
 import ShopService from "@/services/shop.service.js";
 import {useNavigate, useParams} from "react-router-dom";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {Skeleton} from "@/components/ui/skeleton.jsx";
 import CountryService from "@/services/country.service.js";
 import {Switch} from "@/components/ui/switch.jsx";
@@ -15,10 +15,13 @@ import {Textarea} from "@/components/ui/textarea.jsx";
 import {Label} from "@/components/ui/label.jsx";
 import PhoneInput from "@/components/custom/phone-input.jsx";
 import InputWithFormat from "@/components/custom/input-with-format.jsx";
+import LocationPicker from "@/components/custom/location-picker.jsx";
 
 const Index = () => {
   const navigate = useNavigate()
   const params = useParams()
+  const [withMap, setWithMap] = useState(false)
+
   const form = useForm({
     defaultValues: {
       name: '',
@@ -89,6 +92,14 @@ const Index = () => {
       navigate("/shops")
     }
   })
+
+  const setSelectedLocation = (lat, lng) => {
+    form.reset({
+      ...form.getValues(),
+      latitude: lat,
+      longitude: lng
+    })
+  }
 
   const onSubmit = (data) => {
     data.id = params.id
@@ -344,37 +355,59 @@ const Index = () => {
                   )}
                 />
 
-                <div className={"grid grid-cols-12 gap-3"}>
-                  <div className={"col-span-12"}>
-                    <h3 className={"text-xl font-medium"}>Joylashuv</h3>
-                  </div>
-                  <Controller
-                    control={form.control}
-                    name="latitude"
-                    render={({field, fieldState: {error}}) => (
-                      <div className="space-y-1 col-span-6">
-                        <Label className={"text-[#667085]"}>Latitude</Label>
-                        <>
-                          <Input placeholder="41.1" {...field} type={"text"}/>
-                        </>
-                        {error && <p className="text-red-500">{error.message}</p>}
+                {
+                  withMap ? (
+                    <div className={"w-full space-y-2"}>
+                      <div className={"w-full flex justify-between rounded-md overflow-hidden"}>
+                        <h3 className={"text-xl font-medium"}>Joylashuv</h3>
+                        <Button variant={"link"} onClick={() => setWithMap(false)} type={"button"}>
+                          Qo`lda kiritish
+                        </Button>
                       </div>
-                    )}
-                  />
-                  <Controller
-                    control={form.control}
-                    name="longitude"
-                    render={({field, fieldState: {error}}) => (
-                      <div className="space-y-1 col-span-6">
-                        <Label className={"text-[#667085]"}>Longitude</Label>
-                        <>
-                          <Input placeholder="61.1" {...field} type={"text"}/>
-                        </>
-                        {error && <p className="text-red-500">{error.message}</p>}
+                      <LocationPicker onLocationSelect={setSelectedLocation}
+                                      loc={form.getValues(["latitude", "longitude"])[0] !== undefined && form.getValues(["latitude", "longitude"])}/>
+                    </div>
+                  ) : (
+                    <div className={"grid grid-cols-12 gap-3"}>
+                      <div className={"col-span-12 flex justify-between"}>
+                        <h3 className={"text-xl font-medium"}>Joylashuv</h3>
+                        <Button variant={"link"} onClick={() => setWithMap(true)} type={"button"}>
+                          Xaritadan tanlash
+                        </Button>
                       </div>
-                    )}
-                  />
-                </div>
+                      <Controller
+                        control={form.control}
+                        name="latitude"
+                        render={({field, fieldState: {error}}) => (
+                          <div className="space-y-1 col-span-6">
+                            <Label className={"text-[#667085]"}>Latitude</Label>
+                            <>
+                              <Input placeholder="41.1" {...field} type={"text"}/>
+                            </>
+                            {error && (
+                              <p className="text-red-500">{error.message}</p>
+                            )}
+                          </div>
+                        )}
+                      />
+                      <Controller
+                        control={form.control}
+                        name="longitude"
+                        render={({field, fieldState: {error}}) => (
+                          <div className="space-y-1 col-span-6">
+                            <Label className={"text-[#667085]"}>Longitude</Label>
+                            <>
+                              <Input placeholder="61.1" {...field} type={"text"}/>
+                            </>
+                            {error && (
+                              <p className="text-red-500">{error.message}</p>
+                            )}
+                          </div>
+                        )}
+                      />
+                    </div>
+                  )
+                }
               </div>
               <div className={"space-x-4 mt-4"}>
                 <Button

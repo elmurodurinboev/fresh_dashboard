@@ -175,7 +175,7 @@ const Index = () => {
           {
             !usersData.isLoading ? (
               usersData && usersData.data && usersData.isSuccess && !usersData.isError && usersData.data.results && (
-                <div className="rounded-md border min-h-[500px]">
+                <div className="rounded-md border min-h-[600px] flex flex-col justify-between">
                   <Table>
                     <TableHeader>
                       <TableRow>
