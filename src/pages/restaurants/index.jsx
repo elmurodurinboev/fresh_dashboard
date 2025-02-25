@@ -217,7 +217,7 @@ const Index = () => {
 
                               <TableCell>
                                 {
-                                  restaurant.owner
+                                  restaurant?.owner?.full_name
                                 }
                               </TableCell>
 
