@@ -86,7 +86,7 @@ export default function ProfileForm() {
             <FormItem className="space-y-1">
               <FormLabel>User rol</FormLabel>
               <FormControl>
-                <Select {...field}>
+                <Select {...field} disabled>
                   <SelectTrigger>
                     <SelectValue placeholder={"Tanlang"}/>
                   </SelectTrigger>
