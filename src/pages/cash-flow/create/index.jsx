@@ -93,16 +93,16 @@ const Index = () => {
                             Restoranni tanlang
                           </label>
                           <Select
-                            value={+field.value}
+                            value={field?.value?.toString()}
                             onValueChange={field.onChange}
                           >
                             <SelectTrigger className="w-full text-black">
-                              <SelectValue placeholder="Select subcategory"/>
+                              <SelectValue placeholder="Restoranni tanlang"/>
                             </SelectTrigger>
                             <SelectContent>
                               {restaurantsData.data.results.map(
                                 (item, index) => (
-                                  <SelectItem value={item.id} key={index}>
+                                  <SelectItem value={item.id.toString()} key={index}>
                                     {item.name}
                                   </SelectItem>
                                 )
@@ -137,11 +137,11 @@ const Index = () => {
                         Turi
                       </label>
                       <Select
-                        value={field.value}
+                        value={field?.value?.toString()}
                         onValueChange={field.onChange}
                       >
                         <SelectTrigger className="w-full text-black">
-                          <SelectValue placeholder="Select type"/>
+                          <SelectValue placeholder="Amal turini tanlang"/>
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value={"proceeds"}>

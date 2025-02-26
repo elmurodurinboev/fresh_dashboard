@@ -100,29 +100,29 @@ const Index = () => {
                     !subCategoryData.isError &&
                     subCategoryData.data &&
                     subCategoryData.isSuccess &&
-                    subCategoryData.data.result &&
-                    subCategoryData.data.result ? (
+                    subCategoryData.data.results &&
+                    subCategoryData.data.results ? (
                       <Controller
                         name="subcategory"
                         control={form.control}
                         defaultValue={""}
-                        rules={{required: "Category is required"}} // Add validation rules here
+                        rules={{required: "Subkategoriya tanlanishi shart"}} // Add validation rules here
                         render={({field, fieldState: {error}}) => (
                           <div className="flex-1">
                             <label className="text-[#667085]">
                               Kategoriya nomi
                             </label>
                             <Select
-                              value={+field.value}
+                              value={field?.value?.toString()}
                               onValueChange={field.onChange}
                             >
                               <SelectTrigger className="w-full text-black">
-                                <SelectValue placeholder="Select subcategory"/>
+                                <SelectValue placeholder="Subkategoriyani tanlang"/>
                               </SelectTrigger>
                               <SelectContent>
-                                {subCategoryData.data.result.map(
+                                {subCategoryData.data.results.map(
                                   (item, index) => (
-                                    <SelectItem value={item.id} key={index}>
+                                    <SelectItem value={item.id.toString()} key={index}>
                                       {item.name}
                                     </SelectItem>
                                   )

@@ -107,23 +107,23 @@ const Index = () => {
                     name="category"
                     control={form.control}
                     defaultValue={""}
-                    rules={{required: "Bu maydon tanlanishi shart"}} // Add validation rules here
+                    rules={{required: "Bu maydon tanlanishi shart"}}
                     render={({field, fieldState: {error}}) => (
                       <div className={"w-full p-6 bg-white rounded-2xl shadow flex flex-col gap-4"}>
                         <label className="text-[#667085]">
                           Kategoriya
                         </label>
                         <Select
-                          value={+field.value}
+                          value={field?.value?.toString()}
                           onValueChange={field.onChange}
                         >
                           <SelectTrigger className="w-full text-black">
-                            <SelectValue placeholder="Select subcategory"/>
+                            <SelectValue placeholder="Kategoriyani tanlang"/>
                           </SelectTrigger>
                           <SelectContent>
                             {categoryData.data.result.map(
                               (item, index) => (
-                                <SelectItem value={item.id} key={index}>
+                                <SelectItem value={item.id.toString()} key={index}>
                                   {item.name}
                                 </SelectItem>
                               )

@@ -143,7 +143,7 @@ export function AppearanceForm() {
                   <SelectContent>
                     {
                       languages.map((item, index)=> (
-                        <SelectItem value={item.value} key={index}>{item.title}</SelectItem>
+                        <SelectItem value={item.value.toString()} key={index}>{item.title}</SelectItem>
                       ))
                     }
                   </SelectContent>

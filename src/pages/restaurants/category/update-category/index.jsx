@@ -24,7 +24,7 @@ const formSchema = z.object({
     .any()
     .optional(),
   restaurant: z
-    .number()
+    .string()
 })
 
 const Index = () => {
@@ -36,7 +36,7 @@ const Index = () => {
     defaultValues: {
       name: '',
       image: '',
-      restaurant: null,
+      restaurant: "",
     }
   })
 
@@ -123,14 +123,14 @@ const Index = () => {
                             <FormItem className="space-y-1">
                               <FormLabel className={"text-[#667085]"}>Restoran</FormLabel>
                               <FormControl>
-                                <Select value={+field.value} onValueChange={(val) => field.onChange(+val)}>
+                                <Select value={field?.value?.toString()} onValueChange={field.onChange}>
                                   <SelectTrigger className="w-full text-black">
-                                    <SelectValue placeholder="Select subcategory"/>
+                                    <SelectValue placeholder="Restoranni tanlang"/>
                                   </SelectTrigger>
                                   <SelectContent>
                                     {
                                       restaurantsData.data.results.map((item, index) => (
-                                        <SelectItem value={item.id} key={index}>{item.name}</SelectItem>
+                                        <SelectItem value={item.id.toString()} key={index}>{item.name}</SelectItem>
                                       ))
                                     }
                                   </SelectContent>

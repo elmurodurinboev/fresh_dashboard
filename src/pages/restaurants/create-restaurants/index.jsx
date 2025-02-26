@@ -217,16 +217,16 @@ const Index = () => {
                           </Label>
                           <>
                             <Select
-                              value={+field.value}
-                              onValueChange={(val) => field.onChange(+val)}
+                              value={field?.value?.toString()}
+                              onValueChange={field.onChange}
                             >
                               <SelectTrigger className="w-full text-black">
-                                <SelectValue placeholder="Select Owner"/>
+                                <SelectValue placeholder="Restoran egasini tanlang"/>
                               </SelectTrigger>
                               <SelectContent>
                                 {owners.data.result.results.map(
                                   (item, index) => (
-                                    <SelectItem value={item.id} key={index}>
+                                    <SelectItem value={item.id.toString()} key={index}>
                                       {item.full_name}
                                     </SelectItem>
                                   )
@@ -260,15 +260,15 @@ const Index = () => {
                           <Label className={"text-[#667085]"}>Hudud</Label>
                           <>
                             <Select
-                              value={+field.value}
-                              onValueChange={(val) => field.onChange(+val)}
+                              value={field?.value?.toString()}
+                              onValueChange={field.onChange}
                             >
                               <SelectTrigger className="w-full text-black">
-                                <SelectValue placeholder="Select country"/>
+                                <SelectValue placeholder="Hududni tanlang"/>
                               </SelectTrigger>
                               <SelectContent>
                                 {country.data.result.map((item, index) => (
-                                  <SelectItem value={item.id} key={index}>
+                                  <SelectItem value={item.id.toString()} key={index}>
                                     {item.name}
                                   </SelectItem>
                                 ))}

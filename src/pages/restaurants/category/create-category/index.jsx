@@ -1,7 +1,7 @@
 import {Layout} from "@/components/custom/layout.jsx";
 import {Button} from "@/components/custom/button.jsx";
 import {IconPhoto, IconPlus, IconX} from "@tabler/icons-react";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.jsx";
@@ -14,6 +14,8 @@ import RestaurantCategoryService from "@/services/restaurant-category.service.js
 import RestaurantService from "@/services/restaurant.service.js";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.jsx";
 import {Skeleton} from "@/components/ui/skeleton.jsx";
+import ROLES from "@/data/roles.js";
+import {useAuth} from "@/hooks/utils/useAuth.js";
 
 
 const formSchema = z.object({
@@ -24,18 +26,19 @@ const formSchema = z.object({
     .any()
     .optional(),
   restaurant: z
-    .number()
+    .string()
 })
 
 const Index = () => {
   const navigate = useNavigate()
   const [isDragged, setIsDragged] = useState(false)
+  const {session: {user}} = useAuth()
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
       image: '',
-      restaurant: null
+      restaurant: ""
     }
   })
 
@@ -72,7 +75,14 @@ const Index = () => {
     queryFn: RestaurantService.getAll
   })
 
-  console.log(restaurantsData.data)
+  useEffect(() => {
+    const {isSuccess, data} = restaurantsData;
+
+    if (isSuccess && data?.results?.length !== 0 && user?.user_role === ROLES.RESTAURANT_OWNER) {
+      form.reset({restaurant: `${restaurantsData.data.results[0]?.id}`});
+    }
+  }, [restaurantsData.isSuccess, restaurantsData.data?.results]);
+
 
   const onSubmit = (data) => {
     const formData = new FormData()
@@ -105,14 +115,14 @@ const Index = () => {
                             <FormItem className="space-y-1">
                               <FormLabel className={"text-[#667085]"}>Restoran</FormLabel>
                               <FormControl>
-                                <Select value={+field.value} onValueChange={(val) => field.onChange(+val)}>
+                                <Select value={field?.value?.toString()} onValueChange={field.onChange}>
                                   <SelectTrigger className="w-full text-black">
-                                    <SelectValue placeholder="Select subcategory"/>
+                                    <SelectValue placeholder="Restoranni tanlang"/>
                                   </SelectTrigger>
                                   <SelectContent>
                                     {
                                       restaurantsData.data.results.map((item, index) => (
-                                        <SelectItem value={item.id} key={index}>{item.name}</SelectItem>
+                                        <SelectItem value={item.id.toString()} key={index}>{item.name}</SelectItem>
                                       ))
                                     }
                                   </SelectContent>
