@@ -138,7 +138,7 @@ const Index = () => {
                       </SelectTrigger>
                       <SelectContent>
                         {shopData.data.result.map((item, index) => (
-                          <SelectItem value={item.id} key={index}>
+                          <SelectItem value={item.id.toString()} key={index}>
                             {item.name}
                           </SelectItem>
                         ))}
@@ -164,7 +164,7 @@ const Index = () => {
                       >
                         <label className="text-[#667085]">Kategoriya</label>
                         <Select
-                          value={+field.value}
+                          value={field?.value?.toString()}
                           onValueChange={field.onChange}
                         >
                           <SelectTrigger
@@ -172,17 +172,17 @@ const Index = () => {
                               field.value ? "text-black" : "!text-gray-500"
                             }`}
                           >
-                            <SelectValue />
+                            <SelectValue placeholder={"Kategoriyani tanlang"} />
                           </SelectTrigger>
                           <SelectContent>
                             {session?.user?.user_role === "admin"
                               ? filterCategory.map((item, index) => (
-                                  <SelectItem value={item.id} key={index}>
+                                  <SelectItem value={item.id.toString()} key={index}>
                                     {item.name}
                                   </SelectItem>
                                 ))
                               : categoryData.data.result.map((item, index) => (
-                                  <SelectItem value={item.id} key={index}>
+                                  <SelectItem value={item.id.toString()} key={index}>
                                     {item.name}
                                   </SelectItem>
                                 ))}

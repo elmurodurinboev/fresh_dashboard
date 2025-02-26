@@ -142,7 +142,7 @@ const Index = () => {
                 <PopoverContent className="w-72" align={"end"}>
                   <div className={"flex flex-col gap-1"}>
                     <span className={"text-sm font-medium text-gray-400"}>Restoran egasi</span>
-                    <Select value={owner} onValueChange={val => {
+                    <Select value={owner.toString()} onValueChange={val => {
                       handlePageChange(1)
                       setOwner(val)
                     }}>
@@ -155,7 +155,7 @@ const Index = () => {
                             restaurantOwner?.data?.result?.results.map((item, index) => (
                               <SelectItem
                                 key={index}
-                                value={item.id}
+                                value={item.id.toString()}
                               >
                                 {item.full_name}
                               </SelectItem>

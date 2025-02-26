@@ -1,7 +1,7 @@
 import {Layout} from "@/components/custom/layout.jsx";
 import {Button} from "@/components/custom/button.jsx";
 import {IconPhoto, IconPlus, IconX} from "@tabler/icons-react";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useForm, Controller} from "react-hook-form";
 import {useNavigate} from "react-router-dom";
 import {
@@ -17,6 +17,8 @@ import {Input} from "@/components/ui/input.jsx";
 import RestaurantProductService from "@/services/restaurant-product.service.js";
 import {toast} from "@/hooks/use-toast.js";
 import RestaurantService from "@/services/restaurant.service.js";
+import {useAuth} from "@/hooks/utils/useAuth.js";
+import ROLES from "@/data/roles.js";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -29,6 +31,9 @@ const Index = () => {
       restaurant: "",
     },
   });
+
+  const {session: {user}} = useAuth()
+
 
   const mutation = useMutation({
     mutationFn: RestaurantProductService.bestProductCreate,
@@ -75,6 +80,14 @@ const Index = () => {
     queryFn: RestaurantService.getAll,
   });
 
+  useEffect(() => {
+    const {isSuccess, data} = restaurantData;
+
+    if (isSuccess && data?.results?.length !== 0 && user?.user_role === ROLES.RESTAURANT_OWNER) {
+      form.reset({restaurant: `${restaurantData.data.results[0]?.id}`});
+    }
+  }, [restaurantData.isSuccess, restaurantData.data?.results]);
+
   return (
     <Layout>
       <Layout.Body>
@@ -104,34 +117,28 @@ const Index = () => {
                       name="restaurant"
                       control={form.control}
                       defaultValue={""}
-                      rules={{required: "Restaurant is required"}} // Add validation rules here
+                      rules={{required: "Restoran tanlanishi shart!"}}
                       render={({field, fieldState: {error}}) => (
                         <div className="flex-1">
-                          <label className="text-[#667085]">
-                            Restoran
-                          </label>
+                          <label className="text-[#667085]">Restoran</label>
                           <Select
-                            value={+field.value}
-                            onValueChange={field.onChange}
+                            value={field.value?.toString()}
+                            onValueChange={(value) => {
+                              field.onChange(value)
+                            }}
                           >
                             <SelectTrigger className="w-full text-black">
-                              <SelectValue placeholder="Select subcategory"/>
+                              <SelectValue placeholder="Restoranni tanlang"/>
                             </SelectTrigger>
                             <SelectContent>
-                              {restaurantData.data.results.map(
-                                (item, index) => (
-                                  <SelectItem value={item.id} key={index}>
-                                    {item.name}
-                                  </SelectItem>
-                                )
-                              )}
+                              {restaurantData.data.results.map((item, index) => (
+                                <SelectItem value={item.id.toString()} key={index}>
+                                  {item.name}
+                                </SelectItem>
+                              ))}
                             </SelectContent>
                           </Select>
-                          {error && (
-                            <p className="text-red-500 text-sm">
-                              {error.message}
-                            </p>
-                          )}
+                          {error && <p className="text-red-500 text-sm">{error.message}</p>}
                         </div>
                       )}
                     />

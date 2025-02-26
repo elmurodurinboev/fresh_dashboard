@@ -135,16 +135,16 @@ const Index = () => {
                               Kategoriya nomi
                             </label>
                             <Select
-                              value={+field.value}
-                              onValueChange={val => field.onChange(val)}
+                              value={field?.value?.toString()}
+                              onValueChange={field.onChange}
                             >
                               <SelectTrigger className="w-full text-black">
-                                <SelectValue placeholder="Select subcategory"/>
+                                <SelectValue placeholder="Subkategoriyani tanlang"/>
                               </SelectTrigger>
                               <SelectContent>
                                 {subCategoryData.data.result.map(
                                   (item, index) => (
-                                    <SelectItem value={item.id} key={index}>
+                                    <SelectItem value={item.id.toString()} key={index}>
                                       {item.name}
                                     </SelectItem>
                                   )

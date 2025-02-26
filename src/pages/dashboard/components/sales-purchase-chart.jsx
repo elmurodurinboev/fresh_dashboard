@@ -128,7 +128,7 @@ const SalesChart = ({start_date, end_date, setStart_Date, setEnd_Date, type, set
   return (
     <div className={"statistics-incexp w-full shadow p-6 bg-white rounded-md"}>
       <div className="statistic-header">
-        <h1 className={"text-xl font-semibold"}>Report</h1>
+        <h1 className={"text-xl font-semibold"}>Hisobotlar</h1>
       </div>
       <div className="statistic-tabs">
         <Tabs value={type} onValueChange={(value) => {
