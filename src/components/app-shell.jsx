@@ -8,7 +8,7 @@ export default function AppShell() {
   // ToDo
   // Add navigate to this for each user
   return (
-    <div className='relative h-full overflow-hidden bg-background'>
+    <div className='relative h-screen overflow-hidden bg-background'>
       <SkipToMain />
       <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
       <main

@@ -1,6 +1,4 @@
 import {Layout} from "@/components/custom/layout.jsx";
-import ThemeSwitch from "@/components/theme-switch.jsx";
-import {UserNav} from "@/components/user-nav.jsx";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.jsx";
 import {useMutation, useQuery} from "@tanstack/react-query";
 import ShopProductService from "@/services/shop-product.service.js";
@@ -96,12 +94,7 @@ const Index = () => {
   return (
     <Layout>
       {/* ===== Top Heading ===== */}
-      <Layout.Header sticky>
-        <div className="ml-auto flex items-center space-x-4">
-          <ThemeSwitch/>
-          <UserNav/>
-        </div>
-      </Layout.Header>
+      <Layout.Header/>
 
       <Layout.Body>
         <div className="mb-2 flex items-center justify-between space-y-2">

@@ -32,8 +32,8 @@ const Index = () => {
     defaultValues: {
       name: "",
       delivery_time: "",
-      country: null,
-      owner: null,
+      country: "",
+      owner: "",
       picture: null,
       description: "",
       rating: "",
@@ -45,6 +45,10 @@ const Index = () => {
       contractor: "",
       address: "",
       phone_number: "",
+      legal_address: "",
+      director_number: "",
+      bank_account_number: "",
+      stir: ""
     },
   });
 
@@ -201,6 +205,37 @@ const Index = () => {
                     </div>
                   )}
                 />
+
+                <Controller
+                  control={form.control}
+                  name="director_number"
+                  rules={{required: "Bu maydon to'ldirilishi shart!"}}
+                  render={({field, fieldState: {error}}) => (
+                    <div className="space-y-1">
+                      <Label>Direktor telefon raqami</Label>
+                      <>
+                        <div className="relative flex items-center">
+                          <span className="absolute left-2.5 top-[9px] text-sm">
+                            +998
+                          </span>
+                          <PhoneInput
+                            {...field}
+                            onChange={() => {
+                            }}
+                            mask="00 000 0000"
+                            className={"pl-12 flex h-9 items-center"}
+                            placeholder="90 000 0000"
+                            onAccept={(val, mask) => {
+                              field.onChange(mask._unmaskedValue);
+                            }}
+                          />
+                        </div>
+                      </>
+                      {error && <p className="text-red-500">{error.message}</p>}
+                    </div>
+                  )}
+                />
+
                 {!owners.isLoading ? (
                   !owners.isError &&
                   owners.data &&
@@ -287,6 +322,63 @@ const Index = () => {
                 ) : (
                   <Skeleton className={"w-full h-9 rounded-md"}/>
                 )}
+
+                <Controller
+                  control={form.control}
+                  name="legal_address"
+                  rules={{required: "Bu maydon to'ldirilishi shart!"}}
+                  render={({field, fieldState: {error}}) => (
+                    <div className="space-y-1 flex-1">
+                      <Label className={"text-[#667085]"}>
+                        Yuridik shaxs manzili
+                      </Label>
+                      <>
+                        <Input placeholder="......" {...field} />
+                      </>
+                      {error && (
+                        <p className="text-red-500">{error.message}</p>
+                      )}
+                    </div>
+                  )}
+                />
+
+                <Controller
+                  control={form.control}
+                  name="bank_account_number"
+                  rules={{required: "Bu maydon to'ldirilishi shart!"}}
+                  render={({field, fieldState: {error}}) => (
+                    <div className="space-y-1 flex-1">
+                      <Label className={"text-[#667085]"}>
+                        Bank hisob raqami
+                      </Label>
+                      <>
+                        <Input placeholder="22012312031941012" type={"number"}  {...field} />
+                      </>
+                      {error && (
+                        <p className="text-red-500">{error.message}</p>
+                      )}
+                    </div>
+                  )}
+                />
+
+                <Controller
+                  control={form.control}
+                  name="stir"
+                  rules={{required: "Bu maydon to'ldirilishi shart!"}}
+                  render={({field, fieldState: {error}}) => (
+                    <div className="space-y-1 flex-1">
+                      <Label className={"text-[#667085]"}>
+                        STIR
+                      </Label>
+                      <>
+                        <Input placeholder="1231231" type={"number"}  {...field} />
+                      </>
+                      {error && (
+                        <p className="text-red-500">{error.message}</p>
+                      )}
+                    </div>
+                  )}
+                />
 
                 <Controller
                   control={form.control}
