@@ -3,21 +3,37 @@ import ThemeSwitch from "@/components/theme-switch.jsx";
 import {UserNav} from "@/components/user-nav.jsx";
 import {Button} from "@/components/custom/button.jsx";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.jsx";
-import {Formatter} from "@/utils/formatter.js";
-import {Skeleton} from "@/components/ui/skeleton.jsx";
 import {useQuery} from "@tanstack/react-query";
-import {useNavigate} from "react-router-dom";
 import CashFlowService from "@/services/cash-flow.service.js";
-import {format} from "date-fns";
+import BalanceCard from "@/components/cash-flow/balance-card.jsx";
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs.jsx";
+import {IconDownload} from "@tabler/icons-react";
+import RestaurantBalanceTable from "@/components/cash-flow/restaurant-balance-table.jsx";
 
 const Index = () => {
-  const CashFlowData = useQuery({
+  const cashFlowData = useQuery({
     queryKey: ['getAllCashFlowData'],
     queryFn: CashFlowService.getAll
   })
 
-  console.log(CashFlowData.data)
-  const navigate = useNavigate()
+
+  const tableData = [
+    {
+      paymentNumber: "37003",
+      amount: "UZS 8,639,364.09",
+      status: "Paid",
+      accountNumber: "20208000105582672001",
+      dateCreated: "Jul 22, 8:00 AM"
+    },
+    {
+      paymentNumber: "31143",
+      amount: "UZS 12,218,999.65",
+      status: "Paid",
+      accountNumber: "20208000105582672001",
+      dateCreated: "Jul 1, 8:00 AM"
+    }
+  ];
+
 
   return (
     <Layout>
@@ -30,98 +46,92 @@ const Index = () => {
       </Layout.Header>
 
       <Layout.Body>
-        <div className="mb-2 flex items-center justify-between space-y-2">
-          <div>
-            <h2 className="text-2xl font-bold tracking-tight">Restoranlar balansi</h2>
-          </div>
-          <div>
-            <Button
-              onClick={() => navigate("create")}
-            >
-              Yaratish
-            </Button>
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <BalanceCard
+            amount={500000}
+            title={"To'lov uchun mavjud"}
+            description={"Siz bank hisob raqaminggizga chiqarib olishinggiz mumkin bo'lgan pul miqdori."}
+          />
+          <BalanceCard
+            amount={10000000}
+            title={"Jan 1 - Jan 31 uchun to'lov"}
+            description={"Ushbu muddatda hisob raqamiga chiqarilgan barcha pul miqdori."}
+          />
+          <BalanceCard
+            amount={0}
+            title={"Restoran balansi"}
+            description={"Buyurtmalardan komissiya olinadigan restoran balansidagi pul miqdori"}
+          />
         </div>
-        <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0">
-          {
-            !CashFlowData.isLoading ? (
-              CashFlowData && CashFlowData.data && CashFlowData.isSuccess && !CashFlowData.isError && (
-                <div className="rounded-md border min-h-[500px]">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>
-                          Restoran nomi
-                        </TableHead>
-                        <TableHead>
-                          Miqdori
-                        </TableHead>
-                        <TableHead>
-                          Turi
-                        </TableHead>
-                        <TableHead>
-                          Bajaruvchi
-                        </TableHead>
-                        <TableHead className={"text-end"}>
-                          Yaratilgan sana
-                        </TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {
-                        CashFlowData.data.results.length > 0 ? (
-                          CashFlowData.data.results.map((restaurant, index) => (
-                            <TableRow key={index} className={"bg-secondary"}>
-                              <TableCell className={"special-cell"}>
-                                <span>{restaurant.restaurant.name}</span>
-                              </TableCell>
+        {/* Tabs and Table Section */}
+        <div className="bg-white">
+          <Tabs defaultValue="payouts" className="w-full">
+            <TabsList className="w-full flex justify-center rounded-none bg-transparent h-12">
+              <TabsTrigger
+                value="payouts"
+                className="data-[state=active]:border-b-2 data-[state=active]:border-black data-[state=active]:shadow-none rounded-none h-12"
+              >
+                Hisob tarixi
+              </TabsTrigger>
+              <TabsTrigger
+                value="account-top-ups"
+                className="data-[state=active]:border-b-2 data-[state=active]:border-black data-[state=active]:shadow-none rounded-none h-12"
+              >
+                Balans tarixi
+              </TabsTrigger>
+            </TabsList>
 
-                              <TableCell className={"special-cell"}>
-                                {Formatter.currency(restaurant?.amount)}
-                              </TableCell>
-
-                              <TableCell className={"special-cell"}>
-                                {
-                                  restaurant?.finance_flow_type === "proceeds" ? (
-                                    <span className={"bg-green-500 py-1 px-2 rounded-md text-white"}>To`ldirish</span>
-                                  ) : (
-                                    <span className={"bg-rose-500 py-1 px-2 rounded-md text-white"}>Naqd pul qilish</span>
-                                  )
-                                }
-                              </TableCell>
-                              <TableCell className={"special-cell"}>
-                                {
-                                  restaurant.user.full_name ? restaurant.user.full_name : Formatter.formatPhoneNumber(restaurant.user.phone_number)
-                                }
-                              </TableCell>
-                              <TableCell className={"text-end"}>
-                                {
-                                  format(restaurant?.created_at, 'yyyy-MM-dd HH:MM')
-                                }
-                              </TableCell>
-                            </TableRow>
-                          ))
-
-                        ) : (
-                          <TableRow>
-                            <TableCell
-                              colSpan={6}
-                              className="h-24 text-center text-rose-500 font-medium"
-                            >
-                              No results.
-                            </TableCell>
-                          </TableRow>
-                        )
-                      }
-
-                    </TableBody>
-                  </Table>
+            <TabsContent value="payouts" className="p-3 rounded-md shadow-md">
+              <div className="p-4 flex justify-between items-center border-b">
+                <div className="flex items-center space-x-2">
+                  <Button variant="outline" size="sm" className="h-9">
+                    Jan 1–31, 2024
+                  </Button>
                 </div>
-              )
-            ) : (
-              <Skeleton className={"rounded-md border h-[500px]"}/>
-            )
-          }
+              </div>
+
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-[150px]">Payment number</TableHead>
+                      <TableHead>Amount</TableHead>
+                      <TableHead>Account number</TableHead>
+                      <TableHead>Date created</TableHead>
+                      <TableHead className="w-[50px]"></TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {tableData.map((row, index) => (
+                      <TableRow key={index}>
+                        <TableCell className="font-medium">{row.paymentNumber}</TableCell>
+                        <TableCell>
+                          <div className="flex items-center">
+                            {row.amount}
+                            <div className="ml-2 flex items-center">
+                              <div className="h-2 w-2 rounded-full bg-green-500 mr-1"></div>
+                              <span className="text-sm text-green-600">{row.status}</span>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>{row.accountNumber}</TableCell>
+                        <TableCell>{row.dateCreated}</TableCell>
+                        <TableCell>
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                            <IconDownload className="h-4 w-4"/>
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="account-top-ups">
+             <RestaurantBalanceTable cashFlowData={cashFlowData} />
+            </TabsContent>
+          </Tabs>
         </div>
       </Layout.Body>
     </Layout>
