@@ -14,7 +14,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
       <LanguageProvider defaultLanguage="uz" storageKey="vite-ui-language">
         <RouterProvider router={router}/>
-        <Toaster/>
+        <Toaster />
       </LanguageProvider>
     </ThemeProvider>
     <ReactQueryDevtools initialIsOpen={false}/>
