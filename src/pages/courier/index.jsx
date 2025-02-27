@@ -1,6 +1,4 @@
 import {Layout} from "@/components/custom/layout.jsx";
-import ThemeSwitch from "@/components/theme-switch.jsx";
-import {UserNav} from "@/components/user-nav.jsx";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.jsx";
 import {useQuery} from "@tanstack/react-query";
 import {Skeleton} from "@/components/ui/skeleton.jsx";
@@ -21,20 +19,11 @@ const Index = () => {
     queryKey: ['getAllCourier'],
     queryFn: CourierService.getAll
   })
-
-
   const navigate = useNavigate()
-
-
   return (
     <Layout>
       {/* ===== Top Heading ===== */}
-      <Layout.Header sticky>
-        <div className="ml-auto flex items-center space-x-4">
-          <ThemeSwitch/>
-          <UserNav/>
-        </div>
-      </Layout.Header>
+      <Layout.Header/>
 
       <Layout.Body>
         <div className="mb-2 flex items-center justify-between space-y-2">
@@ -111,7 +100,8 @@ const Index = () => {
                                       </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end" className="w-[160px]">
-                                      <DropdownMenuItem onClick={() => navigate(`update/${courier.id}`)}>Edit</DropdownMenuItem>
+                                      <DropdownMenuItem
+                                        onClick={() => navigate(`update/${courier.id}`)}>Edit</DropdownMenuItem>
                                     </DropdownMenuContent>
                                   </DropdownMenu>
                                 </div>

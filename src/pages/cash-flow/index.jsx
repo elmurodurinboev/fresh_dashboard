@@ -1,6 +1,4 @@
 import {Layout} from "@/components/custom/layout.jsx";
-import ThemeSwitch from "@/components/theme-switch.jsx";
-import {UserNav} from "@/components/user-nav.jsx";
 import {Button} from "@/components/custom/button.jsx";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.jsx";
 import {Formatter} from "@/utils/formatter.js";
@@ -22,12 +20,7 @@ const Index = () => {
   return (
     <Layout>
       {/* ===== Top Heading ===== */}
-      <Layout.Header sticky>
-        <div className="ml-auto flex items-center space-x-4">
-          <ThemeSwitch/>
-          <UserNav/>
-        </div>
-      </Layout.Header>
+      <Layout.Header/>
 
       <Layout.Body>
         <div className="mb-2 flex items-center justify-between space-y-2">
@@ -85,7 +78,8 @@ const Index = () => {
                                   restaurant?.finance_flow_type === "proceeds" ? (
                                     <span className={"bg-green-500 py-1 px-2 rounded-md text-white"}>To`ldirish</span>
                                   ) : (
-                                    <span className={"bg-rose-500 py-1 px-2 rounded-md text-white"}>Naqd pul qilish</span>
+                                    <span
+                                      className={"bg-rose-500 py-1 px-2 rounded-md text-white"}>Naqd pul qilish</span>
                                   )
                                 }
                               </TableCell>

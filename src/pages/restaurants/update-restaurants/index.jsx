@@ -26,22 +26,26 @@ const Index = () => {
   const [isDragged, setIsDragged] = useState(false)
   const form = useForm({
     defaultValues: {
-      name: '',
-      delivery_time: '',
-      country: null,
-      owner: null,
+      name: "",
+      delivery_time: "",
+      country: "",
+      owner: "",
       picture: null,
-      description: '',
+      description: "",
       rating: "",
       is_active: false,
-      latitude: "",
-      longitude: "",
+      latitude: "41.55039",
+      longitude: "60.6315",
       opening_time: "",
       closing_time: "",
       contractor: "",
-      address: '',
-      phone_number: ''
-    }
+      address: "",
+      phone_number: "",
+      legal_address: "",
+      director_number: "",
+      bank_account_number: "",
+      stir: ""
+    },
   })
 
   const restaurantData = useQuery({
@@ -55,23 +59,26 @@ const Index = () => {
 
     if (isSuccess && data?.result !== 0) {
       form.reset({
-        name: data.result.name && data.result.name,
-        delivery_time: data.result.delivery_time && data.result.delivery_time,
-        country: data.result.country && data.result.country,
-        owner: data.result.owner && data.result.owner,
-        picture: data.result.picture && data.result.picture,
-        description: data.result.description && data.result.description,
-        rating: data.result.rating && data.result.rating,
-        is_active: data.result.is_active && data.result.is_active,
-        address: data.result.address && data.result.address,
-        contractor: data.result.contractor && data.result.contractor,
-        latitude: data.result.latitude && data.result.latitude,
-        longitude: data.result.longitude && data.result.longitude,
-        opening_time: data.result.opening_time && data.result.opening_time,
-        closing_time: data.result.closing_time && data.result.closing_time,
-        phone_number: data.result.phone_number && data.result.phone_number,
+        name: data?.result?.name && data?.result?.name,
+        delivery_time: data?.result?.delivery_time && data?.result?.delivery_time,
+        country: data?.result?.country && data?.result?.country,
+        owner: data?.result?.owner && data?.result?.owner,
+        picture: data?.result?.picture && data?.result?.picture,
+        description: data?.result?.description && data?.result?.description,
+        rating: data?.result?.rating && data?.result?.rating,
+        is_active: data?.result?.is_active && data?.result?.is_active,
+        address: data?.result?.address && data?.result?.address,
+        contractor: data?.result?.contractor && data?.result?.contractor,
+        latitude: data?.result?.latitude && data?.result?.latitude,
+        longitude: data?.result?.longitude && data?.result?.longitude,
+        opening_time: data?.result?.opening_time && data?.result?.opening_time,
+        closing_time: data?.result?.closing_time && data?.result?.closing_time,
+        phone_number: data?.result?.phone_number && data?.result?.phone_number,
+        director_number: data?.result?.director_number && data?.result?.director_number,
+        legal_address: data?.result?.legal_address && data?.result?.legal_address,
+        bank_account_number: data?.result?.bank_account_number && data?.result?.bank_account_number,
+        stir: data?.result?.stir && data?.result?.stir,
       });
-      console.log("loc:", form.getValues(["latitude", "longitude"]))
     }
   }, [restaurantData.isSuccess, restaurantData.data?.result]);
 
@@ -145,7 +152,9 @@ const Index = () => {
           </div>
           <form onSubmit={form.handleSubmit(onSubmit)} className={"grid grid-cols-12 gap-4"}>
             <div className={"col-span-12 lg:col-span-8 flex flex-col gap-4"}>
-              <div className={"w-full p-6 bg-white rounded-2xl shadow flex flex-col gap-4"}>
+              <div
+                className={"w-full p-6 bg-white rounded-2xl shadow flex flex-col gap-4"}
+              >
                 <div className={"flex items-center justify-between gap-3"}>
                   <Controller
                     control={form.control}
@@ -153,11 +162,15 @@ const Index = () => {
                     rules={{required: "Bu maydon to'ldirilishi shart!"}}
                     render={({field, fieldState: {error}}) => (
                       <div className="space-y-1 flex-1">
-                        <Label className={"text-[#667085]"}>Restaran nomi</Label>
+                        <Label className={"text-[#667085]"}>
+                          Restaran nomi
+                        </Label>
                         <>
                           <Input placeholder="Evos" {...field} />
                         </>
-                        {error && <p className="text-red-500">{error.message}</p>}
+                        {error && (
+                          <p className="text-red-500">{error.message}</p>
+                        )}
                       </div>
                     )}
                   />
@@ -166,13 +179,19 @@ const Index = () => {
                     name="is_active"
                     render={({field, fieldState: {error}}) => (
                       <div className="flex flex-col gap-1 items-end pt-2">
-                        <Label
-                          className={"text-[#667085] flex items-center"}>Aktivligi</Label>
+                        <Label className={"text-[#667085] flex items-center"}>
+                          Aktivligi
+                        </Label>
                         <>
-                          <Switch {...field} checked={field.value}
-                                  onCheckedChange={val => field.onChange(val)}/>
+                          <Switch
+                            {...field}
+                            checked={field.value}
+                            onCheckedChange={(val) => field.onChange(val)}
+                          />
                         </>
-                        {error && <p className="text-red-500">{error.message}</p>}
+                        {error && (
+                          <p className="text-red-500">{error.message}</p>
+                        )}
                       </div>
                     )}
                   />
@@ -186,8 +205,9 @@ const Index = () => {
                       <Label>Telefon raqam</Label>
                       <>
                         <div className="relative flex items-center">
-                                                        <span
-                                                          className="absolute left-2.5 top-[9px] text-sm">+998</span>
+                          <span className="absolute left-2.5 top-[9px] text-sm">
+                            +998
+                          </span>
                           <PhoneInput
                             {...field}
                             onChange={() => {
@@ -200,93 +220,185 @@ const Index = () => {
                             }}
                           />
                         </div>
-
                       </>
                       {error && <p className="text-red-500">{error.message}</p>}
                     </div>
                   )}
                 />
-                {
-                  !owners.isLoading ? (
-                    !owners.isError && owners.data && owners.isSuccess && owners.data.result ? (
-                      <Controller
-                        control={form.control}
-                        name="owner"
-                        rules={{required: "Bu maydon to'ldirilishi shart!"}}
-                        render={({field, fieldState: {error}}) => (
-                          <div className="space-y-1">
-                            <Label className={"text-[#667085]"}>Restaran
-                              egasi</Label>
-                            <>
-                              <Select
-                                value={field?.value?.toString()}
-                                onValueChange={field.onChange}
-                              >
-                                <SelectTrigger className="w-full text-black">
-                                  <SelectValue placeholder="Restoran egasini tanlang"/>
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {
-                                    owners.data.result.results.map((item, index) => (
-                                      <SelectItem value={item.id.toString()}
-                                                  key={index}>{item.full_name}</SelectItem>
-                                    ))
-                                  }
-                                </SelectContent>
-                              </Select>
-                            </>
-                            {error && <p className="text-red-500">{error.message}</p>}
-                          </div>
-                        )
-                        }
-                      />
-                    ) : (
-                      <span className={"text-rose-500"}>Nimadir xato ketdi!</span>
-                    )
+
+                <Controller
+                  control={form.control}
+                  name="director_number"
+                  rules={{required: "Bu maydon to'ldirilishi shart!"}}
+                  render={({field, fieldState: {error}}) => (
+                    <div className="space-y-1">
+                      <Label>Direktor telefon raqami</Label>
+                      <>
+                        <div className="relative flex items-center">
+                          <span className="absolute left-2.5 top-[9px] text-sm">
+                            +998
+                          </span>
+                          <PhoneInput
+                            {...field}
+                            onChange={() => {
+                            }}
+                            mask="00 000 0000"
+                            className={"pl-12 flex h-9 items-center"}
+                            placeholder="90 000 0000"
+                            onAccept={(val, mask) => {
+                              field.onChange(mask._unmaskedValue);
+                            }}
+                          />
+                        </div>
+                      </>
+                      {error && <p className="text-red-500">{error.message}</p>}
+                    </div>
+                  )}
+                />
+
+                {!owners.isLoading ? (
+                  !owners.isError &&
+                  owners.data &&
+                  owners.isSuccess &&
+                  owners.data.result ? (
+                    <Controller
+                      control={form.control}
+                      name="owner"
+                      rules={{required: "Bu maydon to'ldirilishi shart!"}}
+                      render={({field, fieldState: {error}}) => (
+                        <div className="space-y-1">
+                          <Label className={"text-[#667085]"}>
+                            Restaran egasi
+                          </Label>
+                          <>
+                            <Select
+                              value={field?.value?.toString()}
+                              onValueChange={field.onChange}
+                            >
+                              <SelectTrigger className="w-full text-black">
+                                <SelectValue placeholder="Restoran egasini tanlang"/>
+                              </SelectTrigger>
+                              <SelectContent>
+                                {owners.data?.result?.results.map(
+                                  (item, index) => (
+                                    <SelectItem value={item.id.toString()} key={index}>
+                                      {item.full_name}
+                                    </SelectItem>
+                                  )
+                                )}
+                              </SelectContent>
+                            </Select>
+                          </>
+                          {error && (
+                            <p className="text-red-500">{error.message}</p>
+                          )}
+                        </div>
+                      )}
+                    />
                   ) : (
-                    <Skeleton className={"w-full h-9 rounded-md"}/>
+                    <span className={"text-rose-500"}>Nimadir xato ketdi!</span>
                   )
-                }
-                {
-                  !country.isLoading ? (
-                    !country.isError && country.data && country.isSuccess && country.data.result ? (
-                      <Controller
-                        control={form.control}
-                        name="country"
-                        rules={{required: "Bu maydon to'ldirilishi shart!"}}
-                        render={({field, fieldState: {error}}) => (
-                          <div className="space-y-1">
-                            <Label className={"text-[#667085]"}>Hudud</Label>
-                            <>
-                              <Select
-                                value={field?.value?.toString()}
-                                onValueChange={field.onChange}
-                              >
-                                <SelectTrigger className="w-full text-black">
-                                  <SelectValue placeholder="Hududni tanlang"/>
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {
-                                    country.data.result.map((item, index) => (
-                                      <SelectItem value={item.id.toString()}
-                                                  key={index}>{item.name}</SelectItem>
-                                    ))
-                                  }
-                                </SelectContent>
-                              </Select>
-                            </>
-                            {error && <p className="text-red-500">{error.message}</p>}
-                          </div>
-                        )
-                        }
-                      />
-                    ) : (
-                      <span className={"text-rose-500"}>Nimadir xato ketdi!</span>
-                    )
+                ) : (
+                  <Skeleton className={"w-full h-9 rounded-md"}/>
+                )}
+                {!country.isLoading ? (
+                  !country.isError &&
+                  country.data &&
+                  country.isSuccess &&
+                  country.data.result ? (
+                    <Controller
+                      control={form.control}
+                      name="country"
+                      rules={{required: "Bu maydon to'ldirilishi shart!"}}
+                      render={({field, fieldState: {error}}) => (
+                        <div className="space-y-1">
+                          <Label className={"text-[#667085]"}>Hudud</Label>
+                          <>
+                            <Select
+                              value={field?.value?.toString()}
+                              onValueChange={field.onChange}
+                            >
+                              <SelectTrigger className="w-full text-black">
+                                <SelectValue placeholder="Hududni tanlang"/>
+                              </SelectTrigger>
+                              <SelectContent>
+                                {country.data?.result?.map((item, index) => (
+                                  <SelectItem value={item.id.toString()} key={index}>
+                                    {item.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </>
+                          {error && (
+                            <p className="text-red-500">{error.message}</p>
+                          )}
+                        </div>
+                      )}
+                    />
                   ) : (
-                    <Skeleton className={"w-full h-9 rounded-md"}/>
+                    <span className={"text-rose-500"}>Nimadir xato ketdi!</span>
                   )
-                }
+                ) : (
+                  <Skeleton className={"w-full h-9 rounded-md"}/>
+                )}
+
+                <Controller
+                  control={form.control}
+                  name="legal_address"
+                  rules={{required: "Bu maydon to'ldirilishi shart!"}}
+                  render={({field, fieldState: {error}}) => (
+                    <div className="space-y-1 flex-1">
+                      <Label className={"text-[#667085]"}>
+                        Yuridik shaxs manzili
+                      </Label>
+                      <>
+                        <Input placeholder="......" {...field} />
+                      </>
+                      {error && (
+                        <p className="text-red-500">{error.message}</p>
+                      )}
+                    </div>
+                  )}
+                />
+
+                <Controller
+                  control={form.control}
+                  name="bank_account_number"
+                  rules={{required: "Bu maydon to'ldirilishi shart!"}}
+                  render={({field, fieldState: {error}}) => (
+                    <div className="space-y-1 flex-1">
+                      <Label className={"text-[#667085]"}>
+                        Bank hisob raqami
+                      </Label>
+                      <>
+                        <Input placeholder="22012312031941012" type={"number"}  {...field} />
+                      </>
+                      {error && (
+                        <p className="text-red-500">{error.message}</p>
+                      )}
+                    </div>
+                  )}
+                />
+
+                <Controller
+                  control={form.control}
+                  name="stir"
+                  rules={{required: "Bu maydon to'ldirilishi shart!"}}
+                  render={({field, fieldState: {error}}) => (
+                    <div className="space-y-1 flex-1">
+                      <Label className={"text-[#667085]"}>
+                        STIR
+                      </Label>
+                      <>
+                        <Input placeholder="1231231" type={"number"}  {...field} />
+                      </>
+                      {error && (
+                        <p className="text-red-500">{error.message}</p>
+                      )}
+                    </div>
+                  )}
+                />
 
                 <Controller
                   control={form.control}
@@ -295,13 +407,16 @@ const Index = () => {
                     <div className="space-y-1">
                       <Label className={"text-[#667085]"}>Manzil</Label>
                       <>
-                        <Input placeholder="Hazorasp" {...field} type={"text"}/>
+                        <Input
+                          placeholder="Hazorasp"
+                          {...field}
+                          type={"text"}
+                        />
                       </>
                       {error && <p className="text-red-500">{error.message}</p>}
                     </div>
                   )}
                 />
-
 
                 <Controller
                   control={form.control}
@@ -323,13 +438,17 @@ const Index = () => {
                     rules={{required: "Bu maydon to'ldirilishi shart!"}}
                     render={({field, fieldState: {error}}) => (
                       <div className="space-y-1 flex-1">
-                        <Label className={"text-[#667085]"}>Restor reytinggi</Label>
+                        <Label className={"text-[#667085]"}>
+                          Restor reytinggi
+                        </Label>
                         <InputWithFormat
                           placeholder="5"
                           value={field.value}
                           onValueChange={(e) => field.onChange(e)}
                         />
-                        {error && <p className="text-red-500">{error.message}</p>}
+                        {error && (
+                          <p className="text-red-500">{error.message}</p>
+                        )}
                       </div>
                     )}
                   />
@@ -342,13 +461,20 @@ const Index = () => {
                       name="opening_time"
                       render={({field, fieldState: {error}}) => (
                         <div className="space-y-1">
-                          <Label className={"text-[#667085]"}>Ochilish
-                            vaqti</Label>
+                          <Label className={"text-[#667085]"}>
+                            Ochilish vaqti
+                          </Label>
                           <>
-                            <Input placeholder="30"  {...field} type={"time"}
-                                   className={"w-auto"}/>
+                            <Input
+                              placeholder="30"
+                              {...field}
+                              type={"time"}
+                              className={"w-auto"}
+                            />
                           </>
-                          {error && <p className="text-red-500">{error.message}</p>}
+                          {error && (
+                            <p className="text-red-500">{error.message}</p>
+                          )}
                         </div>
                       )}
                     />
@@ -358,13 +484,20 @@ const Index = () => {
                       name="closing_time"
                       render={({field, fieldState: {error}}) => (
                         <div className="space-y-1">
-                          <Label className={"text-[#667085]"}>Ochilish
-                            vaqti</Label>
+                          <Label className={"text-[#667085]"}>
+                            Yopilish vaqti
+                          </Label>
                           <>
-                            <Input placeholder="30" {...field} type={"time"}
-                                   className={"w-auto"}/>
+                            <Input
+                              placeholder="30"
+                              {...field}
+                              type={"time"}
+                              className={"w-auto"}
+                            />
                           </>
-                          {error && <p className="text-red-500">{error.message}</p>}
+                          {error && (
+                            <p className="text-red-500">{error.message}</p>
+                          )}
                         </div>
                       )}
                     />
@@ -376,8 +509,9 @@ const Index = () => {
                       rules={{required: "Bu maydon to'ldirilishi shart!"}}
                       render={({field, fieldState: {error}}) => (
                         <div className="space-y-1 flex-1">
-                          <Label className={"text-[#667085]"}>Yetkazib berish
-                            vaqti</Label>
+                          <Label className={"text-[#667085]"}>
+                            Yetkazib berish vaqti
+                          </Label>
                           <>
                             <div className={"flex items-center gap-2"}>
                               <InputWithFormat
@@ -388,7 +522,9 @@ const Index = () => {
                               <span>daqiqa</span>
                             </div>
                           </>
-                          {error && <p className="text-red-500">{error.message}</p>}
+                          {error && (
+                            <p className="text-red-500">{error.message}</p>
+                          )}
                         </div>
                       )}
                     />
@@ -400,10 +536,16 @@ const Index = () => {
                   name="description"
                   render={({field, fieldState: {error}}) => (
                     <div className="space-y-1">
-                      <Label className={"text-[#667085]"}>Restoran tavsifi</Label>
+                      <Label className={"text-[#667085]"}>
+                        Restoran tavsifi
+                      </Label>
                       <>
-                        <Textarea placeholder="Go'sh, hamir"
-                                  className={"resize-none"} {...field} rows={5}/>
+                        <Textarea
+                          placeholder="Go'sh, hamir"
+                          className={"resize-none"}
+                          {...field}
+                          rows={5}
+                        />
                       </>
                       {error && <p className="text-red-500">{error.message}</p>}
                     </div>
@@ -411,7 +553,7 @@ const Index = () => {
                 />
 
                 {
-                  withMap && restaurantData.data ? (
+                  withMap ? (
                     <div className={"w-full space-y-2"}>
                       <div className={"w-full flex justify-between rounded-md overflow-hidden"}>
                         <h3 className={"text-xl font-medium"}>Joylashuv</h3>
@@ -419,8 +561,7 @@ const Index = () => {
                           Qo`lda kiritish
                         </Button>
                       </div>
-                      <LocationPicker onLocationSelect={setSelectedLocation}
-                                      loc={form.getValues(["latitude", "longitude"])[0] !== undefined && form.getValues(["latitude", "longitude"])}/>
+                      <LocationPicker onLocationSelect={setSelectedLocation}/>
                     </div>
                   ) : (
                     <div className={"grid grid-cols-12 gap-3"}>

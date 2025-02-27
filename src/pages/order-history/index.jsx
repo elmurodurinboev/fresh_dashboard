@@ -1,6 +1,4 @@
-import { Layout } from "@/components/custom/layout.jsx";
-import ThemeSwitch from "@/components/theme-switch.jsx";
-import { UserNav } from "@/components/user-nav.jsx";
+import {Layout} from "@/components/custom/layout.jsx";
 import {
   Table,
   TableBody,
@@ -9,8 +7,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table.jsx";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Skeleton } from "@/components/ui/skeleton.jsx";
+import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
+import {Skeleton} from "@/components/ui/skeleton.jsx";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,20 +20,21 @@ import {
   DropdownMenuRadioItem,
 } from "@/components/ui/dropdown-menu.jsx";
 import OrderService from "@/services/order.service.js";
-import { format } from "date-fns";
-import { cn } from "@/lib/utils.js";
-import { useTranslations } from "use-intl";
-import { Formatter } from "@/utils/formatter.js";
+import {format} from "date-fns";
+import {cn} from "@/lib/utils.js";
+import {useTranslations} from "use-intl";
+import {Formatter} from "@/utils/formatter.js";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible.jsx";
+import {IconCash, IconCreditCard} from "@tabler/icons-react";
 import OrdersItem from "@/components/orders/orders-item.jsx";
-import { Button } from "@/components/ui/button.jsx";
-import { IconSelector } from "@tabler/icons-react";
-import { DotsHorizontalIcon } from "@radix-ui/react-icons";
-import { toast } from "@/hooks/use-toast.js";
+import {Button} from "@/components/ui/button.jsx";
+import {IconSelector} from "@tabler/icons-react";
+import {DotsHorizontalIcon} from "@radix-ui/react-icons";
+import {toast} from "@/hooks/use-toast.js";
 
 const Index = () => {
   const t = useTranslations("order");
@@ -128,12 +127,7 @@ const Index = () => {
   return (
     <Layout>
       {/* ===== Top Heading ===== */}
-      <Layout.Header sticky>
-        <div className="ml-auto flex items-center space-x-4">
-          <ThemeSwitch />
-          <UserNav />
-        </div>
-      </Layout.Header>
+      <Layout.Header/>
 
       <Layout.Body>
         <div className="mb-2 flex items-center justify-between space-y-2">
@@ -174,7 +168,10 @@ const Index = () => {
                               <TableCell>
                                 {t(order.status.toString())}
                               </TableCell>
-                              <TableCell>
+                              <TableCell className={"flex items-center gap-2"}>
+                                {order.payment_type && order.payment_type === 'cash' ?
+                                  <IconCash size={20}/> : <IconCreditCard size={20}/>
+                                }
                                 {Formatter.currency(order?.amount)}
                               </TableCell>
                               <TableCell>
@@ -191,7 +188,7 @@ const Index = () => {
                               >
                                 <CollapsibleTrigger asChild>
                                   <Button variant={"ghost"}>
-                                    <IconSelector size={20} />
+                                    <IconSelector size={20}/>
                                   </Button>
                                 </CollapsibleTrigger>
                                 <DropdownMenu>
@@ -200,7 +197,7 @@ const Index = () => {
                                       variant="ghost"
                                       className="flex h-8 w-8 p-0 data-[state=open]:bg-muted"
                                     >
-                                      <DotsHorizontalIcon className="h-4 w-4" />
+                                      <DotsHorizontalIcon className="h-4 w-4"/>
                                       <span className="sr-only">Open menu</span>
                                     </Button>
                                   </DropdownMenuTrigger>
@@ -269,7 +266,7 @@ const Index = () => {
               </div>
             )
           ) : (
-            <Skeleton className={"rounded-md border h-[500px]"} />
+            <Skeleton className={"rounded-md border h-[500px]"}/>
           )}
         </div>
       </Layout.Body>
