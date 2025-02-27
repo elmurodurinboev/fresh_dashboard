@@ -9,7 +9,8 @@ import {
   IconUsers,
   IconCashRegister,
   IconBaselineDensityMedium,
-  IconBadgeAd
+  IconBadgeAd,
+  IconScooterElectric
 } from "@tabler/icons-react"
 import ROLES from "@/data/roles.js";
 
@@ -103,13 +104,13 @@ export const sidelinks = [
     icon: <IconBadgeAd size={18}/>,
     roles: [ROLES.ADMIN]
   },
-  // {
-  //   title: "sidebar.courier",
-  //   label: "",
-  //   href: "/courier",
-  //   icon: <IconScooterElectric size={18}/>,
-  //   roles: [ROLES.ADMIN]
-  // },
+  {
+    title: "sidebar.courier",
+    label: "",
+    href: "/courier",
+    icon: <IconScooterElectric size={18}/>,
+    roles: [ROLES.ADMIN]
+  },
   {
     title: "sidebar.cash-flow",
     label: "",
