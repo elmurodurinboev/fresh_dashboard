@@ -46,8 +46,7 @@ export default function Sidebar({ className, isCollapsed, setIsCollapsed }) {
 
       <Layout fixed className={navOpened ? "h-svh" : ""}>
         {/* Header */}
-        <Layout.Header
-          sticky
+        <div
           className="z-50 flex justify-between px-4 py-3 shadow-sm md:px-4"
         >
           <div className={`flex items-center ${!isCollapsed ? "gap-2" : ""}`}>
@@ -76,7 +75,7 @@ export default function Sidebar({ className, isCollapsed, setIsCollapsed }) {
           >
             {navOpened ? <IconX /> : <IconMenu2 />}
           </Button>
-        </Layout.Header>
+        </div>
 
         {/* Navigation links */}
         <Nav
