@@ -115,7 +115,7 @@ export const sidelinks = [
     label: "",
     href: "/cash-flow",
     icon: <IconCashRegister size={18}/>,
-    roles: [ROLES.ADMIN]
+    roles: [ROLES.ADMIN, ROLES.RESTAURANT_OWNER]
   },
   {
     title: "sidebar.settings",
