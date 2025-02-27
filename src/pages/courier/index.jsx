@@ -1,11 +1,11 @@
 import {Layout} from "@/components/custom/layout.jsx";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.jsx";
-import {useQuery} from "@tanstack/react-query";
+import {useMutation, useQuery} from "@tanstack/react-query";
 import {Skeleton} from "@/components/ui/skeleton.jsx";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
+  DropdownMenuItem, DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu.jsx";
 import {Button} from "@/components/custom/button.jsx";
@@ -83,6 +83,65 @@ const Index = () => {
   }, []);
 
   const navigate = useNavigate()
+
+
+  const reset = () => {
+    setDeleteModal(false)
+    setSelectedProduct({})
+  }
+
+  const deleteMutation = useMutation({
+    mutationFn: UserService.delete,
+    onSuccess: async () => {
+      toast({
+        title: 'OK',
+        description: "Successfully deleted"
+      })
+      await couriersData.refetch()
+      reset()
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message || "Messages.error_occurred"
+      })
+      reset()
+    },
+  })
+
+  const handleDelete = (user) => {
+    setSelectedProduct(user)
+    setDeleteModal(true)
+  }
+
+  // Pagination logic
+  const searchRef = useRef()
+  const [searchParams] = useSearchParams()
+  const [search, setSearch] = useState("")
+  const [page, setPage] = useState(searchParams.get("page") ?? "1")
+  const [page_size, setPageSize] = useState(searchParams.get("per_page") ?? "10")
+
+  const handlePageChange = (number) => {
+    const params = new URLSearchParams()
+    setPage(number)
+    setPageSize(page_size)
+    params.append("page", number)
+    if (searchParams.get("page_size")) params.append("page_size", page_size)
+    navigate(`${location.pathname}?${params.toString()}`)
+  }
+
+  const handlePageSizeChange = (page_size) => {
+    const params = new URLSearchParams()
+    setPageSize(page_size)
+    setPage(1)
+    params.append("page_size", page_size)
+    params.append("page", 1)
+    navigate(`${location.pathname}?${params.toString()}`)
+  }
+  const couriersData = useQuery({
+    queryKey: ['getAllCourier', page, page_size, search, 'courier'],
+    queryFn: UserService.getAll
+  })
 
 
   return (
