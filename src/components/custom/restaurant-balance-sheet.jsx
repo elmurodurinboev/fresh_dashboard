@@ -18,8 +18,11 @@ import {toast} from "@/hooks/use-toast.js";
 import RestaurantService from "@/services/restaurant.service.js";
 import {IconWallet} from "@tabler/icons-react";
 import {useState} from "react";
+import {useAuth} from "@/hooks/utils/useAuth.js";
+import ROLES from "@/data/roles.js";
 
 const RestaurantBalanceSheet = () => {
+  const {session: {user}} = useAuth()
   const [open, setOpen] = useState(false)
   const form = useForm({
     defaultValues: {
@@ -72,6 +75,9 @@ const RestaurantBalanceSheet = () => {
     });
     mutation.mutate(formData)
   }
+
+  if (user.user_role !== ROLES.ADMIN)
+    return
 
 
   return (
@@ -200,7 +206,7 @@ const RestaurantBalanceSheet = () => {
                           <SelectItem value={"card"}>
                             Plastik karta
                           </SelectItem>
-                          <SelectItem value={"account"}>
+                          <SelectItem value={"account"} disabled>
                             Restoran hisob raqamidan
                           </SelectItem>
                         </SelectContent>
