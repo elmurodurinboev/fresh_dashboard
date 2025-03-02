@@ -5,14 +5,14 @@ import {Skeleton} from "@/components/ui/skeleton.jsx";
 
 const RestaurantBalanceTable = ({cashFlowData}) => {
   return (
-    <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0">
+    <div className="flex-1 overflow-auto py-3">
       {
         !cashFlowData.isLoading ? (
           cashFlowData && cashFlowData.data && cashFlowData.isSuccess && !cashFlowData.isError && (
-            <div className="rounded-md border min-h-[500px]">
+            <div className="rounded-md border min-h-[400px]">
               <Table>
                 <TableHeader>
-                  <TableRow>
+                  <TableRow className={"bg-secondary"}>
                     <TableHead>
                       Restoran nomi
                     </TableHead>
@@ -34,7 +34,7 @@ const RestaurantBalanceTable = ({cashFlowData}) => {
                   {
                     cashFlowData.data.results.length > 0 ? (
                       cashFlowData.data.results.map((restaurant, index) => (
-                        <TableRow key={index} className={"bg-secondary"}>
+                        <TableRow key={index}>
                           <TableCell className={"special-cell"}>
                             <span>{restaurant.restaurant.name}</span>
                           </TableCell>
