@@ -57,7 +57,7 @@ export const sidelinks = [
     label: "",
     href: "/best-products",
     icon: <IconCubeSpark size={18}/>,
-    roles: [ROLES.ADMIN, ROLES.RESTAURANT_OWNER]
+    roles: [ROLES.ADMIN]
   },
 
   // Shops
