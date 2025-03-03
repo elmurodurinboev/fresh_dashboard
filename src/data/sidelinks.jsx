@@ -37,6 +37,7 @@ export const sidelinks = [
     icon: <IconCategoryPlus size={18}/>,
     roles: [ROLES.ADMIN]
   },
+  
   // restaurants
   {
     title: "sidebar.restaurants",
