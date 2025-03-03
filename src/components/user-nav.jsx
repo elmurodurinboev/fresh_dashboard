@@ -36,14 +36,14 @@ export function UserNav() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-8 w-8">
-            <AvatarFallback className={"uppercase"}>{session && session.firstname ? session.firstname[0] : 'U'}</AvatarFallback>
+            <AvatarFallback className={"uppercase"}>{session && session.full_name ? session.full_name[0] : 'U'}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">{session && session.firstname ? session.firstname[0] : 'Unknown'}</p>
+            <p className="text-sm font-medium leading-none">{session && session.full_name ? session.full_name : 'Unknown'}</p>
             <p className="text-xs leading-none text-muted-foreground">
               {
                 session && session.phone_number && session.phone_number
