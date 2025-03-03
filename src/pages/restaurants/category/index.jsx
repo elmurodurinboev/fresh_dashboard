@@ -1,7 +1,7 @@
-import { Layout } from "@/components/custom/layout.jsx";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table.jsx";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { Skeleton } from "@/components/ui/skeleton.jsx";
+import {Layout} from "@/components/custom/layout.jsx";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.jsx";
+import {useMutation, useQuery} from "@tanstack/react-query";
+import {Skeleton} from "@/components/ui/skeleton.jsx";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,14 +9,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu.jsx";
-import { Button } from "@/components/custom/button.jsx";
-import { DotsHorizontalIcon } from "@radix-ui/react-icons";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { toast } from "@/hooks/use-toast.js";
+import {Button} from "@/components/custom/button.jsx";
+import {DotsHorizontalIcon} from "@radix-ui/react-icons";
+import {useNavigate, useSearchParams} from "react-router-dom";
+import {toast} from "@/hooks/use-toast.js";
 import DeleteConfirmationModal from "@/components/custom/delete-confirmation-modal.jsx";
-import { useRef, useState } from "react";
+import {useRef, useState} from "react";
 import RestaurantCategoryService from "@/services/restaurant-category.service.js";
-import DefaultImage from "@/components/custom/default-image.jsx";
 import SearchBar from "@/components/custom/search-bar.jsx";
 import {PaginationControls} from "@/components/custom/pagination-controls.jsx";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.jsx";
@@ -144,16 +143,7 @@ const Index = () => {
                           categoryData.data.results.map((category, index) => (
                             <TableRow key={index} className={"bg-secondary"}>
                               <TableCell className={"flex gap-2 items-center overflow-hidden"}>
-                                {category.image ? (
-                                  <img
-                                    src={category.image}
-                                    alt={"product_image"}
-                                    className={"w-[48px] h-[48px] rounded-md object-cover"}
-                                  />
-                                ) : (
-                                  <DefaultImage />
-                                )}
-                                <span>{category.name}</span>
+                                {category.name}
                               </TableCell>
 
                               <TableCell>
@@ -169,14 +159,14 @@ const Index = () => {
                                         variant="ghost"
                                         className="flex h-8 w-8 p-0 data-[state=open]:bg-muted"
                                       >
-                                        <DotsHorizontalIcon className="h-4 w-4" />
+                                        <DotsHorizontalIcon className="h-4 w-4"/>
                                         <span className="sr-only">Open menu</span>
                                       </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end" className="w-[160px]">
                                       <DropdownMenuItem
                                         onClick={() => navigate(`/restaurant-category/update/${category.id}`)}>Edit</DropdownMenuItem>
-                                      <DropdownMenuSeparator />
+                                      <DropdownMenuSeparator/>
                                       <DropdownMenuItem
                                         onClick={() => handleDelete(category)}
                                       >
@@ -235,7 +225,7 @@ const Index = () => {
                 </div>
               )
             ) : (
-              <Skeleton className={"rounded-md border h-[500px]"} />
+              <Skeleton className={"rounded-md border h-[500px]"}/>
             )
           }
         </div>

@@ -1,7 +1,6 @@
 import {Layout} from "@/components/custom/layout.jsx";
 import {Button} from "@/components/custom/button.jsx";
-import {IconPhoto, IconPlus, IconX} from "@tabler/icons-react";
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.jsx";
@@ -20,9 +19,6 @@ const formSchema = z.object({
   name: z
     .string()
     .min(3, {message: 'Name must be at least 3'}),
-  image: z
-    .any()
-    .optional(),
   restaurant: z
     .string()
 })
@@ -30,12 +26,10 @@ const formSchema = z.object({
 const Index = () => {
   const params = useParams()
   const navigate = useNavigate()
-  const [isDragged, setIsDragged] = useState(false)
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
-      image: '',
       restaurant: "",
     }
   })
@@ -50,7 +44,6 @@ const Index = () => {
     if (categoryData && categoryData.data && categoryData.isSuccess && categoryData.data.result && !categoryData.isError) {
       form.reset({
         name: categoryData.data.result.name && categoryData.data.result.name,
-        image: categoryData.data.result.image && categoryData.data.result.image,
         restaurant: categoryData.data.result.restaurant && categoryData.data.result.restaurant,
       })
     }
@@ -78,6 +71,7 @@ const Index = () => {
     onSuccess: () => {
       toast({
         title: 'OK',
+        variant: "success",
         description: "O'zgartirildi!"
       })
       form.reset()
@@ -89,9 +83,8 @@ const Index = () => {
     const formData = new FormData()
     formData.append("id", params.id)
     Object.entries(data).forEach(([key, value]) => {
-      key !== 'image' && formData.append(key, value ?? "");
+      formData.append(key, value ?? "");
     });
-    typeof data.image === "object" && formData.append("image", data.image)
     mutation.mutate(formData)
   }
 
@@ -103,10 +96,12 @@ const Index = () => {
 
   return (
     <Layout>
+      <Layout.Header/>
+
       <Layout.Body>
         <div className="mb-2 flex flex-col gap-4">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight">Kategoriyani o`zgartirish</h2>
+            <h2 className="text-2xl font-bold tracking-tight">Restoran kategoriyasini yangilash</h2>
           </div>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className={"grid grid-cols-12 gap-4"}>
@@ -162,128 +157,25 @@ const Index = () => {
                       </FormItem>
                     )}
                   />
-                </div>
-              </div>
+                  <div className={"flex items-center gap-3"}>
+                    <Button
+                      size={"xl"}
+                      type={"submit"}
+                      loading={mutation.isPending}
+                    >
+                      Saqlash
+                    </Button>
 
-              {/*Product Image*/}
-              <div className={"col-span-12 lg:col-span-4 flex flex-col gap-3"}>
-                <div className={"flex flex-col bg-white rounded-2xl shadow p-6"}>
-                  <FormField
-                    name="image"
-                    control={form.control}
-                    render={
-                      ({field: {onChange, value, ...field}}) => (
-                        <FormItem>
-                          <FormLabel className={"text-[#667085]"}>Mahsulot rasmi</FormLabel>
-                          <FormControl>
-                            <div
-                              className={`w-full border-2 border-dashed flex p-4 flex-col items-center justify-center rounded-md cursor-pointer gap-4 ${isDragged ? 'border-primary' : ''}`}
-                              onDragEnter={(e) => {
-                                e.preventDefault();
-                                setIsDragged(true);
-                              }}
-                              onDragOver={(e) => {
-                                e.preventDefault();
-                                setIsDragged(true);
-                              }}
-                              onDragLeave={() => {
-                                setIsDragged(false);
-                              }}
-                              onDrop={(e) => {
-                                e.preventDefault();
-                                setIsDragged(false);
-                                onChange(e.dataTransfer.files[0]);
-                              }}
-                            >
-                              {
-                                value ? (
-                                  <span className={"w-full min-h-max rounded-md overflow-hidden"}>
-                                    <img
-                                      src={typeof value === "string" ? value : URL.createObjectURL(value)}
-                                      alt="Selected Image"
-                                      width={"100"}
-                                      height={"100"}
-                                      className="w-full object-center object-contain"
-                                    />
-                                  </span>
-                                ) : (
-                                  <div className={"w-full flex flex-col justify-center items-center gap-4"}>
-                                    <span
-                                      className={"flex items-center justify-center rounded-full w-9 h-9 bg-green-100 text-green-600 p-2"}>
-                                      <IconPhoto className={"icon"}/>
-                                    </span>
-                                    <p className={"text-center text-gray-400 text-sm font-normal"}>
-                                      Rasmni bu yerga sudrab tashlang yoki rasm qo`shish tugmasini bosing
-                                    </p>
-                                  </div>
-                                )}
-                              <input
-                                {...field}
-                                type="file"
-                                id={"imageField"}
-                                className={"hidden"}
-                                accept={"image/png, image/jpeg, image/jpg, image/heic"}
-                                value={value?.fileName}
-                                onChange={(e) => onChange(e.target.files[0])}
-                              />
-                              {
-                                value
-                                  ?
-                                  (
-                                    <div className={"w-full flex gap-4 items-center"}>
-                                      <Button
-                                        type={"button"}
-                                        variant={"danger"}
-                                        className={"w-1/2"}
-                                        onClick={() => onChange(null)} // This line clears the selected image
-                                      >
-                                        O`chirish
-                                      </Button>
-                                      <label
-                                        htmlFor={"imageField"}
-                                        className={"w-1/2 h-10 py-[10px] px-3 font-medium text-brand bg-secondary border-none flex items-center transition-all justify-center gap-2 rounded-md cursor-pointer"}
-                                      >
-                                        Almashtirish
-                                      </label>
-                                    </div>
-                                  ) :
-                                  (
-                                    <label
-                                      htmlFor={"imageField"}
-                                      className={"h-10 py-[10px] px-3 font-medium text-green-600 bg-green-50 border-none flex items-center hover:bg-green-500 hover:text-white transition-all justify-center gap-2 rounded-md cursor-pointer"}
-                                    >
-                                      <IconPlus className={"w-5 h-5"}/>
-                                      Rasm qo‘shish
-                                    </label>
-                                  )
-                              }
-                            </div>
-                          </FormControl>
-                          <FormMessage/>
-                        </FormItem>
-                      )
-                    }
-                  />
+                    <Button
+                      size={"xl"}
+                      type={"reset"}
+                      variant={"outline"}
+                      onClick={() => navigate("/restaurant-category")}
+                    >
+                      Bekor qilish
+                    </Button>
+                  </div>
                 </div>
-                <Button
-                  size={"xl"}
-                  type={"submit"}
-                  loading={mutation.isPending}
-                  className={"w-full"}
-                >
-                  Saqlash
-                </Button>
-
-                <Button
-                  size={"xl"}
-                  type={"reset"}
-                  variant={"outline"}
-                  onClick={() => navigate("/restaurant-category")}
-                  className={"w-full gap-2 items-center"}
-                >
-                  <IconX className={"w-5 h-5"}/>
-                  Bekor qilish
-                </Button>
               </div>
             </form>
           </Form>
