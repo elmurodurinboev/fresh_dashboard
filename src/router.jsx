@@ -51,6 +51,30 @@ const routes = [
             }),
             meta: { roles: getAllowedUsers('dashboard') },
           },
+
+          // BaseCategory
+          {
+            path: "base-category",
+            lazy: async () => ({
+              Component: (await import("@/pages/base-category")).default
+            }),
+            meta: { roles: getAllowedUsers('base-category') },
+          },
+          {
+            path: "base-category/create",
+            lazy: async () => ({
+              Component: (await import("@/pages/base-category/create")).default
+            }),
+            meta: { roles: getAllowedUsers('base-category') },
+          },
+          {
+            path: "base-category/update/:id",
+            lazy: async () => ({
+              Component: (await import("@/pages/base-category/update")).default
+            }),
+            meta: { roles: getAllowedUsers('base-category') },
+          },
+
           // Shop routes
           {
             path: "shops",
