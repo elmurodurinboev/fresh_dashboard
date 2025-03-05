@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
 import { Button } from "@/components/custom/button"
 import {
   DropdownMenu,
@@ -36,14 +36,15 @@ export function UserNav() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-8 w-8">
-            <AvatarFallback className={"uppercase"}>{session && session.full_name ? session.full_name[0] : 'U'}</AvatarFallback>
+            <AvatarImage src={session?.user?.image} alt={session?.user?.full_name} />
+            <AvatarFallback className={"uppercase"}>{session && session?.user?.full_name ? session?.user?.full_name[0] : 'U'}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">{session && session.full_name ? session.full_name : 'Unknown'}</p>
+            <p className="text-sm font-medium leading-none">{session && session.user?.full_name ? session?.user?.full_name : 'Unknown'}</p>
             <p className="text-xs leading-none text-muted-foreground">
               {
                 session && session.phone_number && session.phone_number
@@ -53,11 +54,7 @@ export function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
-            {t("profile")}
-          </DropdownMenuItem>
-
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={() => navigate("/settings")}>
             {t("settings")}
           </DropdownMenuItem>
           {/*<DropdownMenuItem>{t("new_team")}</DropdownMenuItem>*/}

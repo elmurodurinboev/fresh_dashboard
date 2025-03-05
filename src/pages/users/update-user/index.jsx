@@ -1,6 +1,6 @@
 import {Layout} from "@/components/custom/layout.jsx";
 import {Button} from "@/components/custom/button.jsx";
-import {IconPhoto, IconPlus, IconX} from "@tabler/icons-react";
+import {IconPhoto, IconPlus} from "@tabler/icons-react";
 import {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
@@ -418,7 +418,7 @@ const Index = () => {
                   className={"w-full"}
                   loading={mutation.isPending}
                 >
-                  save
+                  Saqlash
                 </Button>
 
                 <Button
@@ -428,8 +428,7 @@ const Index = () => {
                   onClick={() => navigate("/users")}
                   className={"w-full gap-2 items-center"}
                 >
-                  <IconX className={"w-5 h-5"}/>
-                  cancel
+                  Bekor qilish
                 </Button>
               </div>
             </form>

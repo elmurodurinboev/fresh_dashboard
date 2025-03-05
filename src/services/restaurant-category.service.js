@@ -22,8 +22,8 @@ const RestaurantCategoryService = {
     return data
   },
 
-  async updatePatch(formData) {
-    const {data} = await  Api.patch(`/restaurant-category/${formData.get("id")}/`, formData)
+  async updatePatch(payload) {
+    const {data} = await  Api.patch(`/restaurant-category/${payload.id}/`, payload)
     return data
   },
 

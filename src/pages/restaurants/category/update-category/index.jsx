@@ -44,7 +44,7 @@ const Index = () => {
     if (categoryData && categoryData.data && categoryData.isSuccess && categoryData.data.result && !categoryData.isError) {
       form.reset({
         name: categoryData.data.result.name && categoryData.data.result.name,
-        restaurant: categoryData.data.result.restaurant && categoryData.data.result.restaurant,
+        restaurant: categoryData.data.result.restaurant && categoryData.data.result.restaurant.toString(),
       })
     }
   }, [categoryData.isSuccess, categoryData.data?.result]);
@@ -80,12 +80,8 @@ const Index = () => {
   })
 
   const onSubmit = (data) => {
-    const formData = new FormData()
-    formData.append("id", params.id)
-    Object.entries(data).forEach(([key, value]) => {
-      formData.append(key, value ?? "");
-    });
-    mutation.mutate(formData)
+    data.id = params.id
+    mutation.mutate(data)
   }
 
 
