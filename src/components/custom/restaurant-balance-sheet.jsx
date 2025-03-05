@@ -203,7 +203,7 @@ const RestaurantBalanceSheet = () => {
                           <SelectItem value={"cash"}>
                             Naqd pul
                           </SelectItem>
-                          <SelectItem value={"card"}>
+                          <SelectItem value={"payme"}>
                             Plastik karta
                           </SelectItem>
                           <SelectItem value={"account"} disabled>

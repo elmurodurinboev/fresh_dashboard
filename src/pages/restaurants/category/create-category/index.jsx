@@ -80,11 +80,7 @@ const Index = () => {
 
 
   const onSubmit = (data) => {
-    const formData = new FormData()
-    Object.entries(data).forEach(([key, value]) => {
-      formData.append(key, value ?? "");
-    });
-    mutation.mutate(formData)
+    mutation.mutate(data)
   }
 
   return (

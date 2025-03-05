@@ -22,6 +22,7 @@ import SearchBar from "@/components/custom/search-bar.jsx";
 import {useAuth} from "@/hooks/utils/useAuth.js";
 import {MapContainer, TileLayer} from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import CourierService from "@/services/courier.service.js";
 
 const Index = () => {
   const [deleteModal, setDeleteModal] = useState(false)
@@ -139,8 +140,8 @@ const Index = () => {
     navigate(`${location.pathname}?${params.toString()}`)
   }
   const couriersData = useQuery({
-    queryKey: ['getAllCourier', page, page_size, search, 'courier'],
-    queryFn: UserService.getAll
+    queryKey: ['getAllCourier', page, page_size, search],
+    queryFn: CourierService.getAll
   })
 
 
@@ -154,6 +155,9 @@ const Index = () => {
           <div>
             <h2 className="text-2xl font-bold tracking-tight">Kuryerlar</h2>
           </div>
+          <Button onClick={() => navigate("create")}>
+            Qo'shish
+          </Button>
         </div>
         <div className={"mb-2 flex items-center justify-between"}>
           <SearchBar
