@@ -4,13 +4,6 @@ import {IconCash, IconPercentage, IconPhoto, IconPlus, IconX} from "@tabler/icon
 import {useState} from "react";
 import {useForm, Controller} from "react-hook-form";
 import {useNavigate} from "react-router-dom";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select.jsx";
 import {useMutation, useQuery} from "@tanstack/react-query";
 import {Skeleton} from "@/components/ui/skeleton.jsx";
 import {Input} from "@/components/ui/input.jsx";
@@ -23,6 +16,8 @@ import InputWithFormat from "@/components/custom/input-with-format";
 import {Checkbox} from "@/components/ui/checkbox.jsx";
 import {useAuth} from "@/hooks/utils/useAuth.js";
 import ROLES from "@/data/roles.js";
+import Select from "@/components/custom/select-component.jsx";
+import BaseCategoryService from "@/services/base-category.service.js";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -89,10 +84,15 @@ const Index = () => {
     mutation.mutate(formData);
   };
 
-  const categoryData = useQuery({
-    queryKey: ["getAllCategory"],
+  const resCategoryData = useQuery({
+    queryKey: ["getResAllCategory"],
     queryFn: RestaurantCategoryService.getAll,
   });
+
+  const baseCategoryData = useQuery({
+    queryKey: ['getAllBaseCategory'],
+    queryFn: BaseCategoryService.getAll
+  })
 
   return (
     <Layout>
@@ -113,13 +113,47 @@ const Index = () => {
                   "w-full p-6 bg-white rounded-2xl shadow flex flex-col gap-4"
                 }
               >
+                {!baseCategoryData.isLoading ? (
+                  !baseCategoryData.isError &&
+                  baseCategoryData.data &&
+                  baseCategoryData.isSuccess &&
+                  baseCategoryData.data &&
+                  baseCategoryData.data.result ? (
+                    <Controller
+                      name="base_category"
+                      control={form.control}
+                      defaultValue={""}
+                      rules={{required: "Bu maydon to'ldirilishi shart"}} // Add validation rules here
+                      render={({field, fieldState: {error}}) => (
+                        <div className="flex-1">
+                          <label className="text-[#667085]">
+                            Umumiy kategoriya
+                          </label>
+                          <Select value={field.value} onChange={field.onChange} options={baseCategoryData?.data?.result} hasError={!!error} />
+                          {error && (
+                            <p className="text-red-500 text-sm">
+                              {error.message}
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    />
+                  ) : (
+                    <span className={"text-rose-500"}>
+                        Nimadir xato ketdi!
+                      </span>
+                  )
+                ) : (
+                  <Skeleton className={"col-span-9 h-9 rounded-md"}/>
+                )}
+
                 <div className={"flex gap-3 items-center"}>
-                  {!categoryData.isLoading ? (
-                    !categoryData.isError &&
-                    categoryData.data &&
-                    categoryData.isSuccess &&
-                    categoryData.data &&
-                    categoryData.data.results ? (
+                  {!resCategoryData.isLoading ? (
+                    !resCategoryData.isError &&
+                    resCategoryData.data &&
+                    resCategoryData.isSuccess &&
+                    resCategoryData.data &&
+                    resCategoryData.data.results ? (
                       <Controller
                         name="category"
                         control={form.control}
@@ -128,25 +162,9 @@ const Index = () => {
                         render={({field, fieldState: {error}}) => (
                           <div className="flex-1">
                             <label className="text-[#667085]">
-                              Kategoriya nomi
+                              Restorn kategoriyasi
                             </label>
-                            <Select
-                              value={field?.value?.toString()}
-                              onValueChange={field.onChange}
-                            >
-                              <SelectTrigger className="w-full text-black">
-                                <SelectValue placeholder="Kategoriyani tanlang"/>
-                              </SelectTrigger>
-                              <SelectContent>
-                                {categoryData?.data?.results?.map(
-                                  (item, index) => (
-                                    <SelectItem value={item.id.toString()} key={index}>
-                                      {item.name}
-                                    </SelectItem>
-                                  )
-                                )}
-                              </SelectContent>
-                            </Select>
+                            <Select value={field.value} onChange={field.onChange} options={resCategoryData?.data?.results} hasError={!!error} />
                             {error && (
                               <p className="text-red-500 text-sm">
                                 {error.message}
@@ -231,7 +249,7 @@ const Index = () => {
                     rules={{required: false}}
                     render={({field, fieldState: {error}}) => (
                       <div className="col-span-6">
-                        <label className="text-[#667085]">Volume</label>
+                        <label className="text-[#667085]">O'g'irligi (gramm)</label>
                         <InputWithFormat
                           placeholder="10"
                           value={field.value}
