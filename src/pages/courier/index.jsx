@@ -187,10 +187,10 @@ const Index = () => {
                           Telefon raqami
                         </TableHead>
                         <TableHead>
-                          Jinsi
+                          Transport raqami
                         </TableHead>
                         <TableHead>
-                          Rol
+                          Kuryer raqami
                         </TableHead>
                         <TableHead className={"text-end"}>
                         </TableHead>
@@ -221,12 +221,12 @@ const Index = () => {
                               </TableCell>
                               <TableCell>
                                 {
-                                  user.gender ? user.gender : "Nomalum"
+                                  user?.car_number
                                 }
                               </TableCell>
                               <TableCell>
                                 {
-                                  user.user_role ? user.user_role : "Nomalum"
+                                  user?.bag_number
                                 }
                               </TableCell>
                               <TableCell className={"text-end"}>
