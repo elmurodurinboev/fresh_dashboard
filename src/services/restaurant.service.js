@@ -42,7 +42,7 @@ const RestaurantService = {
 
   async getOwners() {
     const {data} = await  api.get("/restaurant_owners/")
-    return data
+    return data.result
   }
 }
 export default RestaurantService

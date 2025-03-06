@@ -260,16 +260,18 @@ const Index = () => {
             )
           }
         </div>
-        <DeleteConfirmationModal
-          open={deleteModal}
-          loading={deleteMutation.isPending}
-          setOpen={setDeleteModal}
-          handleDelete={() => deleteMutation.mutate(selectedProduct.id)}
-          handleClose={() => {
-            setDeleteModal(false)
-            setSelectedProduct({})
-          }}
-        />
+        {deleteModal &&
+          <DeleteConfirmationModal
+            open={deleteModal}
+            loading={deleteMutation.isPending}
+            setOpen={setDeleteModal}
+            handleDelete={() => deleteMutation.mutate(selectedProduct.id)}
+            handleClose={() => {
+              setDeleteModal(false)
+              setSelectedProduct({})
+            }}
+          />
+        }
       </Layout.Body>
     </Layout>
   )

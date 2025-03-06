@@ -4,13 +4,6 @@ import {IconPhoto, IconPlus, IconX} from "@tabler/icons-react";
 import {useEffect, useState} from "react";
 import {useForm, Controller} from "react-hook-form";
 import {useNavigate} from "react-router-dom";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select.jsx";
 import {useMutation, useQuery} from "@tanstack/react-query";
 import {Skeleton} from "@/components/ui/skeleton.jsx";
 import {Input} from "@/components/ui/input.jsx";
@@ -19,6 +12,7 @@ import {toast} from "@/hooks/use-toast.js";
 import RestaurantService from "@/services/restaurant.service.js";
 import {useAuth} from "@/hooks/utils/useAuth.js";
 import ROLES from "@/data/roles.js";
+import SelectComponent from "@/components/custom/select-component.jsx";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -59,15 +53,17 @@ const Index = () => {
     },
     onSuccess: () => {
       toast({
-        title: "OK",
-        description: "Successfully added",
-      });
+        title: 'OK',
+        variant: "success",
+        description: "Muvaffaqiyatli Qo'shildi"
+      })
       form.reset();
       navigate("/best-products")
     },
   });
 
   const onSubmit = (data) => {
+    console.log(data)
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
       formData.append(key, value ?? "");
@@ -121,23 +117,12 @@ const Index = () => {
                       render={({field, fieldState: {error}}) => (
                         <div className="flex-1">
                           <label className="text-[#667085]">Restoran</label>
-                          <Select
-                            value={field.value?.toString()}
-                            onValueChange={(value) => {
-                              field.onChange(value)
-                            }}
-                          >
-                            <SelectTrigger className="w-full text-black">
-                              <SelectValue placeholder="Restoranni tanlang"/>
-                            </SelectTrigger>
-                            <SelectContent>
-                              {restaurantData.data.results.map((item, index) => (
-                                <SelectItem value={item.id.toString()} key={index}>
-                                  {item.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                          <SelectComponent
+                            hasError={!!error}
+                            value={field.value}
+                            onChange={field.onChange}
+                            options={restaurantData?.data?.results}
+                          />
                           {error && <p className="text-red-500 text-sm">{error.message}</p>}
                         </div>
                       )}
@@ -170,11 +155,15 @@ const Index = () => {
                 <Controller
                   name="video_url"
                   control={form.control}
-                  rules={{required: "Video is required"}}
-                  render={({field, fieldState: {error}}) => (
+                  rules={{ required: "Video is required" }}
+                  render={({ field: { onChange }, fieldState: { error } }) => (
                     <div>
                       <label className="text-[#667085]">Video</label>
-                      <Input {...field} type={"file"}/>
+                      <Input
+                        type="file"
+                        accept="video/*"
+                        onChange={(e) => onChange(e.target.files[0])}
+                      />
                       {error && (
                         <p className="text-red-500 text-sm">{error.message}</p>
                       )}

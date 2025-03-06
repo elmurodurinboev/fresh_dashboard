@@ -10,12 +10,12 @@ import {useEffect, useState} from "react";
 import {Skeleton} from "@/components/ui/skeleton.jsx";
 import CountryService from "@/services/country.service.js";
 import {Switch} from "@/components/ui/switch.jsx";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.jsx";
 import {Textarea} from "@/components/ui/textarea.jsx";
 import {Label} from "@/components/ui/label.jsx";
 import PhoneInput from "@/components/custom/phone-input.jsx";
 import InputWithFormat from "@/components/custom/input-with-format.jsx";
 import LocationPicker from "@/components/custom/location-picker.jsx";
+import SelectComponent from "@/components/custom/select-component.jsx";
 
 const Index = () => {
   const navigate = useNavigate()
@@ -197,24 +197,13 @@ const Index = () => {
                           <div className="space-y-1">
                             <Label className={"text-[#667085]"}>Do`kon
                               egasi</Label>
-                            <>
-                              <Select
-                                value={field?.value?.toString()}
-                                onValueChange={field.onChange}
-                              >
-                                <SelectTrigger className="w-full text-black">
-                                  <SelectValue placeholder="Do'kon egasini tanlang"/>
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {
-                                    owners.data.result.results.map((item, index) => (
-                                      <SelectItem value={item.id.toString()}
-                                                  key={index}>{item.full_name}</SelectItem>
-                                    ))
-                                  }
-                                </SelectContent>
-                              </Select>
-                            </>
+                            <SelectComponent
+                              hasError={!!error}
+                              value={field.value}
+                              onChange={field.onChange}
+                              options={owners?.data?.result?.results}
+                              labelName={"full_name"}
+                            />
                             {error && <p className="text-red-500">{error.message}</p>}
                           </div>
                         )
@@ -237,24 +226,12 @@ const Index = () => {
                         render={({field, fieldState: {error}}) => (
                           <div className="space-y-1">
                             <Label className={"text-[#667085]"}>Hudud</Label>
-                            <>
-                              <Select
-                                value={field?.value?.toString()}
-                                onValueChange={field.onChange}
-                              >
-                                <SelectTrigger className="w-full text-black">
-                                  <SelectValue placeholder="Tumanni tanlang"/>
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {
-                                    country.data.result.map((item, index) => (
-                                      <SelectItem value={item.id.toString()}
-                                                  key={index}>{item.name}</SelectItem>
-                                    ))
-                                  }
-                                </SelectContent>
-                              </Select>
-                            </>
+                            <SelectComponent
+                              hasError={!!error}
+                              value={field.value}
+                              onChange={field.onChange}
+                              options={country?.data?.result}
+                            />
                             {error && <p className="text-red-500">{error.message}</p>}
                           </div>
                         )

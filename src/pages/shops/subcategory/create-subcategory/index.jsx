@@ -116,7 +116,7 @@ const Index = () => {
               {session?.user?.user_role === "admin" &&
                 (shopData.isLoading ? (
                   <Skeleton className={"col-span-9 h-9 rounded-md"} />
-                ) : shopData.isError || !shopData.data?.result ? (
+                ) : shopData.isError || !shopData.data?.result?.results ? (
                   <span className={"text-rose-500"}>Nimadir xato ketdi!</span>
                 ) : (
                   <div
@@ -137,7 +137,7 @@ const Index = () => {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        {shopData.data.result.map((item, index) => (
+                        {shopData.data.result.results.map((item, index) => (
                           <SelectItem value={item.id.toString()} key={index}>
                             {item.name}
                           </SelectItem>

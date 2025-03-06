@@ -10,9 +10,9 @@ import {Input} from "@/components/ui/input.jsx";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {toast} from "@/hooks/use-toast.js";
 import RestaurantCategoryService from "@/services/restaurant-category.service.js";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.jsx";
 import {Skeleton} from "@/components/ui/skeleton.jsx";
 import RestaurantService from "@/services/restaurant.service.js";
+import SelectComponent from "@/components/custom/select-component.jsx";
 
 
 const formSchema = z.object({
@@ -44,7 +44,7 @@ const Index = () => {
     if (categoryData && categoryData.data && categoryData.isSuccess && categoryData.data.result && !categoryData.isError) {
       form.reset({
         name: categoryData.data.result.name && categoryData.data.result.name,
-        restaurant: categoryData.data.result.restaurant && categoryData.data.result.restaurant.toString(),
+        restaurant: categoryData.data.result.restaurant && categoryData.data.result.restaurant,
       })
     }
   }, [categoryData.isSuccess, categoryData.data?.result]);
@@ -110,22 +110,16 @@ const Index = () => {
                         <FormField
                           control={form.control}
                           name="restaurant"
-                          render={({field}) => (
+                          render={({field, fieldState: {error}}) => (
                             <FormItem className="space-y-1">
                               <FormLabel className={"text-[#667085]"}>Restoran</FormLabel>
                               <FormControl>
-                                <Select value={field?.value?.toString()} onValueChange={field.onChange}>
-                                  <SelectTrigger className="w-full text-black">
-                                    <SelectValue placeholder="Restoranni tanlang"/>
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    {
-                                      restaurantsData.data.results.map((item, index) => (
-                                        <SelectItem value={item.id.toString()} key={index}>{item.name}</SelectItem>
-                                      ))
-                                    }
-                                  </SelectContent>
-                                </Select>
+                                <SelectComponent
+                                  hasError={!!error}
+                                  value={field.value}
+                                  onChange={field.onChange}
+                                  options={restaurantsData?.data?.results}
+                                />
                               </FormControl>
                               <FormMessage/>
                             </FormItem>

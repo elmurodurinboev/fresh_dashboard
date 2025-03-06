@@ -1,10 +1,9 @@
 import {Layout} from "@/components/custom/layout.jsx";
 import {Button} from "@/components/custom/button.jsx";
-import {IconPhoto, IconPlus, IconX, IconCash, IconPercentage} from "@tabler/icons-react";
+import {IconPhoto, IconPlus, IconCash, IconPercentage} from "@tabler/icons-react";
 import {useEffect, useState} from "react";
 import {useForm, Controller} from "react-hook-form";
 import {useNavigate, useParams} from "react-router-dom";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.jsx";
 import {useMutation, useQuery} from "@tanstack/react-query";
 import {Skeleton} from "@/components/ui/skeleton.jsx";
 import {Input} from "@/components/ui/input.jsx";
@@ -17,6 +16,7 @@ import InputWithFormat from "@/components/custom/input-with-format.jsx";
 import {Checkbox} from "@/components/ui/checkbox.jsx";
 import ROLES from "@/data/roles.js";
 import {useAuth} from "@/hooks/utils/useAuth.js";
+import SelectComponent from "@/components/custom/select-component.jsx";
 
 
 const Index = () => {
@@ -109,11 +109,10 @@ const Index = () => {
     mutation.mutate({formData, id: params.id})
   }
 
-  const categoryData = useQuery({
+  const resCategoryData = useQuery({
     queryKey: ["getAllCategory"],
     queryFn: RestaurantCategoryService.getAll
   })
-
 
   return (
     <Layout>
@@ -132,13 +131,14 @@ const Index = () => {
                   "w-full p-6 bg-white rounded-2xl shadow flex flex-col gap-4"
                 }
               >
-                <div className={"flex gap-3 items-center"}>
-                  {!categoryData.isLoading ? (
-                    !categoryData.isError &&
-                    categoryData.data &&
-                    categoryData.isSuccess &&
-                    categoryData.data &&
-                    categoryData.data.results ? (
+
+                <div className={"flex gap-4 items-center"}>
+                  {!resCategoryData.isLoading ? (
+                    !resCategoryData.isError &&
+                    resCategoryData.data &&
+                    resCategoryData.isSuccess &&
+                    resCategoryData.data &&
+                    resCategoryData.data.results ? (
                       <Controller
                         name="category"
                         control={form.control}
@@ -147,25 +147,10 @@ const Index = () => {
                         render={({field, fieldState: {error}}) => (
                           <div className="flex-1">
                             <label className="text-[#667085]">
-                              Kategoriya nomi
+                              Restorn kategoriyasi
                             </label>
-                            <Select
-                              value={field?.value?.toString()}
-                              onValueChange={field.onChange}
-                            >
-                              <SelectTrigger className="w-full text-black">
-                                <SelectValue placeholder="Kategoriyani tanlang"/>
-                              </SelectTrigger>
-                              <SelectContent>
-                                {categoryData?.data?.results?.map(
-                                  (item, index) => (
-                                    <SelectItem value={item.id.toString()} key={index}>
-                                      {item.name}
-                                    </SelectItem>
-                                  )
-                                )}
-                              </SelectContent>
-                            </Select>
+                            <SelectComponent value={field.value} onChange={field.onChange}
+                                             options={resCategoryData?.data?.results} hasError={!!error}/>
                             {error && (
                               <p className="text-red-500 text-sm">
                                 {error.message}
@@ -250,7 +235,7 @@ const Index = () => {
                     rules={{required: false}}
                     render={({field, fieldState: {error}}) => (
                       <div className="col-span-6">
-                        <label className="text-[#667085]">Volume</label>
+                        <label className="text-[#667085]">O'g'irligi (gramm)</label>
                         <InputWithFormat
                           placeholder="10"
                           value={field.value}
@@ -511,7 +496,6 @@ const Index = () => {
                 onClick={() => navigate("/restaurant-products")}
                 className={"w-full gap-2 items-center"}
               >
-                <IconX className={"w-5 h-5"}/>
                 Bekor qilish
               </Button>
             </div>
@@ -519,7 +503,8 @@ const Index = () => {
         </div>
       </Layout.Body>
     </Layout>
-  );
+  )
+    ;
 };
 
 export default Index;

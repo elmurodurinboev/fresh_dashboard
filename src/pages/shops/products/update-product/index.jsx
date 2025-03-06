@@ -4,7 +4,6 @@ import {IconCash, IconPercentage, IconPhoto, IconPlus, IconX} from "@tabler/icon
 import {useEffect, useState} from "react";
 import {Controller, useForm} from "react-hook-form";
 import {useNavigate, useParams} from "react-router-dom";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.jsx";
 import {useMutation, useQuery} from "@tanstack/react-query";
 import SubcategoryService from "@/services/subcategory.service.js";
 import {Skeleton} from "@/components/ui/skeleton.jsx";
@@ -15,6 +14,7 @@ import {Textarea} from "@/components/ui/textarea.jsx";
 import {Switch} from "@/components/ui/switch.jsx";
 import InputWithFormat from "@/components/custom/input-with-format.jsx";
 import {Checkbox} from "@/components/ui/checkbox.jsx";
+import SelectComponent from "@/components/custom/select-component.jsx";
 
 const Index = () => {
   const params = useParams()
@@ -123,34 +123,24 @@ const Index = () => {
                     !subCategoryData.isError &&
                     subCategoryData.data &&
                     subCategoryData.isSuccess &&
-                    subCategoryData.data.result &&
-                    subCategoryData.data.result ? (
+                    subCategoryData.data.results &&
+                    subCategoryData.data.results ? (
                       <Controller
                         name="subcategory"
                         control={form.control}
-                        rules={{required: "Category is required"}} // Add validation rules here
+                        defaultValue={""}
+                        rules={{required: "Subkategoriya tanlanishi shart"}} // Add validation rules here
                         render={({field, fieldState: {error}}) => (
                           <div className="flex-1">
                             <label className="text-[#667085]">
                               Kategoriya nomi
                             </label>
-                            <Select
-                              value={field?.value?.toString()}
-                              onValueChange={field.onChange}
-                            >
-                              <SelectTrigger className="w-full text-black">
-                                <SelectValue placeholder="Subkategoriyani tanlang"/>
-                              </SelectTrigger>
-                              <SelectContent>
-                                {subCategoryData.data.result.map(
-                                  (item, index) => (
-                                    <SelectItem value={item.id.toString()} key={index}>
-                                      {item.name}
-                                    </SelectItem>
-                                  )
-                                )}
-                              </SelectContent>
-                            </Select>
+                            <SelectComponent
+                              hasError={!!error}
+                              value={field.value}
+                              onChange={field.onChange}
+                              options={subCategoryData?.data?.results}
+                            />
                             {error && (
                               <p className="text-red-500 text-sm">
                                 {error.message}
@@ -167,6 +157,7 @@ const Index = () => {
                   ) : (
                     <Skeleton className={"col-span-9 h-9 rounded-md"}/>
                   )}
+
                   <Controller
                     name="is_active"
                     control={form.control}
