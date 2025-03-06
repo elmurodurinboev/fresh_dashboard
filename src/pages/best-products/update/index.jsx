@@ -4,13 +4,13 @@ import {IconPhoto, IconPlus, IconX} from "@tabler/icons-react";
 import {useEffect, useState} from "react";
 import {useForm, Controller} from "react-hook-form";
 import {useNavigate, useParams} from "react-router-dom";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.jsx";
 import {useMutation, useQuery} from "@tanstack/react-query";
 import {Skeleton} from "@/components/ui/skeleton.jsx";
 import {Input} from "@/components/ui/input.jsx";
 import RestaurantProductService from "@/services/restaurant-product.service.js";
 import {toast} from "@/hooks/use-toast.js";
 import RestaurantService from "@/services/restaurant.service.js";
+import SelectComponent from "@/components/custom/select-component.jsx";
 
 const Index = () => {
   const params = useParams()
@@ -64,22 +64,37 @@ const Index = () => {
     onSuccess: () => {
       toast({
         title: 'OK',
-        description: "Successfully added"
+        variant: "success",
+        description: "Muvaffaqiyatli yangilandi"
       })
       form.reset()
       navigate("/best-products")
     }
   })
-
   const onSubmit = (data) => {
-    const formData = new FormData()
+    const formData = new FormData();
+
+    // Append regular fields
     Object.entries(data).forEach(([key, value]) => {
-      key !== 'logo' && formData.append(key, value ?? "");
+      if (key !== 'logo' && key !== 'video_url') {
+        formData.append(key, value ?? "");
+      }
     });
-    const imgType = typeof data?.logo
-    data.logo && imgType === 'object' && formData.append("logo", data.logo ? data.logo[0] : productData?.data.result.logo)
-    mutation.mutate({formData, id: params.id})
-  }
+
+    // Append logo file if it exists
+    if (data.logo && data.logo instanceof File) {
+      formData.append("logo", data.logo);
+    }
+
+    // Append video file if it exists
+    if (data.video_url && data.video_url instanceof File) {
+      formData.append("video_url", data.video_url);
+    }
+
+    // Send the form data
+    mutation.mutate({ formData, id: params.id });
+  };
+
 
   const restaurantData = useQuery({
     queryKey: ["getAllCategory"],
@@ -114,34 +129,17 @@ const Index = () => {
                       name="restaurant"
                       control={form.control}
                       defaultValue={""}
-                      rules={{required: "Restaurant is required"}} // Add validation rules here
+                      rules={{required: "Restoran tanlanishi shart!"}}
                       render={({field, fieldState: {error}}) => (
                         <div className="flex-1">
-                          <label className="text-[#667085]">
-                            Restoran
-                          </label>
-                          <Select
-                            value={field?.value?.toString()}
-                            onValueChange={field.onChange}
-                          >
-                            <SelectTrigger className="w-full text-black">
-                              <SelectValue placeholder="Restoranni tanlang"/>
-                            </SelectTrigger>
-                            <SelectContent>
-                              {restaurantData.data.results.map(
-                                (item, index) => (
-                                  <SelectItem value={item.id.toString()} key={index}>
-                                    {item.name}
-                                  </SelectItem>
-                                )
-                              )}
-                            </SelectContent>
-                          </Select>
-                          {error && (
-                            <p className="text-red-500 text-sm">
-                              {error.message}
-                            </p>
-                          )}
+                          <label className="text-[#667085]">Restoran</label>
+                          <SelectComponent
+                            hasError={!!error}
+                            value={field.value}
+                            onChange={field.onChange}
+                            options={restaurantData?.data?.results}
+                          />
+                          {error && <p className="text-red-500 text-sm">{error.message}</p>}
                         </div>
                       )}
                     />

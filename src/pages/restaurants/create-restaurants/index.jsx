@@ -4,13 +4,6 @@ import {useForm, Controller} from "react-hook-form";
 import {useMutation, useQuery} from "@tanstack/react-query";
 import {Input} from "@/components/ui/input.jsx";
 import {toast} from "@/hooks/use-toast.js";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select.jsx";
 import {Skeleton} from "@/components/ui/skeleton.jsx";
 import {Textarea} from "@/components/ui/textarea.jsx";
 import {IconPhoto, IconPlus, IconX} from "@tabler/icons-react";
@@ -23,6 +16,7 @@ import PhoneInput from "@/components/custom/phone-input.jsx";
 import {Label} from "@/components/ui/label.jsx";
 import InputWithFormat from "@/components/custom/input-with-format.jsx";
 import LocationPicker from "@/components/custom/location-picker.jsx";
+import SelectComponent from "@/components/custom/select-component.jsx";
 
 const Index = () => {
   const [isDragged, setIsDragged] = useState(false);
@@ -58,7 +52,7 @@ const Index = () => {
     queryFn: CountryService.getAll,
   });
 
-  const owners = useQuery({
+  const ownersData = useQuery({
     queryKey: ["GetOwners"],
     queryFn: RestaurantService.getOwners,
   });
@@ -236,91 +230,74 @@ const Index = () => {
                   )}
                 />
 
-                {!owners.isLoading ? (
-                  !owners.isError &&
-                  owners.data &&
-                  owners.isSuccess &&
-                  owners.data.result ? (
+                {!ownersData.isLoading ? (
+                  !ownersData.isError &&
+                  ownersData.data &&
+                  ownersData.isSuccess &&
+                  ownersData.data &&
+                  ownersData.data.results ? (
                     <Controller
-                      control={form.control}
                       name="owner"
-                      rules={{required: "Bu maydon to'ldirilishi shart!"}}
+                      control={form.control}
+                      defaultValue={""}
+                      rules={{required: "Bu maydon to'ldirilishi shart"}} // Add validation rules here
                       render={({field, fieldState: {error}}) => (
-                        <div className="space-y-1">
-                          <Label className={"text-[#667085]"}>
-                            Restaran egasi
-                          </Label>
-                          <>
-                            <Select
-                              value={field?.value?.toString()}
-                              onValueChange={field.onChange}
-                            >
-                              <SelectTrigger className="w-full text-black">
-                                <SelectValue placeholder="Restoran egasini tanlang"/>
-                              </SelectTrigger>
-                              <SelectContent>
-                                {owners.data.result.results.map(
-                                  (item, index) => (
-                                    <SelectItem value={item.id.toString()} key={index}>
-                                      {item.full_name}
-                                    </SelectItem>
-                                  )
-                                )}
-                              </SelectContent>
-                            </Select>
-                          </>
+                        <div className="flex-1">
+                          <label className="text-[#667085]">
+                            Restoran egasi
+                          </label>
+                          <SelectComponent value={field.value} onChange={field.onChange}
+                                           options={ownersData?.data?.results} hasError={!!error}
+                                           labelName={"full_name"}/>
                           {error && (
-                            <p className="text-red-500">{error.message}</p>
+                            <p className="text-red-500 text-sm">
+                              {error.message}
+                            </p>
                           )}
                         </div>
                       )}
                     />
                   ) : (
-                    <span className={"text-rose-500"}>Nimadir xato ketdi!</span>
+                    <span className={"text-rose-500"}>
+                        Nimadir xato ketdi!
+                      </span>
                   )
                 ) : (
-                  <Skeleton className={"w-full h-9 rounded-md"}/>
+                  <Skeleton className={"col-span-9 h-9 rounded-md"}/>
                 )}
                 {!country.isLoading ? (
                   !country.isError &&
                   country.data &&
                   country.isSuccess &&
+                  country.data &&
                   country.data.result ? (
                     <Controller
-                      control={form.control}
                       name="country"
-                      rules={{required: "Bu maydon to'ldirilishi shart!"}}
+                      control={form.control}
+                      defaultValue={""}
+                      rules={{required: "Bu maydon to'ldirilishi shart"}} // Add validation rules here
                       render={({field, fieldState: {error}}) => (
-                        <div className="space-y-1">
-                          <Label className={"text-[#667085]"}>Hudud</Label>
-                          <>
-                            <Select
-                              value={field?.value?.toString()}
-                              onValueChange={field.onChange}
-                            >
-                              <SelectTrigger className="w-full text-black">
-                                <SelectValue placeholder="Hududni tanlang"/>
-                              </SelectTrigger>
-                              <SelectContent>
-                                {country.data.result.map((item, index) => (
-                                  <SelectItem value={item.id.toString()} key={index}>
-                                    {item.name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </>
+                        <div className="flex-1">
+                          <label className="text-[#667085]">
+                            Hudud
+                          </label>
+                          <SelectComponent value={field.value} onChange={field.onChange} options={country?.data?.result}
+                                           hasError={!!error}/>
                           {error && (
-                            <p className="text-red-500">{error.message}</p>
+                            <p className="text-red-500 text-sm">
+                              {error.message}
+                            </p>
                           )}
                         </div>
                       )}
                     />
                   ) : (
-                    <span className={"text-rose-500"}>Nimadir xato ketdi!</span>
+                    <span className={"text-rose-500"}>
+                        Nimadir xato ketdi!
+                    </span>
                   )
                 ) : (
-                  <Skeleton className={"w-full h-9 rounded-md"}/>
+                  <Skeleton className={"col-span-9 h-9 rounded-md"}/>
                 )}
 
                 <Controller

@@ -1,6 +1,6 @@
 import {Layout} from "@/components/custom/layout.jsx";
 import {Button} from "@/components/custom/button.jsx";
-import {IconCash, IconPercentage, IconPhoto, IconPlus, IconX} from "@tabler/icons-react";
+import {IconCash, IconPercentage, IconPhoto, IconPlus} from "@tabler/icons-react";
 import {useState} from "react";
 import {useForm, Controller} from "react-hook-form";
 import {useNavigate} from "react-router-dom";
@@ -16,8 +16,7 @@ import InputWithFormat from "@/components/custom/input-with-format";
 import {Checkbox} from "@/components/ui/checkbox.jsx";
 import {useAuth} from "@/hooks/utils/useAuth.js";
 import ROLES from "@/data/roles.js";
-import Select from "@/components/custom/select-component.jsx";
-import BaseCategoryService from "@/services/base-category.service.js";
+import SelectComponent from "@/components/custom/select-component.jsx";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -89,11 +88,6 @@ const Index = () => {
     queryFn: RestaurantCategoryService.getAll,
   });
 
-  const baseCategoryData = useQuery({
-    queryKey: ['getAllBaseCategory'],
-    queryFn: BaseCategoryService.getAll
-  })
-
   return (
     <Layout>
       <Layout.Body>
@@ -113,23 +107,53 @@ const Index = () => {
                   "w-full p-6 bg-white rounded-2xl shadow flex flex-col gap-4"
                 }
               >
-                {!baseCategoryData.isLoading ? (
-                  !baseCategoryData.isError &&
-                  baseCategoryData.data &&
-                  baseCategoryData.isSuccess &&
-                  baseCategoryData.data &&
-                  baseCategoryData.data.result ? (
+                  <div className={"flex gap-4 items-center"}>
+                    {!resCategoryData.isLoading ? (
+                      !resCategoryData.isError &&
+                      resCategoryData.data &&
+                      resCategoryData.isSuccess &&
+                      resCategoryData.data &&
+                      resCategoryData.data.results ? (
+                        <Controller
+                          name="category"
+                          control={form.control}
+                          defaultValue={""}
+                          rules={{required: "Bu maydon to'ldirilishi shart"}} // Add validation rules here
+                          render={({field, fieldState: {error}}) => (
+                            <div className="flex-1">
+                              <label className="text-[#667085]">
+                                Restorn kategoriyasi
+                              </label>
+                              <SelectComponent value={field.value} onChange={field.onChange}
+                                               options={resCategoryData?.data?.results} hasError={!!error}/>
+                              {error && (
+                                <p className="text-red-500 text-sm">
+                                  {error.message}
+                                </p>
+                              )}
+                            </div>
+                          )}
+                        />
+                      ) : (
+                        <span className={"text-rose-500"}>
+                        Nimadir xato ketdi!
+                      </span>
+                      )
+                    ) : (
+                      <Skeleton className={"col-span-9 h-9 rounded-md"}/>
+                    )}
+
                     <Controller
-                      name="base_category"
+                      name="is_active"
                       control={form.control}
-                      defaultValue={""}
-                      rules={{required: "Bu maydon to'ldirilishi shart"}} // Add validation rules here
+                      rules={{required: false}}
                       render={({field, fieldState: {error}}) => (
-                        <div className="flex-1">
-                          <label className="text-[#667085]">
-                            Umumiy kategoriya
-                          </label>
-                          <Select value={field.value} onChange={field.onChange} options={baseCategoryData?.data?.result} hasError={!!error} />
+                        <div className="flex flex-col">
+                          <label className="text-[#667085]">Aktivligi</label>
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
                           {error && (
                             <p className="text-red-500 text-sm">
                               {error.message}
@@ -138,266 +162,203 @@ const Index = () => {
                         </div>
                       )}
                     />
-                  ) : (
-                    <span className={"text-rose-500"}>
-                        Nimadir xato ketdi!
-                      </span>
-                  )
-                ) : (
-                  <Skeleton className={"col-span-9 h-9 rounded-md"}/>
-                )}
 
-                <div className={"flex gap-3 items-center"}>
-                  {!resCategoryData.isLoading ? (
-                    !resCategoryData.isError &&
-                    resCategoryData.data &&
-                    resCategoryData.isSuccess &&
-                    resCategoryData.data &&
-                    resCategoryData.data.results ? (
-                      <Controller
-                        name="category"
-                        control={form.control}
-                        defaultValue={""}
-                        rules={{required: "Bu maydon to'ldirilishi shart"}} // Add validation rules here
-                        render={({field, fieldState: {error}}) => (
-                          <div className="flex-1">
-                            <label className="text-[#667085]">
-                              Restorn kategoriyasi
-                            </label>
-                            <Select value={field.value} onChange={field.onChange} options={resCategoryData?.data?.results} hasError={!!error} />
-                            {error && (
-                              <p className="text-red-500 text-sm">
-                                {error.message}
-                              </p>
-                            )}
-                          </div>
-                        )}
-                      />
-                    ) : (
-                      <span className={"text-rose-500"}>
-                        Nimadir xato ketdi!
-                      </span>
-                    )
-                  ) : (
-                    <Skeleton className={"col-span-9 h-9 rounded-md"}/>
-                  )}
-
-                  <Controller
-                    name="is_active"
-                    control={form.control}
-                    rules={{required: false}}
-                    render={({field, fieldState: {error}}) => (
-                      <div className="flex flex-col">
-                        <label className="text-[#667085]">Aktivligi</label>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
+                    {
+                      user.user_role === ROLES.ADMIN && (
+                        <Controller
+                          name="isApproved"
+                          control={form.control}
+                          rules={{required: false}}
+                          render={({field, fieldState: {error}}) => (
+                            <div className="flex flex-col">
+                              <label className="text-[#667085]">Tasdiqlash</label>
+                              <Switch
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                              {error && (
+                                <p className="text-red-500 text-sm">
+                                  {error.message}
+                                </p>
+                              )}
+                            </div>
+                          )}
                         />
-                        {error && (
-                          <p className="text-red-500 text-sm">
-                            {error.message}
-                          </p>
-                        )}
-                      </div>
-                    )}
-                  />
-
-                  {
-                    user.user_role === ROLES.ADMIN && (
-                      <Controller
-                        name="isApproved"
-                        control={form.control}
-                        rules={{required: false}}
-                        render={({field, fieldState: {error}}) => (
-                          <div className="flex flex-col">
-                            <label className="text-[#667085]">Tasdiqlash</label>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
-                            {error && (
-                              <p className="text-red-500 text-sm">
-                                {error.message}
-                              </p>
-                            )}
-                          </div>
-                        )}
-                      />
-                    )
-                  }
-                </div>
-
-                <Controller
-                  name="name"
-                  control={form.control}
-                  rules={{required: "Bu maydon to'ldirilishi shart"}}
-                  render={({field, fieldState: {error}}) => (
-                    <div>
-                      <label className="text-[#667085]">Mahsulot nomi</label>
-                      <Input placeholder="Lavash" {...field} />
-                      {error && (
-                        <p className="text-red-500 text-sm">{error.message}</p>
-                      )}
-                    </div>
-                  )}
-                />
-
-                <div className="grid grid-cols-12 gap-3">
-                  <Controller
-                    name="volume"
-                    control={form.control}
-                    rules={{required: false}}
-                    render={({field, fieldState: {error}}) => (
-                      <div className="col-span-6">
-                        <label className="text-[#667085]">O'g'irligi (gramm)</label>
-                        <InputWithFormat
-                          placeholder="10"
-                          value={field.value}
-                          onValueChange={(e) => field.onChange(e)}
-                        />
-                        {error && (
-                          <p className="text-red-500 text-sm">
-                            {error.message}
-                          </p>
-                        )}
-                      </div>
-                    )}
-                  />
+                      )
+                    }
+                  </div>
 
                   <Controller
-                    name="stock_level"
+                    name="name"
                     control={form.control}
                     rules={{required: "Bu maydon to'ldirilishi shart"}}
                     render={({field, fieldState: {error}}) => (
-                      <div className="col-span-6">
-                        <label className="text-[#667085]">Mahsulotlar soni</label>
+                      <div>
+                        <label className="text-[#667085]">Mahsulot nomi</label>
+                        <Input placeholder="Lavash" {...field} />
+                        {error && (
+                          <p className="text-red-500 text-sm">{error.message}</p>
+                        )}
+                      </div>
+                    )}
+                  />
+
+                  <div className="grid grid-cols-12 gap-3">
+                    <Controller
+                      name="volume"
+                      control={form.control}
+                      rules={{required: false}}
+                      render={({field, fieldState: {error}}) => (
+                        <div className="col-span-6">
+                          <label className="text-[#667085]">O'g'irligi (gramm)</label>
+                          <InputWithFormat
+                            placeholder="10"
+                            value={field.value}
+                            onValueChange={(e) => field.onChange(e)}
+                          />
+                          {error && (
+                            <p className="text-red-500 text-sm">
+                              {error.message}
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    />
+
+                    <Controller
+                      name="stock_level"
+                      control={form.control}
+                      rules={{required: "Bu maydon to'ldirilishi shart"}}
+                      render={({field, fieldState: {error}}) => (
+                        <div className="col-span-6">
+                          <label className="text-[#667085]">Mahsulotlar soni</label>
+                          <InputWithFormat
+                            placeholder="10"
+                            value={field.value}
+                            onValueChange={(e) => field.onChange(e)}
+                          />
+                          {error && (
+                            <p className="text-red-500 text-sm">
+                              {error.message}
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    />
+                  </div>
+
+                  <Controller
+                    name="price"
+                    control={form.control}
+                    rules={{required: "Bu maydon to'ldirilishi shart"}}
+                    render={({field, fieldState: {error}}) => (
+                      <div>
+                        <label className="text-[#667085]">Mahsulot narhi</label>
                         <InputWithFormat
-                          placeholder="10"
+                          placeholder="10 000"
                           value={field.value}
                           onValueChange={(e) => field.onChange(e)}
                         />
                         {error && (
-                          <p className="text-red-500 text-sm">
-                            {error.message}
-                          </p>
+                          <p className="text-red-500 text-sm">{error.message}</p>
+                        )}
+                      </div>
+                    )}
+                  />
+
+                  <Controller
+                    name="discount_price"
+                    control={form.control}
+                    rules={{required: false}}
+                    render={({field, fieldState: {error}}) => (
+                      <div>
+                        <div className={"flex items-center gap-2"}>
+                          <label className="text-[#667085]">
+                            Chegirma
+                          </label>
+                          <Checkbox className={"w-5 h-5 rounded-md"} checked={withDiscount} onCheckedChange={val => {
+                            field.onChange("")
+                            setWithDiscount(val)
+                          }}/>
+                        </div>
+                        {
+                          withDiscount && (
+                            <InputWithFormat
+                              placeholder="10 000"
+                              value={field.value}
+                              onValueChange={(e) => field.onChange(e)}
+                            />
+                          )
+                        }
+                        {error && (
+                          <p className="text-red-500 text-sm">{error.message}</p>
+                        )}
+                      </div>
+                    )}
+                  />
+
+                  <Controller
+                    name="contribution_amount"
+                    control={form.control}
+                    rules={{required: "Bu maydon to'ldirilishi shart"}}
+                    render={({field, fieldState: {error}}) => (
+                      <div className={"flex flex-col gap-1"}>
+                        <label className="text-[#667085]">
+                          Mahsulotdan olinadigan ulush ({contributionType === 'price' ? "so`m" : "% foiz"})
+                        </label>
+                        <div className={"flex justify-between gap-2"}>
+                          <InputWithFormat
+                            placeholder={contributionType === 'price' ? "10 000" : '10%'}
+                            value={field.value}
+                            onValueChange={(e) => field.onChange(e)}
+                            className={"flex-1"}
+                          />
+                          <Button
+                            size={"icon"}
+                            variant={"outline"}
+                            type="button"
+                            onClick={() => {
+                              field.onChange("")
+                              setContributionType(prevState => prevState === 'price' ? 'percent' : 'price')
+                            }}
+                          >
+                            {
+                              contributionType === 'price' ? <IconCash size={20}/> : <IconPercentage size={20}/>
+                            }
+                          </Button>
+                        </div>
+
+                        {error && (
+                          <p className="text-red-500 text-sm">{error.message}</p>
+                        )}
+                      </div>
+                    )}
+                  />
+
+                  <Controller
+                    name="description"
+                    control={form.control}
+                    rules={{required: false}}
+                    render={({field, fieldState: {error}}) => (
+                      <div>
+                        <label className="text-[#667085]">Mahsulot tavsifi</label>
+                        <Textarea
+                          placeholder="Go'sh, hamir"
+                          className={"resize-none"}
+                          {...field}
+                          rows={5}
+                        />
+                        {error && (
+                          <p className="text-red-500 text-sm">{error.message}</p>
                         )}
                       </div>
                     )}
                   />
                 </div>
-
-                <Controller
-                  name="price"
-                  control={form.control}
-                  rules={{required: "Bu maydon to'ldirilishi shart"}}
-                  render={({field, fieldState: {error}}) => (
-                    <div>
-                      <label className="text-[#667085]">Mahsulot narhi</label>
-                      <InputWithFormat
-                        placeholder="10 000"
-                        value={field.value}
-                        onValueChange={(e) => field.onChange(e)}
-                      />
-                      {error && (
-                        <p className="text-red-500 text-sm">{error.message}</p>
-                      )}
-                    </div>
-                  )}
-                />
-
-                <Controller
-                  name="discount_price"
-                  control={form.control}
-                  rules={{required: false}}
-                  render={({field, fieldState: {error}}) => (
-                    <div>
-                      <div className={"flex items-center gap-2"}>
-                        <label className="text-[#667085]">
-                          Chegirma
-                        </label>
-                        <Checkbox className={"w-5 h-5 rounded-md"} checked={withDiscount} onCheckedChange={val => {
-                          field.onChange("")
-                          setWithDiscount(val)
-                        }}/>
-                      </div>
-                      {
-                        withDiscount && (
-                          <InputWithFormat
-                            placeholder="10 000"
-                            value={field.value}
-                            onValueChange={(e) => field.onChange(e)}
-                          />
-                        )
-                      }
-                      {error && (
-                        <p className="text-red-500 text-sm">{error.message}</p>
-                      )}
-                    </div>
-                  )}
-                />
-
-                <Controller
-                  name="contribution_amount"
-                  control={form.control}
-                  rules={{required: "Bu maydon to'ldirilishi shart"}}
-                  render={({field, fieldState: {error}}) => (
-                    <div className={"flex flex-col gap-1"}>
-                      <label className="text-[#667085]">
-                        Mahsulotdan olinadigan ulush ({contributionType === 'price' ? "so`m" : "% foiz"})
-                      </label>
-                      <div className={"flex justify-between gap-2"}>
-                        <InputWithFormat
-                          placeholder={contributionType === 'price' ? "10 000" : '10%'}
-                          value={field.value}
-                          onValueChange={(e) => field.onChange(e)}
-                          className={"flex-1"}
-                        />
-                        <Button
-                          size={"icon"}
-                          variant={"outline"}
-                          type="button"
-                          onClick={() => {
-                            field.onChange("")
-                            setContributionType(prevState => prevState === 'price' ? 'percent' : 'price')
-                          }}
-                        >
-                          {
-                            contributionType === 'price' ? <IconCash size={20}/> : <IconPercentage size={20}/>
-                          }
-                        </Button>
-                      </div>
-
-                      {error && (
-                        <p className="text-red-500 text-sm">{error.message}</p>
-                      )}
-                    </div>
-                  )}
-                />
-
-                <Controller
-                  name="description"
-                  control={form.control}
-                  rules={{required: false}}
-                  render={({field, fieldState: {error}}) => (
-                    <div>
-                      <label className="text-[#667085]">Mahsulot tavsifi</label>
-                      <Textarea
-                        placeholder="Go'sh, hamir"
-                        className={"resize-none"}
-                        {...field}
-                        rows={5}
-                      />
-                      {error && (
-                        <p className="text-red-500 text-sm">{error.message}</p>
-                      )}
-                    </div>
-                  )}
-                />
               </div>
-            </div>
 
-            {/*Product Image*/}
-            <div className={"col-span-12 lg:col-span-4 flex flex-col gap-3"}>
+              {/*Product Image*/}
+              <div className={"col-span-12 lg:col-span-4 flex flex-col gap-3"}>
               <div className={"flex flex-col bg-white rounded-2xl shadow p-6"}>
                 <Controller
                   name="picture"
@@ -495,7 +456,7 @@ const Index = () => {
                 className={"w-full"}
                 loading={mutation.isPending}
               >
-                save
+                Saqlash
               </Button>
 
               <Button
@@ -505,8 +466,7 @@ const Index = () => {
                 onClick={() => navigate("/restaurant-products")}
                 className={"w-full gap-2 items-center"}
               >
-                <IconX className={"w-5 h-5"}/>
-                cancel
+                Bekor qilish
               </Button>
             </div>
           </form>

@@ -1,10 +1,10 @@
 import Select from "react-select";
 
-const SelectComponent = ({options, onChange, value, defaultValue = "", placeholder = "Tanlang", hasError = false}) => {
+const SelectComponent = ({options, onChange, value, defaultValue = "", placeholder = "Tanlang", hasError = false, labelName='name'}) => {
   // Transform backend data to match react-select format
   const transformedOptions = options.map((item) => ({
     value: item.id,
-    label: item.name,
+    label: item[labelName],
   }));
 
   // Handle value change

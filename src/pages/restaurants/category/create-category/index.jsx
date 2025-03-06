@@ -11,10 +11,10 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {toast} from "@/hooks/use-toast.js";
 import RestaurantCategoryService from "@/services/restaurant-category.service.js";
 import RestaurantService from "@/services/restaurant.service.js";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.jsx";
 import {Skeleton} from "@/components/ui/skeleton.jsx";
 import ROLES from "@/data/roles.js";
 import {useAuth} from "@/hooks/utils/useAuth.js";
+import SelectComponent from "@/components/custom/select-component.jsx";
 
 
 const formSchema = z.object({
@@ -92,75 +92,67 @@ const Index = () => {
             <h2 className="text-2xl font-bold tracking-tight">Restoran kategoriyasini yaratish</h2>
           </div>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className={"grid grid-cols-12 gap-4"}>
-              <div className={"col-span-12 lg:col-span-8 flex flex-col gap-4"}>
-                <div className={"w-full p-6 bg-white rounded-2xl shadow flex flex-col gap-4"}>
-                  {
-                    !restaurantsData.isLoading ? (
-                      !restaurantsData.isError && restaurantsData.data && restaurantsData.isSuccess && restaurantsData.data.results ? (
-                        <FormField
-                          control={form.control}
-                          name="restaurant"
-                          render={({field}) => (
-                            <FormItem className="space-y-1">
-                              <FormLabel className={"text-[#667085]"}>Restoran</FormLabel>
-                              <FormControl>
-                                <Select value={field?.value?.toString()} onValueChange={field.onChange}>
-                                  <SelectTrigger className="w-full text-black">
-                                    <SelectValue placeholder="Restoranni tanlang"/>
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    {
-                                      restaurantsData.data.results.map((item, index) => (
-                                        <SelectItem value={item.id.toString()} key={index}>{item.name}</SelectItem>
-                                      ))
-                                    }
-                                  </SelectContent>
-                                </Select>
-                              </FormControl>
-                              <FormMessage/>
-                            </FormItem>
-                          )
-                          }
-                        />
-                      ) : (
-                        <span className={"text-rose-500"}>Nimadir xato ketdi!</span>
-                      )
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+              <div className={"w-full p-6 bg-white rounded-2xl shadow flex flex-col gap-4"}>
+                {
+                  !restaurantsData.isLoading ? (
+                    !restaurantsData.isError && restaurantsData.data && restaurantsData.isSuccess && restaurantsData.data.results ? (
+                      <FormField
+                        control={form.control}
+                        name="restaurant"
+                        render={({field, fieldState: {error}}) => (
+                          <FormItem className="space-y-1">
+                            <FormLabel className={"text-[#667085]"}>Restoran</FormLabel>
+                            <FormControl>
+                              <SelectComponent
+                                hasError={!!error}
+                                value={field.value}
+                                onChange={field.onChange}
+                                options={restaurantsData?.data?.results}
+                              />
+                            </FormControl>
+                            <FormMessage/>
+                          </FormItem>
+                        )
+                        }
+                      />
                     ) : (
-                      <Skeleton className={"w-full h-9 rounded-md"}/>
+                      <span className={"text-rose-500"}>Nimadir xato ketdi!</span>
                     )
-                  }
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({field}) => (
-                      <FormItem className="space-y-1">
-                        <FormLabel className={"text-[#667085]"}>Kategoriya nomi</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Lavash" {...field} />
-                        </FormControl>
-                        <FormMessage/>
-                      </FormItem>
-                    )}
-                  />
-                  <div className={"flex items-center gap-3"}>
-                    <Button
-                      size={"xl"}
-                      type={"submit"}
-                      loading={mutation.isPending}
-                    >
-                      Saqlash
-                    </Button>
+                  ) : (
+                    <Skeleton className={"w-full h-9 rounded-md"}/>
+                  )
+                }
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({field}) => (
+                    <FormItem className="space-y-1">
+                      <FormLabel className={"text-[#667085]"}>Kategoriya nomi</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Lavash" {...field} />
+                      </FormControl>
+                      <FormMessage/>
+                    </FormItem>
+                  )}
+                />
+                <div className={"flex justify-start items-center gap-3"}>
+                  <Button
+                    size={"lg"}
+                    type={"submit"}
+                    loading={mutation.isPending}
+                  >
+                    Saqlash
+                  </Button>
 
-                    <Button
-                      size={"xl"}
-                      type={"reset"}
-                      variant={"outline"}
-                      onClick={() => navigate("/restaurant-category")}
-                    >
-                      Bekor qilish
-                    </Button>
-                  </div>
+                  <Button
+                    size={"lg"}
+                    type={"reset"}
+                    variant={"outline"}
+                    onClick={() => navigate("/restaurant-category")}
+                  >
+                    Bekor qilish
+                  </Button>
                 </div>
               </div>
             </form>
