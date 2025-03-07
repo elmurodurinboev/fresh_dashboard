@@ -35,9 +35,8 @@ const Index = () => {
 
   useEffect(() => {
     const token = session?.tokens?.access; // Get token from localStorage or cookie
-    const socketUrl = "wss://api.wedrivefresh.com/ws/operator/couriers-map/";
 
-    socketRef.current = new WebSocket(socketUrl);
+    socketRef.current = new WebSocket(import.meta.env.VITE_SOCKET_URL);
 
     socketRef.current.onopen = () => {
       console.log("✅ WebSocket connected");
