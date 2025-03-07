@@ -20,13 +20,13 @@ import {toast} from "@/hooks/use-toast.js";
 import DeleteConfirmationModal from "@/components/custom/delete-confirmation-modal.jsx";
 import SearchBar from "@/components/custom/search-bar.jsx";
 import {useAuth} from "@/hooks/utils/useAuth.js";
-import {MapContainer, TileLayer} from "react-leaflet";
-import "leaflet/dist/leaflet.css";
 import CourierService from "@/services/courier.service.js";
+import CouriersMap from "@/components/custom/couriers-map.jsx";
 
 const Index = () => {
   const [deleteModal, setDeleteModal] = useState(false)
   const [selectedProduct, setSelectedProduct] = useState({})
+  const [couriers, setCouriers] = useState([])
 
 
   // Socket logic
@@ -60,13 +60,9 @@ const Index = () => {
         })
       }
       if (data.message) {
-        return toast({
-          title: "Ok",
-          variant: "success",
-          description: data.message || "Ok"
-        })
+        return;
       }
-      console.log(data)
+      setCouriers(data.couriers)
     };
 
     socketRef.current.onerror = (error) => {
@@ -313,9 +309,11 @@ const Index = () => {
           }
         </div>
         <div className={"mt-4 flex-1 w-full overflow-auto z-10"}>
-          <MapContainer center={[41.55039, 60.6315]} zoom={13} style={{ height: "400px", width: "100%" }}>
-            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-          </MapContainer>
+          {
+            !couriersData.isLoading &&  couriersData && couriersData.data && couriersData.isSuccess && !couriersData.isError &&  couriersData.data.results.length > 0 && (
+              <CouriersMap couriersLocations={couriers} couriersData={couriersData.data.results} />
+            )
+          }
         </div>
       </Layout.Body>
       <DeleteConfirmationModal
