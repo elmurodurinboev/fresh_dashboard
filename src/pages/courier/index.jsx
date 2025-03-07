@@ -60,8 +60,9 @@ const Index = () => {
         })
       }
       if (data.message) {
-        return;
+        return console.log(data.message)
       }
+      console.log(data)
       setCouriers(data.couriers)
     };
 
@@ -139,6 +140,11 @@ const Index = () => {
     queryFn: CourierService.getAll
   })
 
+  const allCouriersData = useQuery({
+    queryKey: ['getAllCourierNoPagination', 1, 250],
+    queryFn: CourierService.getAll,
+    enabled: couriers.length > 0
+  })
 
   return (
     <Layout>
@@ -310,8 +316,8 @@ const Index = () => {
         </div>
         <div className={"mt-4 flex-1 w-full overflow-auto z-10"}>
           {
-            !couriersData.isLoading &&  couriersData && couriersData.data && couriersData.isSuccess && !couriersData.isError &&  couriersData.data.results.length > 0 && (
-              <CouriersMap couriersLocations={couriers} couriersData={couriersData.data.results} />
+            !allCouriersData.isLoading && allCouriersData && allCouriersData.data && allCouriersData.isSuccess && !allCouriersData.isError && allCouriersData.data.results.length > 0 && (
+              <CouriersMap couriersLocations={couriers} couriersData={allCouriersData.data.results}/>
             )
           }
         </div>

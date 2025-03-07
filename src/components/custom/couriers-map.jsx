@@ -4,9 +4,9 @@ import L from 'leaflet';
 import {Formatter} from "@/utils/formatter.js";
 
 const courierIcon = L.icon({
-  iconUrl: '/images/car-marker.png',
-  iconSize: [36, 56],
-  popupAnchor: [0, -32]
+  iconUrl: '/images/courier-marker.png',
+  iconSize: [50, 80],
+  popupAnchor: [0, -20]
 });
 
 const CouriersMap = ({couriersLocations = [], couriersData = []}) => {
@@ -26,13 +26,13 @@ const CouriersMap = ({couriersLocations = [], couriersData = []}) => {
               icon={courierIcon}
             >
               <Popup>
-                <div>
+                <div className={"p-0.5"}>
                   <img src={courier.image} alt={courier.full_name}
                        style={{width: '50px', height: '50px', borderRadius: '50%'}}/>
                   <h3 className={"font-medium text-black"}>{courier.full_name}</h3>
                   <p>Tel: <b>{Formatter.formatPhoneNumber(courier.phone_number)}</b></p>
-                  <p>Mashina: <b>{courier.car_name}</b></p>
-                  <p>Mashina raqami: <b>{courier.car_number}</b></p>
+                  <p>Transport: <b>{courier.car_name}</b></p>
+                  <p>Transport raqami: <b>{courier.car_number}</b></p>
                 </div>
               </Popup>
             </Marker>
