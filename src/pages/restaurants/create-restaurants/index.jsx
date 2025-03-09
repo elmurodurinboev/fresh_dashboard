@@ -105,8 +105,6 @@ const Index = () => {
     Object.entries(data).forEach(([key, value]) => {
       formData.append(key, value ?? "");
     });
-
-    formData.append("image", data.image ? data.image[0] : "");
     mutation.mutate(formData);
   };
 

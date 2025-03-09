@@ -148,7 +148,7 @@ const Index = () => {
                           shopData.data.results.map((shop, index) => (
                             <TableRow key={index} className={"bg-secondary"}>
                               <TableCell className={"flex gap-2 items-center overflow-hidden"}>
-                                {shop.owner.image ? (
+                                {shop?.owner?.image ? (
                                   <img
                                     src={shop.owner.image}
                                     alt={"product_image"}
@@ -158,9 +158,9 @@ const Index = () => {
                                   <DefaultImage/>
                                 )}
                                 <div className={"flex flex-col"}>
-                                  <span>{shop.owner.full_name}</span>
+                                  <span>{shop?.owner?.full_name ? shop?.owner?.full_name : "-"}</span>
                                   <span
-                                    className={"text-xs text-foreground"}>{shop.owner.phone_number && Formatter.formatPhoneNumber(shop.owner.phone_number)}</span>
+                                    className={"text-xs text-foreground"}>{shop?.owner?.phone_number && Formatter.formatPhoneNumber(shop.owner.phone_number)}</span>
                                 </div>
                               </TableCell>
                               <TableCell>
