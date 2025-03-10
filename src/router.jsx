@@ -77,6 +77,29 @@ const routes = [
 
           // Shop routes
           {
+            path: "country",
+            lazy: async () => ({
+              Component: (await import("@/pages/country")).default
+            }),
+            meta: { roles: getAllowedUsers('country') },
+          },
+          {
+            path: "country/create",
+            lazy: async () => ({
+              Component: (await import("@/pages/country/create")).default
+            }),
+            meta: { roles: getAllowedUsers('country') },
+          },
+          {
+            path: "country/update/:id",
+            lazy: async () => ({
+              Component: (await import("@/pages/country/update")).default
+            }),
+            meta: { roles: getAllowedUsers('country') },
+          },
+
+          // Shop routes
+          {
             path: "shops",
             lazy: async () => ({
               Component: (await import("@/pages/shops")).default
