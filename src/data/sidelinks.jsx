@@ -11,7 +11,8 @@ import {
   IconBaselineDensityMedium,
   IconBadgeAd,
   IconScooterElectric,
-  IconCategoryPlus
+  IconCategoryPlus,
+  IconWorldPin
 } from "@tabler/icons-react"
 import ROLES from "@/data/roles.js";
 
@@ -35,6 +36,13 @@ export const sidelinks = [
     label: "",
     href: "/base-category",
     icon: <IconCategoryPlus size={18}/>,
+    roles: [ROLES.ADMIN]
+  },
+  {
+    title: "sidebar.country",
+    label: "",
+    href: "/country",
+    icon: <IconWorldPin size={18}/>,
     roles: [ROLES.ADMIN]
   },
   

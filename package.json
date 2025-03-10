@@ -51,6 +51,7 @@
     "react-hook-form": "^7.53.2",
     "react-imask": "^7.6.1",
     "react-leaflet": "^4.2.1",
+    "react-leaflet-draw": "^0.20.6",
     "react-router-dom": "^6.28.0",
     "react-select": "^5.10.1",
     "react-syntax-highlighter": "^15.6.1",
