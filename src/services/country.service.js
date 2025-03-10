@@ -9,7 +9,7 @@ const CountryService = {
     const {data} = await Api.post("/country/", payload)
     return data
   },
-  async delete({id}) {
+  async delete(id) {
     const {data} = await Api.delete(`/country/${id}/`)
     return data
   },

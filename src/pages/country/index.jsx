@@ -19,7 +19,7 @@ import CountryService from "@/services/country.service.js";
 
 const Index = () => {
   const [deleteModal, setDeleteModal] = useState(false)
-  const [selectedcountry, setSelectedcountry] = useState({})
+  const [selectedCountry, setSelectedCountry] = useState({})
 
 
   const navigate = useNavigate()
@@ -33,7 +33,7 @@ const Index = () => {
         description: "Muvaffaqiyatli o'chirildi"
       })
       setDeleteModal(false)
-      setSelectedcountry({})
+      setSelectedCountry({})
       await countryData.refetch()
     },
     onError: (error) => {
@@ -46,8 +46,8 @@ const Index = () => {
     },
   })
 
-  const handleDelete = (product) => {
-    setSelectedcountry(product)
+  const handleDelete = (country) => {
+    setSelectedCountry(country)
     setDeleteModal(true)
   }
 
@@ -151,10 +151,10 @@ const Index = () => {
         <DeleteConfirmationModal
           open={deleteModal}
           setOpen={setDeleteModal}
-          handleDelete={() => deleteMutation.mutate(selectedcountry.id)}
+          handleDelete={() => deleteMutation.mutate(selectedCountry.id)}
           handleClose={() => {
             setDeleteModal(false)
-            setSelectedcountry({})
+            setSelectedCountry({})
           }}
         />
       </Layout.Body>

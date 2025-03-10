@@ -1,5 +1,6 @@
 import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog.jsx";
 import {Button} from "@/components/custom/button.jsx";
+import {useEffect} from "react";
 
 const DeleteConfirmationModal = (
   {
@@ -21,6 +22,15 @@ const DeleteConfirmationModal = (
   let dialog_paragraph = dialogParagraph || "Ishonchingiz komilmi?"
   let cancel_text = cancelText || "Bekor qilish"
   let confirm_text = confirmText || "O'chirish"
+
+  useEffect(() => {
+    if (!open) {
+      document.body.style.pointerEvents = "auto";
+    }
+    return () => {
+      document.body.style.pointerEvents = "auto";
+    };
+  }, [open]);
 
   return (
     <Dialog open={open} onOpenChange={(open) => {
