@@ -1,6 +1,14 @@
 import Select from "react-select";
 
-const SelectComponent = ({options, onChange, value, defaultValue = "", placeholder = "Tanlang", hasError = false, labelName='name'}) => {
+const SelectComponent = ({
+                           options,
+                           onChange,
+                           value,
+                           defaultValue = "",
+                           placeholder = "Tanlang",
+                           hasError = false,
+                           labelName = 'name'
+                         }) => {
   // Transform backend data to match react-select format
   const transformedOptions = options.map((item) => ({
     value: item.id,
@@ -11,6 +19,8 @@ const SelectComponent = ({options, onChange, value, defaultValue = "", placehold
   const handleChange = (selectedOption) => {
     onChange(selectedOption ? selectedOption.value : "");
   };
+
+  if (!options || options.length < 0) return;
 
   return (
     <Select

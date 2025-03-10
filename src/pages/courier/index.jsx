@@ -22,6 +22,7 @@ import SearchBar from "@/components/custom/search-bar.jsx";
 import {useAuth} from "@/hooks/utils/useAuth.js";
 import CourierService from "@/services/courier.service.js";
 import CouriersMap from "@/components/custom/couriers-map.jsx";
+import {Formatter} from "@/utils/formatter.js";
 
 const Index = () => {
   const [deleteModal, setDeleteModal] = useState(false)
@@ -193,6 +194,9 @@ const Index = () => {
                         <TableHead>
                           Kuryer raqami
                         </TableHead>
+                        <TableHead>
+                          Balansi
+                        </TableHead>
                         <TableHead className={"text-end"}>
                         </TableHead>
                       </TableRow>
@@ -203,7 +207,7 @@ const Index = () => {
                           couriersData.data.results.map((user, index) => (
                             <TableRow key={index} className={"bg-secondary"}>
                               <TableCell className={"flex gap-2 items-center overflow-hidden"}>
-                                {user.image ? (
+                                {user?.image ? (
                                   <img
                                     src={user.image}
                                     alt={"product_image"}
@@ -212,15 +216,15 @@ const Index = () => {
                                 ) : (
                                   <DefaultImage/>
                                 )}
-                                <span>{user.full_name ? user.full_name : "Nomalum"}</span>
+                                <span>{user?.full_name ? user.full_name : "Nomalum"}</span>
                               </TableCell>
 
                               <TableCell>
                                 {
-                                  user.phone_number
+                                  user?.phone_number && Formatter.formatPhoneNumber(user.phone_number)
                                 }
                               </TableCell>
-                              <TableCell>
+                              <TableCell className={"uppercase"}>
                                 {
                                   user?.car_number
                                 }
@@ -228,6 +232,11 @@ const Index = () => {
                               <TableCell>
                                 {
                                   user?.bag_number
+                                }
+                              </TableCell>
+                              <TableCell>
+                                {
+                                  user?.balance && Formatter.currency(user.balance)
                                 }
                               </TableCell>
                               <TableCell className={"text-end"}>

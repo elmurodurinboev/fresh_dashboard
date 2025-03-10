@@ -76,7 +76,7 @@ const Index = () => {
       toast({
         title: "Error",
         variant: "destructive",
-        description: error.message || "Messages.error_occurred",
+        description: error?.message || "Messages.error_occurred",
       });
     },
     onSuccess: () => {
@@ -107,6 +107,8 @@ const Index = () => {
     });
     mutation.mutate(formData);
   };
+
+  console.log(ownersData.data)
 
   return (
     <Layout>
@@ -218,7 +220,7 @@ const Index = () => {
                             className={"pl-12 flex h-9 items-center"}
                             placeholder="90 000 0000"
                             onAccept={(val, mask) => {
-                              field.onChange(mask._unmaskedValue);
+                              field.onChange(mask?._unmaskedValue);
                             }}
                           />
                         </div>
@@ -233,7 +235,7 @@ const Index = () => {
                   ownersData.data &&
                   ownersData.isSuccess &&
                   ownersData.data &&
-                  ownersData.data.results ? (
+                  ownersData?.data?.results ? (
                     <Controller
                       name="owner"
                       control={form.control}
@@ -244,9 +246,14 @@ const Index = () => {
                           <label className="text-[#667085]">
                             Restoran egasi
                           </label>
-                          <SelectComponent value={field.value} onChange={field.onChange}
-                                           options={ownersData?.data?.results} hasError={!!error}
-                                           labelName={"full_name"}/>
+                          <SelectComponent
+                            value={field.value}
+                            onChange={field.onChange}
+                            options={ownersData?.data?.results}
+                            hasError={!!error}
+                            labelName={"full_name"}
+
+                          />
                           {error && (
                             <p className="text-red-500 text-sm">
                               {error.message}
@@ -263,12 +270,12 @@ const Index = () => {
                 ) : (
                   <Skeleton className={"col-span-9 h-9 rounded-md"}/>
                 )}
-                {!country.isLoading ? (
-                  !country.isError &&
-                  country.data &&
+                {!country?.isLoading ? (
+                  !country?.isError &&
+                  country?.data &&
                   country.isSuccess &&
-                  country.data &&
-                  country.data.result ? (
+                  country?.data &&
+                  country?.data?.result ? (
                     <Controller
                       name="country"
                       control={form.control}
@@ -279,8 +286,12 @@ const Index = () => {
                           <label className="text-[#667085]">
                             Hudud
                           </label>
-                          <SelectComponent value={field.value} onChange={field.onChange} options={country?.data?.result}
-                                           hasError={!!error}/>
+                          <SelectComponent
+                            value={field.value}
+                            onChange={field.onChange}
+                            options={country?.data?.result}
+                            hasError={!!error}
+                          />
                           {error && (
                             <p className="text-red-500 text-sm">
                               {error.message}
