@@ -22,7 +22,7 @@ const formSchema = z.object({
     .string()
     .min(3, {message: 'Name must be at least 3'}),
   restaurant: z
-    .string()
+    .number()
 })
 
 const Index = () => {
@@ -32,7 +32,7 @@ const Index = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
-      restaurant: ""
+      restaurant: null
     }
   })
 

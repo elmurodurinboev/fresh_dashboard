@@ -118,7 +118,6 @@ const Index = () => {
             <div className={"col-span-12 lg:col-span-8 flex flex-col gap-4"}>
               <div className={"w-full p-6 bg-white rounded-2xl shadow flex flex-col gap-4"}>
                 <div className={"flex gap-3 items-center"}>
-
                   {!subCategoryData.isLoading ? (
                     !subCategoryData.isError &&
                     subCategoryData.data &&
