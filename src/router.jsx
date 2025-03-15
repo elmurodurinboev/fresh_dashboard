@@ -301,6 +301,13 @@ const routes = [
 
           // Courier router
           {
+            path: "courier-balance",
+            lazy: async () => ({
+              Component: (await import("@/pages/courier/balance")).default
+            }),
+            meta: { roles: getAllowedUsers('courier') },
+          },
+          {
             path: "courier",
             lazy: async () => ({
               Component: (await import("@/pages/courier")).default

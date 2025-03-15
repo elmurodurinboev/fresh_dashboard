@@ -128,6 +128,13 @@ export const sidelinks = [
     roles: [ROLES.ADMIN]
   },
   {
+    title: "sidebar.courier-balance",
+    label: "",
+    href: "/courier-balance",
+    icon: <IconScooterElectric size={18}/>,
+    roles: [ROLES.ADMIN]
+  },
+  {
     title: "sidebar.cash-flow",
     label: "",
     href: "/cash-flow",

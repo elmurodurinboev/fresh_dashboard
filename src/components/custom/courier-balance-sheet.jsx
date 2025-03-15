@@ -12,30 +12,31 @@ import {Skeleton} from "@/components/ui/skeleton.jsx";
 import InputWithFormat from "@/components/custom/input-with-format.jsx";
 import {Textarea} from "@/components/ui/textarea.jsx";
 import {Button} from "@/components/custom/button.jsx";
-import {useMutation, useQuery} from "@tanstack/react-query";
-import CashFlowService from "@/services/cash-flow.service.js";
+import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {toast} from "@/hooks/use-toast.js";
-import RestaurantService from "@/services/restaurant.service.js";
 import {IconWallet} from "@tabler/icons-react";
 import {useState} from "react";
 import {useAuth} from "@/hooks/utils/useAuth.js";
 import ROLES from "@/data/roles.js";
+import CourierService from "@/services/courier.service.js";
 import SelectComponent from "@/components/custom/select-component.jsx";
 
 const RestaurantBalanceSheet = () => {
   const {session: {user}} = useAuth()
   const [open, setOpen] = useState(false)
+  const [transactionType, setTransactionType] = useState("plus")
   const form = useForm({
     defaultValues: {
-      restaurant: null,
+      courier: '',
       amount: '',
-      finance_flow_type: "proceeds",
-      comment: ''
+      description: ''
     }
   })
 
-  const mutation = useMutation({
-    mutationFn: CashFlowService.create,
+  const queryClient = useQueryClient()
+
+  const mutationPlus = useMutation({
+    mutationFn: CourierService.transactionPlus,
     onError: (error) => {
       const {data: {errors: serverErrors}, status} = error.response;
       if (status === 422) {
@@ -58,23 +59,52 @@ const RestaurantBalanceSheet = () => {
         variant: "success",
         description: "Muvaffaqiyatli yaratildi"
       })
+      queryClient.invalidateQueries(['getAllCourierTransactions']).then(r => r)
       form.reset()
       setOpen(false)
     }
   })
 
-  const restaurantsData = useQuery({
-    queryKey: ['getRestaurants', 1, 500],
-    queryFn: RestaurantService.getAll
+  const mutationMinus = useMutation({
+    mutationFn: CourierService.transactionMinus,
+    onError: (error) => {
+      const {data: {errors: serverErrors}, status} = error.response;
+      if (status === 422) {
+        Object.entries(serverErrors).forEach(([key, value]) => {
+          form.setError(key, {
+            type: "server", message: value[0]
+          })
+        })
+        return;
+      }
+      toast({
+        variant: 'destructive',
+        title: "Error",
+        description: error.message || "Messages.error_occurred"
+      })
+    },
+    onSuccess: () => {
+      toast({
+        title: 'OK',
+        variant: "success",
+        description: "Muvaffaqiyatli yaratildi"
+      })
+      queryClient.invalidateQueries(['getAllCourierTransactions']).then(r => r)
+      form.reset()
+      setOpen(false)
+    }
+  })
+
+  const couriersData = useQuery({
+    queryKey: ['getCouriers', 1, 500],
+    queryFn: CourierService.getAll
   })
 
 
   const onSubmit = (data) => {
-    const formData = new FormData()
-    Object.entries(data).forEach(([key, value]) => {
-      formData.append(key, value ?? "");
-    });
-    mutation.mutate(formData)
+    data.amount = Number(data.amount)
+    if (transactionType && transactionType === 'plus') return mutationPlus.mutate(data)
+    else return mutationMinus.mutate(data)
   }
 
   if (user.user_role !== ROLES.ADMIN)
@@ -89,35 +119,36 @@ const RestaurantBalanceSheet = () => {
         setOpen(open)
       }}
     >
-      <SheetTrigger>
+      <SheetTrigger className={"bg-primary px-3 py-2 text-white rounded-md"}>
         <IconWallet size={24}/>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Restoran balans amallari</SheetTitle>
+          <SheetTitle>Kuryer balans amallari</SheetTitle>
         </SheetHeader>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className={"w-full flex flex-col gap-4 mt-4"}>
-            {!restaurantsData.isLoading ? (
-              !restaurantsData.isError &&
-              restaurantsData.data &&
-              restaurantsData.isSuccess &&
-              restaurantsData.data.results ? (
+            {!couriersData.isLoading ? (
+              !couriersData.isError &&
+              couriersData.data &&
+              couriersData.isSuccess &&
+              couriersData.data.results ? (
                 <Controller
-                  name="restaurant"
+                  name="courier"
                   control={form.control}
                   defaultValue={""}
-                  rules={{required: "Restoran tanlanishi shart!"}} // Add validation rules here
+                  rules={{required: "Kuryer tanlanishi shart!"}} // Add validation rules here
                   render={({field, fieldState: {error}}) => (
                     <div className="flex-1">
                       <label className="text-[#667085]">
-                        Restoranni tanlang
+                        Kuryerni tanlang
                       </label>
                       <SelectComponent
                         hasError={!!error}
                         value={field.value}
                         onChange={field.onChange}
-                        options={restaurantsData?.data?.results}
+                        options={couriersData?.data?.results}
+                        labelName={"full_name"}
                       />
                       {error && (
                         <p className="text-red-500 text-sm">
@@ -136,81 +167,27 @@ const RestaurantBalanceSheet = () => {
               <Skeleton className={"col-span-9 h-9 rounded-md"}/>
             )}
 
-            <Controller
-              name="finance_flow_type"
-              control={form.control}
-              defaultValue={"proceeds"}
-              rules={{required: "Turi tanlanishi shart!"}} // Add validation rules here
-              render={({field, fieldState: {error}}) => (
-                <div className="flex-1">
-                  <label className="text-[#667085]">
-                    Turi
-                  </label>
-                  <Select
-                    value={field?.value?.toString()}
-                    onValueChange={field.onChange}
-                  >
-                    <SelectTrigger className="w-full text-black">
-                      <SelectValue placeholder="Amal turini tanlang"/>
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value={"proceeds"}>
-                        Balansni to`ldirish
-                      </SelectItem>
-                      <SelectItem value={"expense"}>
-                        Naqd pul qilish
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                  {error && (
-                    <p className="text-red-500 text-sm">
-                      {error.message}
-                    </p>
-                  )}
-                </div>
-              )}
-            />
-
-            {
-              form.watch("finance_flow_type") === 'proceeds' && (
-                <Controller
-                  name="payment_method"
-                  control={form.control}
-                  defaultValue={"cash"}
-                  render={({field, fieldState: {error}}) => (
-                    <div className="flex-1">
-                      <label className="text-[#667085]">
-                        To'lov turi
-                      </label>
-                      <Select
-                        value={field?.value?.toString()}
-                        onValueChange={field.onChange}
-                      >
-                        <SelectTrigger className="w-full text-black">
-                          <SelectValue placeholder="Amal turini tanlang"/>
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value={"cash"}>
-                            Naqd pul
-                          </SelectItem>
-                          <SelectItem value={"payme"}>
-                            Plastik karta
-                          </SelectItem>
-                          <SelectItem value={"account"} disabled>
-                            Restoran hisob raqamidan
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                      {error && (
-                        <p className="text-red-500 text-sm">
-                          {error.message}
-                        </p>
-                      )}
-                    </div>
-                  )}
-                />
-              )
-            }
+            <div className="flex-1">
+              <label className="text-[#667085]">
+                Tranzaksiya turi
+              </label>
+              <Select
+                value={transactionType}
+                onValueChange={setTransactionType}
+              >
+                <SelectTrigger className="w-full text-black">
+                  <SelectValue placeholder="Restoranni tanlang"/>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={"plus"}>
+                    Balansni to'ldirish
+                  </SelectItem>
+                  <SelectItem value={"minus"}>
+                    Balansdan yechish
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
             <Controller
               name="amount"
@@ -232,7 +209,7 @@ const RestaurantBalanceSheet = () => {
             />
 
             <Controller
-              name="comment"
+              name="description"
               control={form.control}
               rules={{required: false}}
               render={({field, fieldState: {error}}) => (
@@ -249,7 +226,7 @@ const RestaurantBalanceSheet = () => {
               <Button
                 type={'submit'}
                 size={"lg"}
-                loading={mutation.isPending}
+                loading={mutationMinus.isPending || mutationPlus.isPending}
               >
                 Yaratish
               </Button>
