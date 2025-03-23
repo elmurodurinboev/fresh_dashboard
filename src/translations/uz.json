@@ -1,4 +1,5 @@
 {
+  "orders": "Buyurtmalar",
   "sidebar": {
     "dashboard": "Dashboard",
     "tasks": "Amallar",
@@ -35,7 +36,7 @@
     "courier-balance": "Kuryer balans",
     "cash-flow": "Hisob amallari",
     "best-products": "Eng yaxshi taomlarimiz",
-    "order-history": "Buyurtmalar",
+    "orders": "Buyurtmalar",
     "ads": "Reklamalar"
   },
   "dashboard": {
@@ -71,7 +72,9 @@
     "unauthorised_title": "Hisob Ochilmaganda Xatolik",
     "unauthorised_desc": "",
     "not_allowed_title": "Access Denied",
-    "not_allowed_desc": "You do not have permission to access this resource. Please contact your administrator if you believe this is a mistake."
+    "not_allowed_desc": "You do not have permission to access this resource. Please contact your administrator if you believe this is a mistake.",
+    "something_went_wrong": "Qandaydir xatolik yuz berdi!",
+    "wrong_desc": "Iltimos keyinroq qaytadan urinib ko'ring"
   },
   "userNav": {
     "profile": "Profil",

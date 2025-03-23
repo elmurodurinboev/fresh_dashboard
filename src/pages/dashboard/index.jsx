@@ -1,17 +1,18 @@
-import {Layout} from "@/components/custom/layout"
+import {Layout} from "@/components/custom/layout";
 import Reports from "@/pages/dashboard/components/reports.jsx";
+import {ErrorBoundary} from "react-error-boundary";
+import {GeneralErrorFallback} from "@/components/custom/general-error-fallback.jsx";
 
 export default function Dashboard() {
-  return (
-    <Layout>
-      {/* ===== Top Heading ===== */}
-      <Layout.Header/>
+    return (
+        <Layout>
+            <Layout.Header/>
 
-      {/* ===== Main ===== */}
-      <Layout.Body>
-        <Reports/>
-      </Layout.Body>
-    </Layout>
-  )
+            <Layout.Body>
+                <ErrorBoundary fallback={<GeneralErrorFallback/>}>
+                    <Reports/>
+                </ErrorBoundary>
+            </Layout.Body>
+        </Layout>
+    );
 }
-

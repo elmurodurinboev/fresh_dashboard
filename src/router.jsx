@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate } from "react-router-dom";
+import {createBrowserRouter, Navigate} from "react-router-dom";
 import GeneralError from "./pages/errors/general-error";
 import NotFoundError from "./pages/errors/not-found-error";
 import MaintenanceError from "./pages/errors/maintenance-error";
@@ -9,11 +9,11 @@ import NotAllowed from "@/pages/errors/not-allowed.jsx";
 import {sidelinks} from "@/data/sidelinks.jsx";
 
 const getAllowedUsers = (path) => {
-  const inx = sidelinks.indexOf(item => item.href === `/${path}`)
-  if (inx === -1)
-    return
+    const inx = sidelinks.indexOf(item => item.href === `/${path}`)
+    if (inx === -1)
+        return
 
-  return sidelinks[inx].roles
+    return sidelinks[inx].roles
 }
 
 // User's role (dynamically fetch from auth state or context in a real app)
@@ -21,424 +21,424 @@ const session = AuthService.getAuthSession()
 
 // Routes with metadata for role-based access
 const routes = [
-  // Auth routes
-  {
-    path: "/auth/login",
-    lazy: async () => ({
-      Component: (await import("./pages/auth/login.jsx")).default,
-    }),
-  },
+    // Auth routes
+    {
+        path: "/auth/login",
+        lazy: async () => ({
+            Component: (await import("./pages/auth/login.jsx")).default,
+        }),
+    },
 
-  // Main routes
-  {
-    path: "/",
-    lazy: async () => ({
-      Component: (await import("./layouts/Protected.jsx")).default,
-    }),
-    children: [
-      {
+    // Main routes
+    {
         path: "/",
-        lazy: async () => {
-          const AppShell = await import("./components/app-shell");
-          return { Component: AppShell.default };
-        },
-        errorElement: <GeneralError />,
+        lazy: async () => ({
+            Component: (await import("./layouts/Protected.jsx")).default,
+        }),
         children: [
-          {
-            path: "dashboard",
-            lazy: async () => ({
-              Component: (await import("@/pages/dashboard")).default,
-            }),
-            meta: { roles: getAllowedUsers('dashboard') },
-          },
+            {
+                path: "/",
+                lazy: async () => {
+                    const AppShell = await import("./components/app-shell");
+                    return {Component: AppShell.default};
+                },
+                errorElement: <GeneralError/>,
+                children: [
+                    {
+                        path: "dashboard",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/dashboard")).default,
+                        }),
+                        meta: {roles: getAllowedUsers('dashboard')},
+                    },
 
-          // BaseCategory
-          {
-            path: "base-category",
-            lazy: async () => ({
-              Component: (await import("@/pages/base-category")).default
-            }),
-            meta: { roles: getAllowedUsers('base-category') },
-          },
-          {
-            path: "base-category/create",
-            lazy: async () => ({
-              Component: (await import("@/pages/base-category/create")).default
-            }),
-            meta: { roles: getAllowedUsers('base-category') },
-          },
-          {
-            path: "base-category/update/:id",
-            lazy: async () => ({
-              Component: (await import("@/pages/base-category/update")).default
-            }),
-            meta: { roles: getAllowedUsers('base-category') },
-          },
+                    // BaseCategory
+                    {
+                        path: "base-category",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/base-category")).default
+                        }),
+                        meta: {roles: getAllowedUsers('base-category')},
+                    },
+                    {
+                        path: "base-category/create",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/base-category/create")).default
+                        }),
+                        meta: {roles: getAllowedUsers('base-category')},
+                    },
+                    {
+                        path: "base-category/update/:id",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/base-category/update")).default
+                        }),
+                        meta: {roles: getAllowedUsers('base-category')},
+                    },
 
-          // Shop routes
-          {
-            path: "country",
-            lazy: async () => ({
-              Component: (await import("@/pages/country")).default
-            }),
-            meta: { roles: getAllowedUsers('country') },
-          },
-          {
-            path: "country/create",
-            lazy: async () => ({
-              Component: (await import("@/pages/country/create")).default
-            }),
-            meta: { roles: getAllowedUsers('country') },
-          },
-          {
-            path: "country/update/:id",
-            lazy: async () => ({
-              Component: (await import("@/pages/country/update")).default
-            }),
-            meta: { roles: getAllowedUsers('country') },
-          },
+                    // Shop routes
+                    {
+                        path: "country",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/country")).default
+                        }),
+                        meta: {roles: getAllowedUsers('country')},
+                    },
+                    {
+                        path: "country/create",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/country/create")).default
+                        }),
+                        meta: {roles: getAllowedUsers('country')},
+                    },
+                    {
+                        path: "country/update/:id",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/country/update")).default
+                        }),
+                        meta: {roles: getAllowedUsers('country')},
+                    },
 
-          // Shop routes
-          {
-            path: "shops",
-            lazy: async () => ({
-              Component: (await import("@/pages/shops")).default
-            }),
-            meta: { roles: getAllowedUsers('shops') },
-          },
-          {
-            path: "shops/create",
-            lazy: async () => ({
-              Component: (await import("@/pages/shops/create-shop")).default
-            }),
-            meta: { roles: getAllowedUsers('shops') },
-          },
-          {
-            path: "shops/update/:id",
-            lazy: async () => ({
-              Component: (await import("@/pages/shops/update-shop")).default
-            }),
-            meta: { roles: getAllowedUsers('shops') },
-          },
+                    // Shop routes
+                    {
+                        path: "shops",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/shops")).default
+                        }),
+                        meta: {roles: getAllowedUsers('shops')},
+                    },
+                    {
+                        path: "shops/create",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/shops/create-shop")).default
+                        }),
+                        meta: {roles: getAllowedUsers('shops')},
+                    },
+                    {
+                        path: "shops/update/:id",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/shops/update-shop")).default
+                        }),
+                        meta: {roles: getAllowedUsers('shops')},
+                    },
 
-          // Shop product routes
-          {
-            path: "shop-products",
-            lazy: async () => ({
-              Component: (await import("@/pages/shops/products")).default
-            }),
-            meta: { roles: getAllowedUsers('shop-products') },
-          },
-          {
-            path: "shop-products/update/:id",
-            lazy: async () => ({
-              Component: (await import("@/pages/shops/products/update-product")).default
-            }),
-            meta: { roles: getAllowedUsers('shop-products') },
-          },
+                    // Shop product routes
+                    {
+                        path: "shop-products",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/shops/products")).default
+                        }),
+                        meta: {roles: getAllowedUsers('shop-products')},
+                    },
+                    {
+                        path: "shop-products/update/:id",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/shops/products/update-product")).default
+                        }),
+                        meta: {roles: getAllowedUsers('shop-products')},
+                    },
 
-          {
-            path: "shop-products/create",
-            lazy: async () => ({
-              Component: (await import("@/pages/shops/products/create-product")).default
-            }),
-            meta: { roles: getAllowedUsers('shop-products') },
-          },
+                    {
+                        path: "shop-products/create",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/shops/products/create-product")).default
+                        }),
+                        meta: {roles: getAllowedUsers('shop-products')},
+                    },
 
-          // ShopCategory
-          {
-            path: "shop-category",
-            lazy: async () => ({
-              Component: (await import("@/pages/shops/category")).default
-            }),
-            meta: { roles: getAllowedUsers('shop-category') },
-          },
-          {
-            path: "shop-category/create",
-            lazy: async () => ({
-              Component: (await import("@/pages/shops/category/create-category")).default
-            }),
-            meta: { roles: getAllowedUsers('shop-category') },
-          },
-          {
-            path: "shop-category/update/:id",
-            lazy: async () => ({
-              Component: (await import("@/pages/shops/category/update-category")).default
-            }),
-            meta: { roles: getAllowedUsers('shop-category') },
-          },
+                    // ShopCategory
+                    {
+                        path: "shop-category",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/shops/category")).default
+                        }),
+                        meta: {roles: getAllowedUsers('shop-category')},
+                    },
+                    {
+                        path: "shop-category/create",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/shops/category/create-category")).default
+                        }),
+                        meta: {roles: getAllowedUsers('shop-category')},
+                    },
+                    {
+                        path: "shop-category/update/:id",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/shops/category/update-category")).default
+                        }),
+                        meta: {roles: getAllowedUsers('shop-category')},
+                    },
 
-          // SubCategory
-          {
-            path: "subcategory",
-            lazy: async () => ({
-              Component: (await import("@/pages/shops/subcategory")).default
-            }),
-            meta: { roles: getAllowedUsers('subcategory') },
-          },
-          {
-            path: "subcategory/create",
-            lazy: async () => ({
-              Component: (await import("@/pages/shops/subcategory/create-subcategory")).default
-            }),
-            meta: { roles: getAllowedUsers('subcategory') },
-          },
-          {
-            path: "subcategory/update/:id",
-            lazy: async () => ({
-              Component: (await import("@/pages/shops/subcategory/update-subcategory")).default
-            }),
-            meta: { roles: getAllowedUsers('subcategory') },
-          },
+                    // SubCategory
+                    {
+                        path: "subcategory",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/shops/subcategory")).default
+                        }),
+                        meta: {roles: getAllowedUsers('subcategory')},
+                    },
+                    {
+                        path: "subcategory/create",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/shops/subcategory/create-subcategory")).default
+                        }),
+                        meta: {roles: getAllowedUsers('subcategory')},
+                    },
+                    {
+                        path: "subcategory/update/:id",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/shops/subcategory/update-subcategory")).default
+                        }),
+                        meta: {roles: getAllowedUsers('subcategory')},
+                    },
 
-          // ======================================================================
-          // Restaurant routes
-          {
-            path: "restaurants",
-            lazy: async () => ({
-              Component: (await import("@/pages/restaurants")).default
-            }),
-            meta: { roles: getAllowedUsers('restaurants') },
-          },
-          {
-            path: "restaurants/update/:id",
-            lazy: async () => ({
-              Component: (await import("@/pages/restaurants/update-restaurants")).default
-            }),
-            meta: { roles: getAllowedUsers('restaurants') },
-          },
-          {
-            path: "restaurants/create",
-            lazy: async () => ({
-              Component: (await import("@/pages/restaurants/create-restaurants")).default
-            }),
-            meta: { roles: getAllowedUsers('restaurants') },
-          },
+                    // ======================================================================
+                    // Restaurant routes
+                    {
+                        path: "restaurants",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/restaurants")).default
+                        }),
+                        meta: {roles: getAllowedUsers('restaurants')},
+                    },
+                    {
+                        path: "restaurants/update/:id",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/restaurants/update-restaurants")).default
+                        }),
+                        meta: {roles: getAllowedUsers('restaurants')},
+                    },
+                    {
+                        path: "restaurants/create",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/restaurants/create-restaurants")).default
+                        }),
+                        meta: {roles: getAllowedUsers('restaurants')},
+                    },
 
-          {
-            path: "cash-flow",
-            lazy: async () => ({
-              Component: (await import("@/pages/cash-flow/index.jsx")).default
-            }),
-            meta: { roles: getAllowedUsers('cash-flow') },
-          },
+                    {
+                        path: "cash-flow",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/cash-flow/index.jsx")).default
+                        }),
+                        meta: {roles: getAllowedUsers('cash-flow')},
+                    },
 
-          {
-            path: "cash-flow/create",
-            lazy: async () => ({
-              Component: (await import("@/pages/cash-flow/create/index.jsx")).default
-            }),
-            meta: { roles: getAllowedUsers('cash-flow') },
-          },
-
-
-          // RestaurantProducts routes
-          {
-            path: "restaurant-products",
-            lazy: async () => ({
-              Component: (await import("@/pages/restaurants/products")).default
-            }),
-            meta: { roles: getAllowedUsers('restaurant-products') },
-          },
-          {
-            path: "restaurant-products/create",
-            lazy: async () => ({
-              Component: (await import("@/pages/restaurants/products/create-product")).default
-            }),
-            meta: { roles: getAllowedUsers('restaurant-products') },
-          },
-          {
-            path: "restaurant-products/update/:id",
-            lazy: async () => ({
-              Component: (await import("@/pages/restaurants/products/update-product")).default
-            }),
-            meta: { roles: getAllowedUsers('restaurant-products') },
-          },
-          {
-            path: "best-products",
-            lazy: async () => ({
-              Component: (await import("@/pages/best-products")).default
-            }),
-            meta: { roles: getAllowedUsers('best-products') },
-          },
-          {
-            path: "best-products/update/:id",
-            lazy: async () => ({
-              Component: (await import("@/pages/best-products/update")).default
-            }),
-            meta: { roles: getAllowedUsers('best-products') },
-          },
-          {
-            path: "best-products/create",
-            lazy: async () => ({
-              Component: (await import("@/pages/best-products/create")).default
-            }),
-            meta: { roles: getAllowedUsers('best-products') },
-          },
-
-          // RestaurantCategory
-          {
-            path: "restaurant-category",
-            lazy: async () => ({
-              Component: (await import("@/pages/restaurants/category")).default
-            }),
-            meta: { roles: getAllowedUsers('restaurant-category') },
-          },
-          {
-            path: "restaurant-category/create",
-            lazy: async () => ({
-              Component: (await import("@/pages/restaurants/category/create-category")).default
-            }),
-            meta: { roles: getAllowedUsers('restaurant-category') },
-          },
-          {
-            path: "restaurant-category/update/:id",
-            lazy: async () => ({
-              Component: (await import("@/pages/restaurants/category/update-category")).default
-            }),
-            meta: { roles: getAllowedUsers('restaurant-category') },
-          },
-
-          // Courier router
-          {
-            path: "courier-balance",
-            lazy: async () => ({
-              Component: (await import("@/pages/courier/balance")).default
-            }),
-            meta: { roles: getAllowedUsers('courier') },
-          },
-          {
-            path: "courier",
-            lazy: async () => ({
-              Component: (await import("@/pages/courier")).default
-            }),
-            meta: { roles: getAllowedUsers('courier') },
-          },
-          {
-            path: "courier/create",
-            lazy: async () => ({
-              Component: (await import("@/pages/courier/create-courier")).default
-            }),
-            meta: { roles: getAllowedUsers('courier') },
-          },
-          {
-            path: "courier/update/:id",
-            lazy: async () => ({
-              Component: (await import("@/pages/courier/update-courier")).default
-            }),
-            meta: { roles: getAllowedUsers('courier') },
-          },
-
-          // Ads router
-          {
-            path: "ads",
-            lazy: async () => ({
-              Component: (await import("@/pages/ads")).default
-            }),
-            meta: { roles: getAllowedUsers('ads') },
-          },
-          {
-            path: "ads/create",
-            lazy: async () => ({
-              Component: (await import("@/pages/ads/create")).default
-            }),
-            meta: { roles: getAllowedUsers('ads') },
-          },
-          {
-            path: "ads/update/:id",
-            lazy: async () => ({
-              Component: (await import("@/pages/ads/update")).default
-            }),
-            meta: { roles: getAllowedUsers('ads') },
-          },
-
-          // Users Routes
-
-          {
-            path: "users",
-            lazy: async () => ({
-              Component: (await import("@/pages/users")).default
-            }),
-            meta: { roles: getAllowedUsers('users') },
-          },
-          {
-            path: "users/create",
-            lazy: async () => ({
-              Component: (await import("@/pages/users/create-user")).default
-            }),
-            meta: { roles: getAllowedUsers('users') }
-          },
-          {
-            path: "users/update/:id",
-            lazy: async () => ({
-              Component: (await import("@/pages/users/update-user")).default
-            }),
-            meta: { roles: getAllowedUsers('users') }
-          },
+                    {
+                        path: "cash-flow/create",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/cash-flow/create/index.jsx")).default
+                        }),
+                        meta: {roles: getAllowedUsers('cash-flow')},
+                    },
 
 
-          // OrderHistory
-          {
-            path: "order-history",
-            lazy: async () => ({
-              Component: (await import("@/pages/order-history")).default
-            }),
-            meta: { roles: getAllowedUsers('order-history') }
-          },
+                    // RestaurantProducts routes
+                    {
+                        path: "restaurant-products",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/restaurants/products")).default
+                        }),
+                        meta: {roles: getAllowedUsers('restaurant-products')},
+                    },
+                    {
+                        path: "restaurant-products/create",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/restaurants/products/create-product")).default
+                        }),
+                        meta: {roles: getAllowedUsers('restaurant-products')},
+                    },
+                    {
+                        path: "restaurant-products/update/:id",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/restaurants/products/update-product")).default
+                        }),
+                        meta: {roles: getAllowedUsers('restaurant-products')},
+                    },
+                    {
+                        path: "best-products",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/best-products")).default
+                        }),
+                        meta: {roles: getAllowedUsers('best-products')},
+                    },
+                    {
+                        path: "best-products/update/:id",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/best-products/update")).default
+                        }),
+                        meta: {roles: getAllowedUsers('best-products')},
+                    },
+                    {
+                        path: "best-products/create",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/best-products/create")).default
+                        }),
+                        meta: {roles: getAllowedUsers('best-products')},
+                    },
+
+                    // RestaurantCategory
+                    {
+                        path: "restaurant-category",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/restaurants/category")).default
+                        }),
+                        meta: {roles: getAllowedUsers('restaurant-category')},
+                    },
+                    {
+                        path: "restaurant-category/create",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/restaurants/category/create-category")).default
+                        }),
+                        meta: {roles: getAllowedUsers('restaurant-category')},
+                    },
+                    {
+                        path: "restaurant-category/update/:id",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/restaurants/category/update-category")).default
+                        }),
+                        meta: {roles: getAllowedUsers('restaurant-category')},
+                    },
+
+                    // Courier router
+                    {
+                        path: "courier-balance",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/courier/balance")).default
+                        }),
+                        meta: {roles: getAllowedUsers('courier')},
+                    },
+                    {
+                        path: "courier",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/courier")).default
+                        }),
+                        meta: {roles: getAllowedUsers('courier')},
+                    },
+                    {
+                        path: "courier/create",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/courier/create-courier")).default
+                        }),
+                        meta: {roles: getAllowedUsers('courier')},
+                    },
+                    {
+                        path: "courier/update/:id",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/courier/update-courier")).default
+                        }),
+                        meta: {roles: getAllowedUsers('courier')},
+                    },
+
+                    // Ads router
+                    {
+                        path: "ads",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/ads")).default
+                        }),
+                        meta: {roles: getAllowedUsers('ads')},
+                    },
+                    {
+                        path: "ads/create",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/ads/create")).default
+                        }),
+                        meta: {roles: getAllowedUsers('ads')},
+                    },
+                    {
+                        path: "ads/update/:id",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/ads/update")).default
+                        }),
+                        meta: {roles: getAllowedUsers('ads')},
+                    },
+
+                    // Users Routes
+
+                    {
+                        path: "users",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/users")).default
+                        }),
+                        meta: {roles: getAllowedUsers('users')},
+                    },
+                    {
+                        path: "users/create",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/users/create-user")).default
+                        }),
+                        meta: {roles: getAllowedUsers('users')}
+                    },
+                    {
+                        path: "users/update/:id",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/users/update-user")).default
+                        }),
+                        meta: {roles: getAllowedUsers('users')}
+                    },
 
 
-          {
-            path: "settings",
-            lazy: async () => ({
-              Component: (await import("./pages/settings")).default,
-            }),
-            children: [
-              {
-                index: true,
-                lazy: async () => ({
-                  Component: (await import("./pages/settings/profile")).default,
-                }),
-                meta: { roles: [ROLES.ADMIN, ROLES.SHOP_OWNER, ROLES.RESTAURANT_OWNER, ROLES.OPERATOR, ROLES.COURIER, ROLES.CLIENT] },
-              },
-              {
-                path: "appearance",
-                lazy: async () => ({
-                  Component: (await import("./pages/settings/appearance")).default,
-                }),
-                meta: { roles: [ROLES.ADMIN, ROLES.SHOP_OWNER, ROLES.RESTAURANT_OWNER, ROLES.OPERATOR, ROLES.COURIER, ROLES.CLIENT] },
-              },
-            ],
-          },
+                    // OrderHistory
+                    {
+                        path: "orders",
+                        lazy: async () => ({
+                            Component: (await import("@/pages/orders")).default
+                        }),
+                        meta: {roles: getAllowedUsers('orders')}
+                    },
+
+
+                    {
+                        path: "settings",
+                        lazy: async () => ({
+                            Component: (await import("./pages/settings")).default,
+                        }),
+                        children: [
+                            {
+                                index: true,
+                                lazy: async () => ({
+                                    Component: (await import("./pages/settings/profile")).default,
+                                }),
+                                meta: {roles: [ROLES.ADMIN, ROLES.SHOP_OWNER, ROLES.RESTAURANT_OWNER, ROLES.OPERATOR, ROLES.COURIER, ROLES.CLIENT]},
+                            },
+                            {
+                                path: "appearance",
+                                lazy: async () => ({
+                                    Component: (await import("./pages/settings/appearance")).default,
+                                }),
+                                meta: {roles: [ROLES.ADMIN, ROLES.SHOP_OWNER, ROLES.RESTAURANT_OWNER, ROLES.OPERATOR, ROLES.COURIER, ROLES.CLIENT]},
+                            },
+                        ],
+                    },
+                ],
+            },
         ],
-      },
-    ],
-  },
+    },
 
-  // Error routes
-  { path: "/500", Component: GeneralError },
-  { path: "/404", Component: NotFoundError },
-  { path: "/503", Component: MaintenanceError },
-  { path: "/401", Component: UnauthorisedError },
-  { path: "/403", Component: NotAllowed },
+    // Error routes
+    {path: "/500", Component: GeneralError},
+    {path: "/404", Component: NotFoundError},
+    {path: "/503", Component: MaintenanceError},
+    {path: "/401", Component: UnauthorisedError},
+    {path: "/403", Component: NotAllowed},
 
-  // Fallback 404 route
-  { path: "*", Component: NotFoundError },
+    // Fallback 404 route
+    {path: "*", Component: NotFoundError},
 ];
 
 // Centralized guard logic
 const applyGuards = (routes, userRole) => {
-  const guardRoute = (route) => {
-    if (!userRole) return { ...route, Component: () => <Navigate to="/500" replace /> };
-    if (route.meta?.roles && !route.meta.roles.includes(userRole)) {
-      return { ...route, Component: () => <Navigate to="/403" replace /> };
-    }
-    if (route.children) {
-      return { ...route, children: route.children.map(guardRoute) };
-    }
-    return route;
-  };
+    const guardRoute = (route) => {
+        if (!userRole) return {...route, Component: () => <Navigate to="/500" replace/>};
+        if (route.meta?.roles && !route.meta.roles.includes(userRole)) {
+            return {...route, Component: () => <Navigate to="/403" replace/>};
+        }
+        if (route.children) {
+            return {...route, children: route.children.map(guardRoute)};
+        }
+        return route;
+    };
 
-  return routes.map(guardRoute);
+    return routes.map(guardRoute);
 };
 
 // Apply guards
