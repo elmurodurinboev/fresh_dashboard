@@ -63,7 +63,6 @@ const Index = () => {
       if (data.message) {
         return console.log(data.message)
       }
-      console.log(data)
       setCouriers(data.couriers)
     };
 
@@ -192,7 +191,7 @@ const Index = () => {
                           Transport raqami
                         </TableHead>
                         <TableHead>
-                          Kuryer raqami
+                          Sumka raqami
                         </TableHead>
                         <TableHead>
                           Balansi

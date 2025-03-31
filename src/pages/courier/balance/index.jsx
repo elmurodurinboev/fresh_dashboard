@@ -65,7 +65,7 @@ const Index = () => {
                     <TableHeader>
                       <TableRow>
                         <TableHead>
-                          Kuryer raqami
+                          Sumka raqami
                         </TableHead>
                         <TableHead>
                           Hozirgi balansi
