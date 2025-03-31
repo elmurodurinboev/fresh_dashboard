@@ -46,7 +46,7 @@ const formSchema = z.object({
     .min(3, {message: "JSHSHIR to'ldirilishi shart. Kamida 3ta harf"}),
   bag_number: z
     .string()
-    .min(3, {message: "Kuryer raqami to'ldirilishi shart. Kamida 3ta harf"}),
+    .min(3, {message: "Sumka raqami to'ldirilishi shart. Kamida 3ta harf"}),
   driver_license: z
     .string()
     .min(3, {message: "Ruhsatnoma raqami to'ldirilishi shart. Kamida 3ta harf"}),
@@ -221,9 +221,9 @@ const Index = () => {
                         name="bag_number"
                         render={({field}) => (
                           <FormItem className="space-y-1">
-                            <FormLabel className={"text-[#667085]"}>Kuryer raqami</FormLabel>
+                            <FormLabel className={"text-[#667085]"}>Sumka raqami</FormLabel>
                             <FormControl>
-                              <Input placeholder="58012015670042" type={"number"} {...field} />
+                              <Input placeholder="UZ1215" type={"text"} {...field} />
                             </FormControl>
                             <FormMessage/>
                           </FormItem>
